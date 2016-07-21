@@ -1,0 +1,74 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  font-size: 16px;
+}
+
+.jumbotron {
+	background-image: url("../img/frontpage_cropped.jpg");
+	background-size: cover;
+	height: 80%;
+	color: white;
+}
+
+.navbar-brand {
+	float: left;
+	height: 50px;
+	padding: 5px 5px;
+	font-size: 18px;
+	line-height: 20px;
+}
+
+#result-status {
+	font-weight: bold;
+}
+
+.preview {
+	max-height: 500px;
+}
+
+#slide1 {
+	background-color: #FFF;
+	color: black;
+	padding: 50px;
+
+}
+
+#slide2 {
+	background-color: #2a2730;
+	text-align: center;
+	color: white;
+	padding: 50px;
+}
+
+#infopage {
+	background-color: #FFF;
+	text-align: center;
+	padding: 50px;
+}
+
+.transparent-bg {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.transparent-bg-white {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.slide-image {
+    margin: 25px;
+}
+
+.footer {
+    text-align: center;
+    padding: 70px 0;
+    border-top: 1px solid #e5e5e5;
+    background-color: #f5f5f5;
+}
+
+.img-responsive {
+    display: inline;
+    max-width: 100%;
+    height: auto;
+}
