@@ -13,6 +13,7 @@ class Files extends CI_Controller {
 				'form' 
 		) );
 		$this->load->model ( 'files_model' );
+		$this->load->model ( 'Results_Client_model' );
 	}
 	
 	public function index() {
@@ -39,7 +40,7 @@ class Files extends CI_Controller {
                 $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
 
                 $data ['tiledUploadedImages'] = $this->getImagesTiled("assets/uploads/", $uploadedFiles);
-                $data ['tiledResultImages'] = $this->getImagesTiled("assets/result_images/", $resultFiles);
+                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 10);
 			}
 		}
 		
@@ -88,7 +89,7 @@ class Files extends CI_Controller {
 			if ($completedPercent >= 100)
 			{
                 $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
-                $imageHTML = $this->getImagesTiled("assets/result_images/", $resultFiles);
+                $imageHTML = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 10);
 			}
 			
 			$jsonResult = (object) array (
@@ -169,6 +170,45 @@ class Files extends CI_Controller {
 
         return $resultHTML;
     }
+
+	function getImagesTiledFromDB($sourcePath, $ezRefString, $numberOfRecords)
+	{
+
+		$resultHTML = "";
+		$result = $this->Results_Client_model->get_by_ezRefString($ezRefString, $numberOfRecords);
+		$count = 0;
+		if ($result != false) {
+
+			foreach ($result as $row) {
+
+				$image_properties = array(
+					'src' => $sourcePath . $ezRefString . "/" . $row["IMAGE"],
+					'alt' => $row["IMAGE"],
+					'class' => 'img-responsive',
+					//'width' => '200',
+					//'height' => '200',
+					'title' => $row["IMAGE"],
+					'rel' => 'lightbox',
+				);
+
+				if ($count % 4 == 0 || $count == 0) {
+					$resultHTML .= '<div class="row">';
+				}
+
+				$resultHTML .= '<div class="col-md-3">';
+				$resultHTML .= img($image_properties);
+				$resultHTML .= '</div>';
+
+				if (($count + 1) % 4 == 0) {
+					$resultHTML .= '</div>';
+				}
+
+				$count++;
+			}
+		}
+
+		return $resultHTML;
+	}
 
 
 }

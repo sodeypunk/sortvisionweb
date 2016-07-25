@@ -18,6 +18,7 @@ class Bibcommander extends CI_Controller {
 
     public function index() {
         $data ['systems'] = $this->GetAllSystems();
+        $data ['files'] = $this->GetFiles(10);
 
         $this->load->view ( 'templates/header' );
         $this->load->view ( 'pages/bibcommander', $data);
@@ -27,6 +28,11 @@ class Bibcommander extends CI_Controller {
     private function GetAllSystems()
     {
         return $this->system_model->get_all();
+    }
+
+    private function GetFiles($numberOfFiles)
+    {
+        return $this->files_model->get_files($numberOfFiles);
     }
 
 }

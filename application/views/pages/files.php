@@ -59,10 +59,12 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6">
+		<div class="col-sm-12">
 			<h2>Result</h2>
 		</div>
-		<div class="col-sm-6">
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
 			<div id="result-image">
 				<?php
 				if ($status == "COMPLETED")

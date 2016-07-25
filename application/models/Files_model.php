@@ -24,7 +24,7 @@ class Files_model extends CI_Model {
 		
 	}
 	
-	public function get_by_ezRefString($ezRefString) {
+	public function get_by_ezRefString($ezRefString, $numberOfRecords = 0) {
 		
 		//select * from FILES f
 		//LEFT JOIN FILES_HISTORY h
@@ -37,6 +37,11 @@ class Files_model extends CI_Model {
 		$this->db->join('FILES_HISTORY h', 'f.IDFILE = h.IDFILE', 'left');
 		$this->db->where('f.EZ_REF_STRING', $ezRefString);
 		$this->db->order_by('h.IDFILE_HIST', 'asc');
+        if ($numberOfRecords > 0)
+        {
+            $this->db->limit($numberOfRecords);
+        }
+
 		$query = $this->db->get();
 		
 		if($query->num_rows() != 0)
@@ -48,5 +53,23 @@ class Files_model extends CI_Model {
 			return false;
 		}
 		
+	}
+
+	public function get_files($numberOfRecords)
+	{
+		$this->db->select('*');
+		$this->db->from('FILES f');
+		$this->db->order_by('f.IDFILE', 'desc');
+		$this->db->limit($numberOfRecords);
+		$query = $this->db->get();
+
+		if($query->num_rows() != 0)
+		{
+			return $query->result_array();
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

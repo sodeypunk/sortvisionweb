@@ -3,7 +3,7 @@
 <h2><?php echo $TITLE; ?></h2>
 <div class="row">
     <div class="col-sm-12">
-    Select the machine you are running from:
+        Current Machine:
         <select id="user-system">
         <?php
             foreach ($systems as $system)
@@ -17,6 +17,8 @@
             }
         ?>
         </select>
+        <br>
+        Unzip Files After Upload: <input id="unzip-after-upload" type="checkbox">
     </div>
 </div>
 <br><br>
@@ -34,6 +36,36 @@
         <div id="dropzone" class="dropzone"></div>
     </div>
 </div>
+<div class="row">
+    <div class="col-sm-12">
+        <h2>Job History</h2>
+        <br><Br>
+        <table id="status-table" class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>FILE</th>
+                <th>STATUS</th>
+                <th>LOCATION</th>
+                <th>TIMESTAMP</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+                foreach ($files as $row)
+                {
+                    echo "<tr>";
+                    echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status/" . $row["EZ_REF_STRING"] . "\">" . $row["IDFILE"] . "</td>";
+                    echo "<td>" . $row["FILE_NAME"] . "</td>";
+                    echo "<td>" . $row["STATUS"] . "</td>";
+                    echo "<td>" . $row["FILE_PATH"] . $row["EZ_REF_STRING"] . "</td>";
+                    echo "<td>" . $row["UPDT"] . "</td>";
+                    echo "</tr>";
+                }
+            ?>
+        </table>
+    </div>
+</div>
 <script>
 $(document).ready(function() {
 
@@ -43,9 +75,13 @@ $(document).ready(function() {
 	$("#dropzone").dropzone({
 		url: "<?php echo site_url('/upload/dropzone'); ?>",
 		acceptedFiles: ".jpg, .JPG, .png, .PNG, .zip, .ZIP, .jpeg, .JPEG",
+        maxFilesize: 5000,
 		init: function() {
             this.on("sending", function(file, xhr, formData){
-               formData.append("UserSystem", $("#user-system option:selected").val())
+                var userSystem = $("#user-system option:selected").val()
+                var unzipAfterUpload = $("#unzip-after-upload").is(':checked');
+                formData.append("UserSystem", userSystem)
+                formData.append("UnzipAfterUpload", unzipAfterUpload)
             }),
 		    this.on("success", function(file, response) { 
 			    var jsonResponse = JSON.parse(response);
