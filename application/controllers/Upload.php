@@ -44,6 +44,27 @@ class Upload extends CI_Controller {
         echo "SUCCESS";
     }
 
+    public function cleanupResultImage() {
+
+        if (!empty($_FILES)) {
+
+            $tempFile = $_FILES['file']['tmp_name'];
+            $fileName = $_FILES['file']['name'];
+            $fileFolder = $_POST['folder'];
+            $targetPath = getcwd() . '/assets/result_images/' . $fileFolder . '/cleanup/';
+
+            if (!file_exists($targetPath))
+            {
+                mkdir($targetPath, 0777);
+            }
+
+            $targetFile = $targetPath . $fileName ;
+            move_uploaded_file($tempFile, $targetFile);
+        }
+
+        echo "SUCCESS";
+    }
+
     public function dropzone() {
         $jsonResult = array();
         try

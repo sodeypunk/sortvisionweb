@@ -75,6 +75,23 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<h2>Cleanup</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div id="result-image">
+				<?php
+				if ($status == "COMPLETED")
+				{
+					echo $tiledCleanupResultImages;
+				}
+				?>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>

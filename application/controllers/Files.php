@@ -40,7 +40,8 @@ class Files extends CI_Controller {
                 $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
 
                 $data ['tiledUploadedImages'] = $this->getImagesTiled("assets/uploads/", $uploadedFiles);
-                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 10);
+                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, false, 10);
+				$data ['tiledCleanupResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, true, 10);
 			}
 		}
 		
@@ -171,18 +172,29 @@ class Files extends CI_Controller {
         return $resultHTML;
     }
 
-	function getImagesTiledFromDB($sourcePath, $ezRefString, $numberOfRecords)
+	function getImagesTiledFromDB($sourcePath, $ezRefString, $cleanUp, $numberOfRecords)
 	{
 
 		$resultHTML = "";
-		$result = $this->Results_Client_model->get_by_ezRefString($ezRefString, $numberOfRecords);
+		$result = $this->Results_Client_model->get_by_ezRefString($ezRefString, $cleanUp, $numberOfRecords);
 		$count = 0;
 		if ($result != false) {
 
 			foreach ($result as $row) {
 
+				$src = "";
+
+				if ($cleanUp)
+				{
+					$src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE"];
+				}
+				else
+				{
+					$src = $sourcePath . $ezRefString . "/" . $row["IMAGE"];
+				}
+
 				$image_properties = array(
-					'src' => $sourcePath . $ezRefString . "/" . $row["IMAGE"],
+					'src' => $src,
 					'alt' => $row["IMAGE"],
 					'class' => 'img-responsive',
 					//'width' => '200',
