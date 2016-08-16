@@ -73,7 +73,7 @@ class Upload extends CI_Controller {
             if (!empty($_FILES)) {
 
                 $tempFile = $_FILES['file']['tmp_name'];
-                $fileName = $_FILES['file']['name'];
+                $fileName = str_replace(" ", "_", $_FILES['file']['name']);
                 $fileExt = strtolower(pathinfo($fileName)['extension']);
                 $userSystem = $_POST['UserSystem'];
                 $unzipAfterUpload = $_POST['UnzipAfterUpload'];

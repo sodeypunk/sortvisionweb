@@ -53,5 +53,6 @@ $route['upload'] = 'upload';
 $route['files'] = 'files';
 $route['home'] = 'home';
 $route['bibcommander'] = 'bibcommander';
+$route['cleanup'] = 'cleanup';
 $route['default_controller'] = 'pages/view';
 $route['(:any)'] = 'pages/view/$1';

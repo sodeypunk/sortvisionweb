@@ -40,8 +40,8 @@ class Files extends CI_Controller {
                 $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
 
                 $data ['tiledUploadedImages'] = $this->getImagesTiled("assets/uploads/", $uploadedFiles);
-                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, false, 10);
-				$data ['tiledCleanupResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, true, 10);
+                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
+				$data ['tiledCleanupResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
 			}
 		}
 		
@@ -51,17 +51,17 @@ class Files extends CI_Controller {
 	}
 	
 	public function GetUpdate() {
-		
+
 		$ezRefString = $_POST['ezRefString'];
 		$result = $this->files_model->get_by_ezRefString($ezRefString);
-		
+
 		if ($result != false) {
 
 			$status = $result[0]['STATUS'];
 			$maxStatus = 0;
 			$statusHTML = "";
 			$imageHTML = "";
-			
+
 			foreach ($result as $row) {
 				if ((int)$row['STATUS_CODE'] > $maxStatus) {
 					$maxStatus = (int)$row['STATUS_CODE'];
@@ -69,7 +69,7 @@ class Files extends CI_Controller {
 			}
 
 			$completedPercent = round(($maxStatus / 7) * 100);
-			
+
 			// Get the table data
 			$statusHTML .= '<tr><td>Initializing...</td><td></td></tr>';
 			if (!empty($result))
@@ -85,21 +85,22 @@ class Files extends CI_Controller {
 					}
 				}
 			}
-			
+
 			// Get the result image if available
 			if ($completedPercent >= 100)
 			{
-                $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
-                $imageHTML = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 10);
+				$tiledResultImages = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
+				$tiledCleanupResultImages = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
 			}
-			
+
 			$jsonResult = (object) array (
 				'PERCENT' => $completedPercent,
 				'STATUS' => $status,
 				'STATUS_TABLE_HTML' => $statusHTML,
-				'IMAGE_HTML' => $imageHTML
+				'IMAGE_HTML' => $tiledResultImages,
+				'IMAGE_HTML_CLEANUP' => $tiledCleanupResultImages
 			);
-			
+
 			echo json_encode ( $jsonResult );
 		}
 	}
@@ -184,13 +185,13 @@ class Files extends CI_Controller {
 
 				$src = "";
 
-				if ($cleanUp)
+				if ($cleanUp == 'true')
 				{
-					$src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE"];
+					$src = $sourcePath . $ezRefString . "/cleanup/" . $this->flatten($row["IMAGE"]);
 				}
-				else
+				elseif ($cleanUp == 'false')
 				{
-					$src = $sourcePath . $ezRefString . "/" . $row["IMAGE"];
+					$src = $sourcePath . $ezRefString . "/" . $this->flatten($row["IMAGE"]);
 				}
 
 				$image_properties = array(
@@ -220,6 +221,14 @@ class Files extends CI_Controller {
 		}
 
 		return $resultHTML;
+	}
+
+	function flatten($string)
+	{
+		$newString = str_replace("/", "^", $string);
+		$newString = str_replace(" ", "+", $newString);
+
+		return $newString;
 	}
 
 

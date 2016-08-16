@@ -2,7 +2,7 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-sm-6">
-			<h2>File Status</h2>
+			<?php echo '<h2>FILE STATUS | <a href="http://sortvision.localhost.com/index.php/cleanup/index/' . $ezRefString . '">Cleanup</a></h2>'; ?>
 			<h5>Note: Please refresh this page for updates on your image</h5>
 			<?php 
 			if ($status != null && $status != "") 
@@ -82,7 +82,7 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<div id="result-image">
+			<div id="result-image-cleanup">
 				<?php
 				if ($status == "COMPLETED")
 				{
@@ -115,12 +115,14 @@ $(document).ready(function() {
 				
 			var status_table_html = jsonResponse["STATUS_TABLE_HTML"];
 			var image_html = jsonResponse["IMAGE_HTML"];
+			var image_html_cleanup = jsonResponse["IMAGE_HTML_CLEANUP"];
 	
 			$("#status-progress-bar").text(percent + "%");
 			$("#status-progress-bar").css('width', percent+'%').attr('aria-valuenow', percent);
 			$("#status").html(status);
 			$("#status-table tbody").html(status_table_html);
 			$("#result-image").html(image_html);
+			$("#result-image-cleanup").html(image_html_cleanup);
             $("#status-table tr:last td:first").prepend('<img id="statusgif" src="../../../assets/img/loading_sm_tr.gif">')
 
 			if (status == "COMPLETED" && percent >= 100) {

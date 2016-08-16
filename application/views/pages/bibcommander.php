@@ -55,7 +55,7 @@
                 foreach ($files as $row)
                 {
                     echo "<tr>";
-                    echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status/" . $row["EZ_REF_STRING"] . "\">" . $row["IDFILE"] . "</td>";
+                    echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status/" . $row["EZ_REF_STRING"] . "\">" . $row["IDFILE"] . "</a></td>";
                     echo "<td>" . $row["FILE_NAME"] . "</td>";
                     echo "<td>" . $row["STATUS"] . "</td>";
                     echo "<td>" . $row["FILE_PATH"] . $row["EZ_REF_STRING"] . "</td>";
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	$("#dropzone").dropzone({
 		url: "<?php echo site_url('/upload/dropzone'); ?>",
 		acceptedFiles: ".jpg, .JPG, .png, .PNG, .zip, .ZIP, .jpeg, .JPEG",
-        maxFilesize: 5000,
+        maxFilesize: 50000,
 		init: function() {
             this.on("sending", function(file, xhr, formData){
                 var userSystem = $("#user-system option:selected").val()

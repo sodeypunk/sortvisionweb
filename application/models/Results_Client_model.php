@@ -6,19 +6,21 @@ class Results_Client_model extends CI_Model {
         $this->load->model ( 'system_model' );
     }
 
-    public function get_by_ezRefString($ezRefString, $cleanUp = false, $numberOfRecords = 0) {
+    public function get_by_ezRefString($ezRefString, $cleanUp = '', $numberOfRecords = 0) {
 
         $this->db->select('*');
         $this->db->from('RESULTS_CLIENT c');
         $this->db->join('FILES f', 'f.IDFILE = c.IDFILE', 'inner');
         $this->db->where('f.EZ_REF_STRING', $ezRefString);
 
-        if ($cleanUp)
+        if ($cleanUp == 'true') {
             $this->db->where('c.CLEANUP', 'Cleanup');
-        else
+        }
+        elseif ($cleanUp == 'false') {
             $this->db->where('c.CLEANUP', '');
+        }
 
-        $this->db->order_by('c.IMAGE', 'asc');
+        $this->db->order_by('c.CLEANUP, c.IMAGE', 'asc');
         if ($numberOfRecords > 0)
         {
             $this->db->limit($numberOfRecords);
