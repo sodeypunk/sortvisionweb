@@ -39,4 +39,8 @@ class Results_Client_model extends CI_Model {
 
     }
 
+    public function UpdateCleanUpInfo($rows) {
+        $this->db->update_batch('RESULTS_CLIENT', $rows, 'ID');
+    }
+
 }

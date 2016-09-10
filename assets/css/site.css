@@ -72,3 +72,8 @@ body {
     max-width: 100%;
     height: auto;
 }
+
+#filters {
+	border: 1px solid #e5e5e5;
+	padding: 10px;
+}
