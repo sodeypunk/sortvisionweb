@@ -34,13 +34,33 @@ class Results_Client_model extends CI_Model {
         }
         else
         {
-            return false;
+            return array();
         }
 
     }
 
-    public function UpdateCleanUpInfo($rows) {
-        $this->db->update_batch('RESULTS_CLIENT', $rows, 'ID');
+    public function UpdateResultsClient($rows) {
+
+        $saveArray = array();
+        foreach ($rows as $row)
+        {
+            $data = array(
+                'ID' => $row['ID'],
+                'IDFILE' => $row['IDFILE'],
+                'IMAGE' => $row['IMAGE'],
+                'LABEL' => $row['LABEL'],
+                'COORDINATES' => $row['COORDINATES'],
+                'IMAGE_SIZE' => $row['IMAGE_SIZE'],
+                'CLEANUP' => $row['CLEANUP'],
+                'UPDT' => $row['UPDT'],
+                'LABEL_REMOVED' => $row['LABEL_REMOVED']
+
+            );
+
+                array_push($saveArray, $data);
+        }
+
+        $this->db->update_batch('RESULTS_CLIENT', $saveArray, 'ID');
     }
 
 }

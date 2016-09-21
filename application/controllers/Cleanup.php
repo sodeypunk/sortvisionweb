@@ -72,7 +72,8 @@ class Cleanup extends CI_Controller {
 		$invalidNumbersToCheck = $this->GetInvalidLabels($labelContainsValue);
 		foreach ($resultsClientAll as $row)
 		{
-
+			$row['LABEL_REMOVED'] = "";
+			$row['CLEANUP'] = "";
 			$labelString = $row['LABEL'];
 			$labelString = str_replace($chars_to_remove, "", $labelString);
 
@@ -85,7 +86,7 @@ class Cleanup extends CI_Controller {
 
 			if (count($invalidContainsLabels) > 0)
 			{
-				$row['LABEL_REMOVED'] = $row['LABEL_REMOVED'] . "," . implode(",", $invalidContainsLabels);
+				$row['LABEL_REMOVED'] = implode(",", $invalidContainsLabels);
 				$row['CLEANUP'] = 'Cleanup';
 
 				if ($labelContainsChoice == 'image') {
@@ -116,7 +117,8 @@ class Cleanup extends CI_Controller {
 
 		if ($action == 'Update')
 		{
-
+			$saveArray = array_merge($resultsClientGood, $resultsClientCleanup);
+			$this->Results_Client_model->UpdateResultsClient ( $saveArray );
 		}
 
 		$data['resultsClientGood'] = $resultsClientGood;
@@ -133,9 +135,6 @@ class Cleanup extends CI_Controller {
 		$this->load->view ( 'templates/header' );
 		$this->load->view ( 'pages/cleanup', $data);
 		$this->load->view ( 'templates/footer' );
-	}
-
-	public function update() {
 	}
 
 	private function CheckAtLeastOneLabelFilter($labelString, $atLeastOne, $combinedInvalidLabels)
