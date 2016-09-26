@@ -1,5 +1,7 @@
 <?php
 
+include 'Utility.php';
+
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
@@ -39,9 +41,11 @@ class Files extends CI_Controller {
                 $uploadedFiles = $this->getImageFilePaths($ezRefString, "assets/uploads/");
                 $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
 
-                $data ['tiledUploadedImages'] = $this->getImagesTiled("assets/uploads/", $uploadedFiles);
-                $data ['tiledResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
-				$data ['tiledCleanupResultImages'] = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
+				$resultImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'false', 10);
+				$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 10);
+                $data ['tiledUploadedImages'] =  util::getImagesTiled("assets/uploads/", $uploadedFiles);
+                $data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, "assets/result_images/", $ezRefString);
+				$data ['tiledCleanupResultImages'] =  util::getImagesTiledFromDB($resultCleanupImages, "assets/result_images/", $ezRefString);
 			}
 		}
 		
@@ -89,8 +93,8 @@ class Files extends CI_Controller {
 			// Get the result image if available
 			if ($completedPercent >= 100)
 			{
-				$tiledResultImages = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
-				$tiledCleanupResultImages = $this->getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
+				$tiledResultImages = util::getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
+				$tiledCleanupResultImages =  util::getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
 			}
 
 			$jsonResult = (object) array (
@@ -143,93 +147,6 @@ class Files extends CI_Controller {
 
         return $files;
     }
-
-    function getImagesTiled($sourcePath, $filePaths)
-    {
-        $resultHTML = "";
-        $count = 0;
-        foreach ($filePaths as $filePath) {
-            $fileNm = pathinfo($filePath)['basename'];
-
-            $image_properties = array(
-                'src' => $sourcePath . $filePath,
-                'alt' => $fileNm,
-                'class' => 'img-responsive',
-                //'width' => '200',
-                //'height' => '200',
-                'title' => $fileNm,
-                'rel' => 'lightbox',
-            );
-
-            $resultHTML .= '<div class="row">';
-            $resultHTML .= '<div class="col-lg-12">';
-            $resultHTML .=  img($image_properties);
-            $resultHTML .=  '</div>';
-            $resultHTML .=  '</div>';
-
-            $count++;
-        }
-
-        return $resultHTML;
-    }
-
-	function getImagesTiledFromDB($sourcePath, $ezRefString, $cleanUp, $numberOfRecords)
-	{
-
-		$resultHTML = "";
-		$result = $this->Results_Client_model->get_by_ezRefString($ezRefString, $cleanUp, $numberOfRecords);
-		$count = 0;
-		if ($result != false) {
-
-			foreach ($result as $row) {
-
-				$src = "";
-
-				if ($cleanUp == 'true')
-				{
-					$src = $sourcePath . $ezRefString . "/cleanup/" . $this->flatten($row["IMAGE"]);
-				}
-				elseif ($cleanUp == 'false')
-				{
-					$src = $sourcePath . $ezRefString . "/" . $this->flatten($row["IMAGE"]);
-				}
-
-				$image_properties = array(
-					'src' => $src,
-					'alt' => $row["IMAGE"],
-					'class' => 'img-responsive',
-					//'width' => '200',
-					//'height' => '200',
-					'title' => $row["IMAGE"],
-					'rel' => 'lightbox',
-				);
-
-				if ($count % 4 == 0 || $count == 0) {
-					$resultHTML .= '<div class="row">';
-				}
-
-				$resultHTML .= '<div class="col-md-3">';
-				$resultHTML .= img($image_properties);
-				$resultHTML .= '</div>';
-
-				if (($count + 1) % 4 == 0) {
-					$resultHTML .= '</div>';
-				}
-
-				$count++;
-			}
-		}
-
-		return $resultHTML;
-	}
-
-	function flatten($string)
-	{
-		$newString = str_replace("/", "^", $string);
-		$newString = str_replace(" ", "+", $newString);
-
-		return $newString;
-	}
 
 
 }

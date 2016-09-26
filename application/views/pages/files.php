@@ -2,7 +2,7 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-sm-6">
-			<?php echo '<h2>FILE STATUS | <a href="http://sortvision.localhost.com/index.php/cleanup/index/' . $ezRefString . '">Cleanup</a></h2>'; ?>
+			<?php echo '<h2>FILE STATUS | <a href="http://sortvision.localhost.com/index.php/analysis/index/' . $ezRefString . '">Cleanup</a></h2>'; ?>
 			<h5>Note: Please refresh this page for updates on your image</h5>
 			<?php 
 			if ($status != null && $status != "") 

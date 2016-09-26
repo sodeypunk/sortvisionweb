@@ -8,25 +8,30 @@ class Results_Client_model extends CI_Model {
 
     public function get_by_ezRefString($ezRefString, $cleanUp = '', $numberOfRecords = 0) {
 
-        $this->db->select('*');
-        $this->db->from('RESULTS_CLIENT c');
-        $this->db->join('FILES f', 'f.IDFILE = c.IDFILE', 'inner');
-        $this->db->where('f.EZ_REF_STRING', $ezRefString);
+        $sql = "SELECT * FROM RESULTS_CLIENT c " .
+                "INNER JOIN FILES f " .
+                "ON f.IDFILE = c.IDFILE " .
+                "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
+
 
         if ($cleanUp == 'true') {
-            $this->db->where('c.CLEANUP', 'Cleanup');
+            $sql .= "AND c.CLEANUP = 'Cleanup' " .
+                    "OR c.NEW_CLEANUP = 'Cleanup' " .
+                    "OR c.NEW_CLEANUP = 'Partial' ";
         }
         elseif ($cleanUp == 'false') {
-            $this->db->where('c.CLEANUP', '');
+            $sql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) " .
+                    "AND (c.NEW_CLEANUP = '' || c.NEW_CLEANUP IS NULL) ";
         }
 
-        $this->db->order_by('c.CLEANUP, c.IMAGE', 'asc');
+        $sql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
+
         if ($numberOfRecords > 0)
         {
-            $this->db->limit($numberOfRecords);
+            $sql .= "LIMIT " . $numberOfRecords . " ";
         }
 
-        $query = $this->db->get();
+        $query = $this->db->query($sql);
 
         if($query->num_rows() != 0)
         {
@@ -52,6 +57,7 @@ class Results_Client_model extends CI_Model {
                 'COORDINATES' => $row['COORDINATES'],
                 'IMAGE_SIZE' => $row['IMAGE_SIZE'],
                 'CLEANUP' => $row['CLEANUP'],
+                'NEW_CLEANUP' => $row['NEW_CLEANUP'],
                 'UPDT' => $row['UPDT'],
                 'LABEL_REMOVED' => $row['LABEL_REMOVED']
 
