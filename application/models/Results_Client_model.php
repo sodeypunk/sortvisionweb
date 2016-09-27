@@ -15,9 +15,8 @@ class Results_Client_model extends CI_Model {
 
 
         if ($cleanUp == 'true') {
-            $sql .= "AND c.CLEANUP = 'Cleanup' " .
-                    "OR c.NEW_CLEANUP = 'Cleanup' " .
-                    "OR c.NEW_CLEANUP = 'Partial' ";
+            $sql .= "AND " .
+                    "(c.CLEANUP = 'Cleanup' OR c.NEW_CLEANUP = 'Cleanup' OR c.NEW_CLEANUP = 'Partial') ";
         }
         elseif ($cleanUp == 'false') {
             $sql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) " .

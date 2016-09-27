@@ -1,4 +1,4 @@
-<html>
+<html ng-app="sortvision">
 	<head>
 		<meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,7 +16,7 @@
 	    <link href="<?php echo base_url("assets/css/dropzone.css"); ?>" rel="stylesheet">
 	    <!-- Custom styles for this template -->
 	    <link href="<?php echo base_url("assets/css/site.css"); ?>" rel="stylesheet">
-		
+
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	    <script>window.jQuery || document.write('<script src="<?php echo base_url("assets/js/jquery-1.11.3.min.js"); ?>"><\/script>')</script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -24,6 +24,8 @@
 	    <script src="<?php echo base_url("assets/js/ie10-viewport-bug-workaround.js"); ?>"></script>
 	    <script src="<?php echo base_url("assets/js/dropzone.js"); ?>"></script>
 	    <script type="text/javascript" src="<?php echo base_url("assets/js/ie-emulation-modes-warning.js"); ?>"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script src="<?php echo base_url("assets/js/sortvision.js"); ?>"></script>
 
 	</head>
 	<body>

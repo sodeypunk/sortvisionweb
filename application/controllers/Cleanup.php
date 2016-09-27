@@ -22,7 +22,7 @@ class Cleanup extends CI_Controller {
 	
 	public function index($ezRefString = '') {
 		$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true');
-		$data['tiledCleanupResultImages'] = util::getImagesTiledFromDB($resultCleanupImages, "assets/result_images/", $ezRefString, 'true');
+		$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/", $ezRefString, 'true');
 
 		$this->load->view ( 'templates/header' );
 		$this->load->view ( 'pages/cleanup', $data);

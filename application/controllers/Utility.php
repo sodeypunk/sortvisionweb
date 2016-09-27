@@ -61,6 +61,37 @@ class util
         return $resultHTML;
     }
 
+    public static function  getImagesTiledFromDBForCleanup($data, $sourcePath, $ezRefString)
+    {
+
+        $resultHTML = "";
+        $count = 0;
+        if ($data != false) {
+
+            foreach ($data as $row) {
+
+                $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString);
+
+                if ($count % 3 == 0 || $count == 0) {
+                    $resultHTML .= '<div class="row">';
+                }
+
+                $resultHTML .= '<div class="col-md-4">';
+                $resultHTML .= img($image_properties);
+                $resultHTML .= '<br><br><input type="text" value="' . $row['LABEL'] . '">';
+                $resultHTML .= '</div>';
+
+                if (($count + 1) % 3 == 0) {
+                    $resultHTML .= '</div>';
+                }
+
+                $count++;
+            }
+        }
+
+        return $resultHTML;
+    }
+
     public static function buildImageHTML($row, $sourcePath, $ezRefString)
     {
         $src = "";
