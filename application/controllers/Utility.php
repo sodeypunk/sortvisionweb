@@ -70,7 +70,17 @@ class util
 
             foreach ($data as $row) {
 
-                $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString);
+                $allLabels = array_filter(explode(",", $row['LABEL']), 'strlen');
+                $removedLabels = array_filter(explode(",", $row['LABEL_REMOVED']), 'strlen');
+                $goodLabels = array_diff($allLabels, $removedLabels);
+
+                if ($count == 0) {
+                    $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString, true);
+                }
+                else
+                {
+                    $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString);
+                }
 
                 if ($count % 3 == 0 || $count == 0) {
                     $resultHTML .= '<div class="row">';
@@ -78,8 +88,17 @@ class util
 
                 $resultHTML .= '<div class="col-md-4">';
                 $resultHTML .= img($image_properties);
-                $resultHTML .= '<br><br><input type="text" value="' . $row['LABEL'] . '">';
-                $resultHTML .= '</div>';
+
+                $resultHTML .= '<br>';
+
+                foreach ($removedLabels as $label) {
+                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label . '"> ' . $label;
+                }
+                foreach ($goodLabels as $label) {
+                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label . '" checked> ' . $label;
+                }
+
+                $resultHTML .= '<br><br></div>';
 
                 if (($count + 1) % 3 == 0) {
                     $resultHTML .= '</div>';
@@ -92,7 +111,7 @@ class util
         return $resultHTML;
     }
 
-    public static function buildImageHTML($row, $sourcePath, $ezRefString)
+    public static function buildImageHTML($row, $sourcePath, $ezRefString, $selected = false)
     {
         $src = "";
         $cleanUp = 'false';
@@ -112,10 +131,16 @@ class util
             $src = $sourcePath . $ezRefString . "/" . self::flatten($row["IMAGE"]);
         }
 
+        $glowBorderClass = "";
+        if ($selected)
+        {
+            $glowBorderClass = "glowing-border-selected";
+        }
+
         $image_properties = array(
             'src' => $src,
             'alt' => $row["IMAGE"],
-            'class' => 'img-responsive',
+            'class' => 'img-responsive ' . $glowBorderClass,
             //'width' => '200',
             //'height' => '200',
             'title' => $row["IMAGE"],

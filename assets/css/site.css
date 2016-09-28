@@ -20,6 +20,16 @@ body {
 	line-height: 20px;
 }
 
+.strikethrough {
+	text-decoration: line-through;
+}
+
+.glowing-border-selected {
+	outline: none;
+	border-color: #9ecaed;
+	box-shadow: 0 0 40px #177C04;
+}
+
 #result-status {
 	font-weight: bold;
 }
