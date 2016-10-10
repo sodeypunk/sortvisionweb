@@ -122,13 +122,13 @@ class util
 
         if ($cleanUp == 'true')
         {
-            $src = $sourcePath . $ezRefString . "/cleanup/" . self::flatten($row["IMAGE"]);
+            $src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE"];
         }
 
         elseif
         ($cleanUp == 'false')
         {
-            $src = $sourcePath . $ezRefString . "/" . self::flatten($row["IMAGE"]);
+            $src = $sourcePath . $ezRefString . "/" . $row["IMAGE"];
         }
 
         $glowBorderClass = "";
@@ -156,6 +156,37 @@ class util
         $newString = str_replace(" ", "+", $newString);
 
         return $newString;
+    }
+
+    public static function bibStringToArray($labels, $labelsRemoved)
+    {
+        $allLabels = array_filter(explode(",", $labels), 'strlen');
+        $removedLabels = array_filter(explode(",", $labelsRemoved), 'strlen');
+        $goodLabels = array_diff($allLabels, $removedLabels);
+        $finalArrayList = array();
+
+        foreach($removedLabels as $label)
+        {
+            $newObj = array(
+                "label" => $label,
+                "cleanup" => false
+            );
+
+            array_push($finalArrayList, $newObj);
+        }
+
+        foreach($goodLabels as $label)
+        {
+            $newObj = array(
+                "label" => $label,
+                "cleanup" => true
+            );
+
+            array_push($finalArrayList, $newObj);
+        }
+
+        return $finalArrayList;
+
     }
 
 }

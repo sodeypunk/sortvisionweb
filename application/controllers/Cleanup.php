@@ -1,6 +1,6 @@
 <?php
 
-include 'Utility.php';
+require_once(dirname(__DIR__)."/controllers/Utility.php");
 
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
@@ -28,6 +28,18 @@ class Cleanup extends CI_Controller {
 		$this->load->view ( 'templates/header' );
 		$this->load->view ( 'pages/cleanup', $data);
 		$this->load->view ( 'templates/footer' );
+	}
+
+	public function bibs() {
+		$ezRefString = $_GET['ezRefString'];
+		$objectString = "";
+		if (!empty ( $ezRefString )) {
+
+			$objectString = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true');
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($objectString);
 	}
 
 

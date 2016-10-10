@@ -1,4 +1,7 @@
 <?php
+
+require_once(dirname(__DIR__)."/controllers/Utility.php");
+
 class Results_Client_model extends CI_Model {
 
     public function __construct() {
@@ -34,7 +37,16 @@ class Results_Client_model extends CI_Model {
 
         if($query->num_rows() != 0)
         {
-            return $query->result_array();
+            $results = $query->result_array();
+            $index = 0;
+            foreach ($results as &$row)
+            {
+                $row['IMAGE'] = util::flatten($row['IMAGE']);
+                $row['LABEL_ARRAY'] = util::bibStringToArray($row['LABEL'], $row['LABEL_REMOVED']);
+                $row['INDEX'] = $index;
+                $index++;
+            }
+            return $results;
         }
         else
         {
