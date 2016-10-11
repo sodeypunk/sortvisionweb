@@ -36,6 +36,29 @@
 
     }]);
 
+    app.directive('svKeypress', function($document){
+       return {
+           restrict: 'A',
+           scope: {selectedindex:'='},
+           link: function (scope, element, attr) {
+               $document.on("keydown", function(event) {
+                   switch(event.keyCode)
+                   {
+                       case 39:
+                           scope.selectedindex += 1;
+                           break;
+                       case 37:
+                           if (scope.selectedindex > 0)
+                               scope.selectedindex -= 1;
+                           break;
+                   }
+
+                   scope.$apply();
+               });
+           }
+       }
+    });
+
 })();
 
 //$(document).keydown(function(e) {
