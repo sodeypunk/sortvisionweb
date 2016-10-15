@@ -11,38 +11,46 @@ class Results_Client_model extends CI_Model {
 
     public function get_by_ezRefString($ezRefString, $cleanUp = '', $numberOfRecords = 0) {
 
-        $sql = "SELECT * FROM RESULTS_CLIENT c " .
+        $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
                 "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
 
 
         if ($cleanUp == 'true') {
-            $sql .= "AND " .
-                    "(c.CLEANUP = 'Cleanup' OR c.NEW_CLEANUP = 'Cleanup' OR c.NEW_CLEANUP = 'Partial') ";
+            $imageSql .= "AND " .
+                    "(c.CLEANUP = 'Cleanup') ";
         }
         elseif ($cleanUp == 'false') {
-            $sql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) " .
-                    "AND (c.NEW_CLEANUP = '' || c.NEW_CLEANUP IS NULL) ";
+            $imageSql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) ";
         }
 
-        $sql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
+        $imageSql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
 
         if ($numberOfRecords > 0)
         {
-            $sql .= "LIMIT " . $numberOfRecords . " ";
+            $imageSql .= "LIMIT " . $numberOfRecords . " ";
         }
 
-        $query = $this->db->query($sql);
+        $labelSql = "SELECT * FROM RESULTS_LABELS l " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = l.IDFILE " .
+            "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
 
-        if($query->num_rows() != 0)
+        $imageQuery = $this->db->query($imageSql);
+        $LabelsQuery = $this->db->query($labelSql);
+        $labelsResults = $LabelsQuery->result_array();
+
+        if($imageQuery->num_rows() != 0)
         {
-            $results = $query->result_array();
+            $results = $imageQuery->result_array();
             $index = 0;
             foreach ($results as &$row)
             {
+                $row['LABEL_ARRAY'] = util::bibStringToArray($labelsResults);
+                $row['LABELS'] = util::bibArrayToString($labelsResults, $row['IMAGE'], false);
+                $row['LABELS_REMOVED'] = util::bibArrayToString($labelsResults, $row['IMAGE'], true);
                 $row['IMAGE'] = util::flatten($row['IMAGE']);
-                $row['LABEL_ARRAY'] = util::bibStringToArray($row['LABEL'], $row['LABEL_REMOVED']);
                 $row['INDEX'] = $index;
                 $index++;
             }

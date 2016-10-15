@@ -30,6 +30,11 @@ body {
 	box-shadow: 0 0 40px #177C04;
 }
 
+.checkbox-border {
+	border: black;
+	border-style: solid;
+}
+
 #result-status {
 	font-weight: bold;
 }

@@ -5,13 +5,14 @@
 (function() {
     var app = angular.module('sortvision', []);
 
-    app.controller('CleanupController', ['$http', function($http) {
+    app.controller('CleanupController', ['$http', '$anchorScroll', '$location', function($http, $anchorScroll, $location) {
         var cleanupCtrl = this;
         this.bibs = [];
         this.chunkedData = [];
         this.ezRefString = $('input[name=ezRefString]').val();
         this.selectedIndex = 0;
-
+        this.selectedLabelIndex = 0;
+        $anchorScroll.yOffset = 100;
 
 
         $http({
@@ -25,6 +26,26 @@
 
         });
 
+        this.scrollToElement = function()
+        {
+            var newHash = this.bibs[this.selectedIndex].IMAGE;
+            if ($location.hash() !== newHash)
+            {
+                $location.hash(newHash);
+            }
+            else
+            {
+                $anchorScroll();
+            }
+        }
+
+        this.addNewLabel = function(newLabel)
+        {
+            var labelsArray = this.bibs[this.selectedIndex].LABEL_ARRAY;
+
+            labelsArray.push({index: labelsArray.length, label: newLabel, cleanup: false });
+        }
+
         function chunk(myArray, size) {
             var newArray = [];
             for (var i=0; i<myArray.length; i+=size)
@@ -34,22 +55,62 @@
             return newArray;
         };
 
+
+
     }]);
 
     app.directive('svKeypress', function($document){
        return {
            restrict: 'A',
-           scope: {selectedindex:'='},
+           scope:true,
            link: function (scope, element, attr) {
                $document.on("keydown", function(event) {
                    switch(event.keyCode)
                    {
+                       // right key
                        case 39:
-                           scope.selectedindex += 1;
+                           if (scope.$parent.cleanup.selectedIndex < scope.$parent.cleanup.bibs.length - 1) {
+                               scope.$parent.cleanup.selectedIndex += 1;
+                               scope.$parent.cleanup.selectedBibIndex = 0;
+                               scope.$parent.cleanup.scrollToElement();
+                           }
+                           event.preventDefault();
                            break;
+                       // left key
                        case 37:
-                           if (scope.selectedindex > 0)
-                               scope.selectedindex -= 1;
+                           if (scope.$parent.cleanup.selectedIndex > 0) {
+                               scope.$parent.cleanup.selectedIndex -= 1;
+                               scope.$parent.cleanup.selectedBibIndex = 0;
+                               scope.$parent.cleanup.scrollToElement();
+                           }
+                           event.preventDefault();
+                           break;
+                       // up key
+                       case 38:
+                           if (scope.$parent.cleanup.selectedLabelIndex > 0) {
+                               scope.$parent.cleanup.selectedLabelIndex -= 1;
+                           }
+                           event.preventDefault();
+                           break;
+                       // down key
+                       case 40:
+                           if (scope.$parent.cleanup.selectedLabelIndex < scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABEL_ARRAY.length - 1) {
+                               scope.$parent.cleanup.selectedLabelIndex += 1;
+                           }
+                           event.preventDefault();
+                           break;
+                       // space-bar
+                       case 32:
+                           var currentLabel = scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABEL_ARRAY[scope.$parent.cleanup.selectedLabelIndex];
+                           var currentLabelCleanup = currentLabel.cleanup;
+                           currentLabel.cleanup = !currentLabelCleanup;
+                           event.preventDefault();
+                           break;
+                       // + button
+                       case 107:
+                           var newLabel = prompt("Please enter new label");
+                           scope.$parent.cleanup.addNewLabel(newLabel);
+                           event.preventDefault();
                            break;
                    }
 

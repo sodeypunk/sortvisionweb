@@ -77,8 +77,6 @@ class Analysis extends CI_Controller {
 		$invalidNumbersToCheck = $this->GetInvalidLabels($labelContainsValue);
 		foreach ($resultsClientAll as $row)
 		{
-			$row['LABEL_REMOVED'] = "";
-			$row['NEW_CLEANUP'] = "";
 			$labelString = $row['LABEL'];
 			$labelString = str_replace($chars_to_remove, "", $labelString);
 

@@ -158,34 +158,48 @@ class util
         return $newString;
     }
 
-    public static function bibStringToArray($labels, $labelsRemoved)
+    public static function bibStringToArray($labelsArray)
     {
-        $allLabels = array_filter(explode(",", $labels), 'strlen');
-        $removedLabels = array_filter(explode(",", $labelsRemoved), 'strlen');
-        $goodLabels = array_diff($allLabels, $removedLabels);
         $finalArrayList = array();
 
-        foreach($removedLabels as $label)
+        $index = 0;
+        foreach($labelsArray as $label)
         {
             $newObj = array(
-                "label" => $label,
-                "cleanup" => false
+                "index" => $index,
+                "label" => $label['LABEL'],
+                "cleanup" => $label['REMOVED'] == 1
             );
 
-            array_push($finalArrayList, $newObj);
-        }
-
-        foreach($goodLabels as $label)
-        {
-            $newObj = array(
-                "label" => $label,
-                "cleanup" => true
-            );
+            $index++;
 
             array_push($finalArrayList, $newObj);
         }
 
         return $finalArrayList;
+    }
+
+    public static function bibArrayToString($labelsArray, $image, $isRemoved)
+    {
+        $labelArray = array();
+
+        foreach($labelsArray as $label)
+        {
+            if ($label['IMAGE'] == $image) {
+                if ($isRemoved == true) {
+                    if ((int)$label['REMOVED'] == 1) {
+                        array_push($labelArray, $label['LABEL']);
+                    }
+                } else {
+                    if ((int)$label['REMOVED'] == 0) {
+                        array_push($labelArray, $label['LABEL']);
+                    }
+                }
+            }
+        }
+
+        $bibString = implode(',', $labelArray);
+        return $bibString;
 
     }
 
