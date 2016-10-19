@@ -70,53 +70,40 @@ class Analysis extends CI_Controller {
 
 		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString );
 
-		$chars_to_remove = array("[", "]", "'", " ");
 		$resultsClientGood = array();
 		$resultsClientCleanup = array();
 
 		$invalidNumbersToCheck = $this->GetInvalidLabels($labelContainsValue);
 		foreach ($resultsClientAll as $row)
 		{
-			$labelString = $row['LABEL'];
-			$labelString = str_replace($chars_to_remove, "", $labelString);
+			$this->CheckLabelsContainsFilters($row, $invalidNumbersToCheck);
+			$this->CheckLabelsLengthFilters($row, $labelLengthValue);
 
-			$invalidContainsLabels = $this->CheckLabelsContainsFilters($labelString, $invalidNumbersToCheck, $labelContainsValue);
-			$invalidLengthLabels = $this->CheckLabelsLengthFilters($labelString, $labelLengthValue);
+			$pass = $this->CheckAtLeastOneLabelFilter($row, $atLeastOne);
 
-			$combinedInvalidLabels = array_merge($invalidContainsLabels, $invalidLengthLabels);
-			$combinedInvalidLabels = array_unique($combinedInvalidLabels);
-			$pass = $this->CheckAtLeastOneLabelFilter($labelString, $atLeastOne, $combinedInvalidLabels);
+			$row['LABELS_STRING'] = util::bibArrayToString($row['LABELS_ARRAY'], null, false);
+			$row['LABELS_STRING_REMOVED'] = util::bibArrayToString($row['LABELS_ARRAY'], null, true);
+			$row['UPDT'] = date("Y-m-d H:i:s");
 
-			if (count($invalidContainsLabels) > 0)
+			if (count(util::GoodLabels($row)) > 0 && count(util::BadLabels($row)) > 0 && $pass == true)
 			{
-				$row['LABEL_REMOVED'] = implode(",", $invalidContainsLabels);
-				$row['NEW_CLEANUP'] = 'Partial';
-
-				if ($labelContainsChoice == 'image') {
-					$pass = false;
-				}
-			}
-
-			if (count($invalidLengthLabels) > 0)
-			{
-				$row['LABEL_REMOVED'] = $row['LABEL_REMOVED'] . "," . implode(",", $invalidLengthLabels);
-				$row['NEW_CLEANUP'] = 'Partial';
-
-				if ($labelLengthChoice == 'image') {
-					$pass = false;
-				}
-			}
-
-			if ($pass == true)
-			{
-				array_push($resultsClientGood, $row);
-			}
-			else
-			{
-				$row['NEW_CLEANUP'] = 'Cleanup';
+				$row['CLEANUP'] = 'Partial';
 				array_push($resultsClientCleanup, $row);
 
 			}
+			else if (count(util::GoodLabels($row)) > 0 && count(util::BadLabels($row)) == 0 && $pass == true)
+			{
+				$row['CLEANUP'] = '';
+				array_push($resultsClientGood, $row);
+
+			}
+			else if (count(util::GoodLabels($row)) <= 0)
+			{
+				$row['CLEANUP'] = 'Cleanup';
+				array_push($resultsClientCleanup, $row);
+
+			}
+
 		}
 
 		if ($action == 'Update')
@@ -141,19 +128,13 @@ class Analysis extends CI_Controller {
 		$this->load->view ( 'templates/footer' );
 	}
 
-	private function CheckAtLeastOneLabelFilter($labelString, $atLeastOne, $combinedInvalidLabels)
+	private function CheckAtLeastOneLabelFilter($row, $atLeastOne)
 	{
 		$pass = true;
-		$labelsArray = explode(",", $labelString);
 
 		if (filter_var($atLeastOne, FILTER_VALIDATE_BOOLEAN) == true)
 		{
-			if (strlen($labelString) <= 0)
-			{
-				$pass = false;
-			}
-
-			if (count($combinedInvalidLabels) == count($labelsArray))
+			if (count(util::GoodLabels($row)) <= 0)
 			{
 				$pass = false;
 			}
@@ -162,46 +143,41 @@ class Analysis extends CI_Controller {
 		return $pass;
 	}
 
-	private function CheckLabelsContainsFilters($labelString, $invalidNumbersToCheck, $labelContainsValue) {
+	private function CheckLabelsContainsFilters(&$row, $invalidNumbersToCheck) {
 
-		$invalidLabels = array();
+		$labelsArray = &$row['LABELS_ARRAY'];
 
-		if (strlen($labelContainsValue) > 0)
+		if (count($invalidNumbersToCheck) > 0)
 		{
-
-			$labelsArray = explode(",", $labelString);
-
-			foreach ($labelsArray as $label)
+			foreach ($labelsArray as &$label)
 			{
-				$labelNum = (int)$label;
+				$labelNum = (int)$label['LABEL'];
 				if (in_array($labelNum, $invalidNumbersToCheck))
 				{
-					array_push($invalidLabels, $label);
+					$label['REMOVED'] = "1";
+					$label['UPDT'] = date("Y-m-d H:i:s");
 				}
 			}
 		}
 
-		return $invalidLabels;
 	}
 
-	private function CheckLabelsLengthFilters($labelString, $labelLengthValue) {
+	private function CheckLabelsLengthFilters(&$row, $labelLengthValue) {
 
-		$invalidLabels = array();
+		$labelsArray = &$row['LABELS_ARRAY'];
 
 		if (strlen($labelLengthValue) > 0)
 		{
-			$labelsArray = explode(",", $labelString);
-
-			foreach ($labelsArray as $label)
+			foreach ($labelsArray as &$label)
 			{
-				if (strlen($label) > (int)$labelLengthValue)
+				if (strlen($label['LABEL']) > (int)$labelLengthValue)
 				{
-					array_push($invalidLabels, $label);
+					$label['REMOVED'] = "1";
+					$label['UPDT'] = date("Y-m-d H:i:s");
 				}
 			}
 		}
 
-		return $invalidLabels;
 	}
 
 	private function GetInvalidLabels($labelContainsValue) {

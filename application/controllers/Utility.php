@@ -70,9 +70,8 @@ class util
 
             foreach ($data as $row) {
 
-                $allLabels = array_filter(explode(",", $row['LABEL']), 'strlen');
-                $removedLabels = array_filter(explode(",", $row['LABEL_REMOVED']), 'strlen');
-                $goodLabels = array_diff($allLabels, $removedLabels);
+                $removedLabels = self::BadLabels($row);
+                $goodLabels = self::GoodLabels($row);
 
                 if ($count == 0) {
                     $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString, true);
@@ -92,10 +91,10 @@ class util
                 $resultHTML .= '<br>';
 
                 foreach ($removedLabels as $label) {
-                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label . '"> ' . $label;
+                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label['LABEL'] . '"> ' . $label['LABEL'];
                 }
                 foreach ($goodLabels as $label) {
-                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label . '" checked> ' . $label;
+                    $resultHTML .= '<br><input type="checkbox" name="' . $row['IDFILE'] . '" value="' . $label['LABEL'] . '" checked> ' . $label['LABEL'];
                 }
 
                 $resultHTML .= '<br><br></div>';
@@ -122,13 +121,13 @@ class util
 
         if ($cleanUp == 'true')
         {
-            $src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE"];
+            $src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE_FLATTENED"];
         }
 
         elseif
         ($cleanUp == 'false')
         {
-            $src = $sourcePath . $ezRefString . "/" . $row["IMAGE"];
+            $src = $sourcePath . $ezRefString . "/" . $row["IMAGE_FLATTENED"];
         }
 
         $glowBorderClass = "";
@@ -139,11 +138,11 @@ class util
 
         $image_properties = array(
             'src' => $src,
-            'alt' => $row["IMAGE"],
+            'alt' => $row["IMAGE_FLATTENED"],
             'class' => 'img-responsive ' . $glowBorderClass,
             //'width' => '200',
             //'height' => '200',
-            'title' => $row["IMAGE"],
+            'title' => $row["IMAGE_FLATTENED"],
             'rel' => 'lightbox',
         );
 
@@ -158,26 +157,26 @@ class util
         return $newString;
     }
 
-    public static function bibStringToArray($labelsArray)
-    {
-        $finalArrayList = array();
-
-        $index = 0;
-        foreach($labelsArray as $label)
-        {
-            $newObj = array(
-                "index" => $index,
-                "label" => $label['LABEL'],
-                "cleanup" => $label['REMOVED'] == 1
-            );
-
-            $index++;
-
-            array_push($finalArrayList, $newObj);
-        }
-
-        return $finalArrayList;
-    }
+//    public static function bibStringToArray($labelsArray)
+//    {
+//        $finalArrayList = array();
+//
+//        $index = 0;
+//        foreach($labelsArray as $label)
+//        {
+//            $newObj = array(
+//                "index" => $index,
+//                "label" => $label['LABEL'],
+//                "cleanup" => $label['REMOVED'] == 1
+//            );
+//
+//            $index++;
+//
+//            array_push($finalArrayList, $newObj);
+//        }
+//
+//        return $finalArrayList;
+//    }
 
     public static function bibArrayToString($labelsArray, $image, $isRemoved)
     {
@@ -185,7 +184,7 @@ class util
 
         foreach($labelsArray as $label)
         {
-            if ($label['IMAGE'] == $image) {
+            if ($label['IMAGE'] == $image || $image == null) {
                 if ($isRemoved == true) {
                     if ((int)$label['REMOVED'] == 1) {
                         array_push($labelArray, $label['LABEL']);
@@ -201,6 +200,55 @@ class util
         $bibString = implode(',', $labelArray);
         return $bibString;
 
+    }
+
+    public static function labelsArrayFromAllArray($allLabelsArray, $image)
+    {
+        $newLabelsArray = array();
+
+        $index = 0;
+        foreach($allLabelsArray as $label)
+        {
+            if ($label['IMAGE'] == $image) {
+                $label['INDEX'] = $index;
+                array_push($newLabelsArray, $label);
+                $index++;
+            }
+        }
+
+        return $newLabelsArray;
+    }
+
+    public static function GoodLabels($row)
+    {
+        $labelsArray = $row['LABELS_ARRAY'];
+        $goodLabels = array();
+
+        foreach ($labelsArray as $label)
+        {
+            if ((int)$label['REMOVED'] == 0)
+            {
+                array_push($goodLabels, $label);
+            }
+        }
+
+        return $goodLabels;
+    }
+
+    public static function BadLabels($row)
+    {
+        $labelsArray = $row['LABELS_ARRAY'];
+        $badLabels = array();
+
+        foreach ($labelsArray as $label)
+        {
+            if ((int)$label['REMOVED'] == 1)
+            {
+                array_push($badLabels, $label);
+            }
+        }
+
+        return $badLabels;
     }
 
 }

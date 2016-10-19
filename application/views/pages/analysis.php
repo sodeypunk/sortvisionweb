@@ -72,9 +72,9 @@
 					echo "<tr>";
 					echo "<td>" . $row["ID"] . "</td>";
 					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE"] . "</td>";
-					echo "<td>" . $row["LABELS"] . "</td>";
-					echo "<td>" . $row["LABELS_REMOVED"] . "</td>";
+					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 					echo "<td>" . $row["CLEANUP"] . "</td>";
 					echo "<td>" . $row["UPDT"] . "</td>";
 					echo "</tr>";
@@ -95,7 +95,6 @@
 					<th>LABELS</th>
 					<th>LABELS REMOVED</th>
 					<th>CLEANUP</th>
-					<th>NEW CLEANUP</th>
 					<th>UPDT</th>
 				</tr>
 				</thead>
@@ -106,11 +105,10 @@
 					echo "<tr>";
 					echo "<td>" . $row["ID"] . "</td>";
 					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE"] . "</td>";
-					echo "<td>" . $row["LABEL"] . "</td>";
-					echo "<td>" . $row["LABEL_REMOVED"] . "</td>";
+					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["NEW_CLEANUP"] . "</td>";
 					echo "<td>" . $row["UPDT"] . "</td>";
 					echo "</tr>";
 				}

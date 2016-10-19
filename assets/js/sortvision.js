@@ -41,7 +41,7 @@
 
         this.addNewLabel = function(newLabel)
         {
-            var labelsArray = this.bibs[this.selectedIndex].LABEL_ARRAY;
+            var labelsArray = this.bibs[this.selectedIndex].LABELS_ARRAY;
 
             labelsArray.push({index: labelsArray.length, label: newLabel, cleanup: false });
         }
@@ -94,16 +94,16 @@
                            break;
                        // down key
                        case 40:
-                           if (scope.$parent.cleanup.selectedLabelIndex < scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABEL_ARRAY.length - 1) {
+                           if (scope.$parent.cleanup.selectedLabelIndex < scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABELS_ARRAY.length - 1) {
                                scope.$parent.cleanup.selectedLabelIndex += 1;
                            }
                            event.preventDefault();
                            break;
                        // space-bar
                        case 32:
-                           var currentLabel = scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABEL_ARRAY[scope.$parent.cleanup.selectedLabelIndex];
-                           var currentLabelCleanup = currentLabel.cleanup;
-                           currentLabel.cleanup = !currentLabelCleanup;
+                           var currentLabel = scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABELS_ARRAY[scope.$parent.cleanup.selectedLabelIndex];
+                           var currentLabelCleanup = currentLabel.REMOVED;
+                           currentLabel.REMOVED = currentLabelCleanup === "1" ? "0" : "1";
                            event.preventDefault();
                            break;
                        // + button

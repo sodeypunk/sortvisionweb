@@ -19,7 +19,7 @@ class Results_Client_model extends CI_Model {
 
         if ($cleanUp == 'true') {
             $imageSql .= "AND " .
-                    "(c.CLEANUP = 'Cleanup') ";
+                    "(c.CLEANUP = 'Cleanup') || (c.CLEANUP = 'PARTIAL')";
         }
         elseif ($cleanUp == 'false') {
             $imageSql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) ";
@@ -47,10 +47,10 @@ class Results_Client_model extends CI_Model {
             $index = 0;
             foreach ($results as &$row)
             {
-                $row['LABEL_ARRAY'] = util::bibStringToArray($labelsResults);
-                $row['LABELS'] = util::bibArrayToString($labelsResults, $row['IMAGE'], false);
-                $row['LABELS_REMOVED'] = util::bibArrayToString($labelsResults, $row['IMAGE'], true);
-                $row['IMAGE'] = util::flatten($row['IMAGE']);
+                $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelsResults, $row['IMAGE']);
+                $row['LABELS_STRING'] = util::bibArrayToString($labelsResults, $row['IMAGE'], false);
+                $row['LABELS_STRING_REMOVED'] = util::bibArrayToString($labelsResults, $row['IMAGE'], true);
+                $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
                 $row['INDEX'] = $index;
                 $index++;
             }
@@ -65,27 +65,39 @@ class Results_Client_model extends CI_Model {
 
     public function UpdateResultsClient($rows) {
 
-        $saveArray = array();
+        $saveClientArray = array();
+        $saveLabelsArray = array();
         foreach ($rows as $row)
         {
-            $data = array(
+            $clientData = array(
                 'ID' => $row['ID'],
                 'IDFILE' => $row['IDFILE'],
                 'IMAGE' => $row['IMAGE'],
-                'LABEL' => $row['LABEL'],
-                'COORDINATES' => $row['COORDINATES'],
                 'IMAGE_SIZE' => $row['IMAGE_SIZE'],
                 'CLEANUP' => $row['CLEANUP'],
-                'NEW_CLEANUP' => $row['NEW_CLEANUP'],
-                'UPDT' => $row['UPDT'],
-                'LABEL_REMOVED' => $row['LABEL_REMOVED']
-
+                'UPDT' => $row['UPDT']
             );
 
-                array_push($saveArray, $data);
+            $labelsArray = $row['LABELS_ARRAY'];
+            foreach ($labelsArray as $label)
+            {
+                $labelsData = array(
+                    'ID' => $label['ID'],
+                    'IDFILE' => $label['IDFILE'],
+                    'LABEL' => $label['LABEL'],
+                    'COORDINATE' => $label['COORDINATE'],
+                    'REMOVED' => $label['REMOVED'],
+                    'UPDT' => $label['UPDT']
+                );
+
+                array_push($saveLabelsArray, $labelsData);
+            }
+
+            array_push($saveClientArray, $clientData);
         }
 
-        $this->db->update_batch('RESULTS_CLIENT', $saveArray, 'ID');
+        $this->db->update_batch('RESULTS_CLIENT', $saveClientArray, 'ID');
+        $this->db->update_batch('RESULTS_LABELS', $saveLabelsArray, 'ID');
     }
 
 }
