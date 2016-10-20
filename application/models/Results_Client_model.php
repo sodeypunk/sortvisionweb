@@ -35,7 +35,8 @@ class Results_Client_model extends CI_Model {
         $labelSql = "SELECT * FROM RESULTS_LABELS l " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = l.IDFILE " .
-            "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
+            "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' " .
+            "ORDER BY REMOVED DESC, LABEL";
 
         $imageQuery = $this->db->query($imageSql);
         $LabelsQuery = $this->db->query($labelSql);

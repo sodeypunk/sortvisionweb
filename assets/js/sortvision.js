@@ -28,7 +28,7 @@
 
         this.scrollToElement = function()
         {
-            var newHash = this.bibs[this.selectedIndex].IMAGE;
+            var newHash = this.bibs[this.selectedIndex].IMAGE_FLATTENED;
             if ($location.hash() !== newHash)
             {
                 $location.hash(newHash);
@@ -41,9 +41,10 @@
 
         this.addNewLabel = function(newLabel)
         {
+            var bib = this.bibs[this.selectedIndex];
             var labelsArray = this.bibs[this.selectedIndex].LABELS_ARRAY;
 
-            labelsArray.push({index: labelsArray.length, label: newLabel, cleanup: false });
+            labelsArray.push({INDEX: labelsArray.length, IDFILE: bib.IDFILE, IMAGE: bib.IMAGE, LABEL: newLabel, REMOVED: "0", COORDINATE: "[0,0,0,0]" });
         }
 
         function chunk(myArray, size) {
@@ -71,7 +72,7 @@
                        case 39:
                            if (scope.$parent.cleanup.selectedIndex < scope.$parent.cleanup.bibs.length - 1) {
                                scope.$parent.cleanup.selectedIndex += 1;
-                               scope.$parent.cleanup.selectedBibIndex = 0;
+                               scope.$parent.cleanup.selectedLabelIndex = 0;
                                scope.$parent.cleanup.scrollToElement();
                            }
                            event.preventDefault();
@@ -80,7 +81,7 @@
                        case 37:
                            if (scope.$parent.cleanup.selectedIndex > 0) {
                                scope.$parent.cleanup.selectedIndex -= 1;
-                               scope.$parent.cleanup.selectedBibIndex = 0;
+                               scope.$parent.cleanup.selectedLabelIndex = 0;
                                scope.$parent.cleanup.scrollToElement();
                            }
                            event.preventDefault();
