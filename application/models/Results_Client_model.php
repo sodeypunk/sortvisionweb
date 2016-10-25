@@ -76,7 +76,8 @@ class Results_Client_model extends CI_Model {
                 'IMAGE' => $row['IMAGE'],
                 'IMAGE_SIZE' => $row['IMAGE_SIZE'],
                 'CLEANUP' => $row['CLEANUP'],
-                'UPDT' => $row['UPDT']
+                'CLEANUP_STATUS' => $row['CLEANUP_STATUS'],
+                'UPDT' => util::CurrentDateTime()
             );
 
             $labelsArray = $row['LABELS_ARRAY'];
@@ -88,7 +89,7 @@ class Results_Client_model extends CI_Model {
                     'LABEL' => $label['LABEL'],
                     'COORDINATE' => $label['COORDINATE'],
                     'REMOVED' => $label['REMOVED'],
-                    'UPDT' => $label['UPDT']
+                    'UPDT' => util::CurrentDateTime()
                 );
 
                 array_push($saveLabelsArray, $labelsData);
@@ -97,8 +98,15 @@ class Results_Client_model extends CI_Model {
             array_push($saveClientArray, $clientData);
         }
 
-        $this->db->update_batch('RESULTS_CLIENT', $saveClientArray, 'ID');
-        $this->db->update_batch('RESULTS_LABELS', $saveLabelsArray, 'ID');
+        $rowsAffected = $this->db->update_batch('RESULTS_CLIENT', $saveClientArray, 'ID');
+        $rowsAffected2 = $this->db->update_batch('RESULTS_LABELS', $saveLabelsArray, 'ID');
+
+        if ($rowsAffected > 0 && $rowsAffected2 > 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
 }

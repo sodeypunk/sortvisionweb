@@ -13,9 +13,12 @@
             <div class="row" ng-repeat="rows in cleanup.chunkedData">
                 <div class="col-md-4" ng-repeat="bib in rows">
                     <div id="{{bib.IMAGE_FLATTENED}}">
+                        <!--<div ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" style="background-image:url(<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}});">-->
+                        <img ng-if="bib.CLEANUP_STATUS != null" class="checkmark" src="<?php echo base_url(); ?>assets/img/checkmark_small.png">
+                        <img ng-if="cleanup.saving === true" class="loading" src="<?php echo base_url(); ?>assets/img/loading_sm.gif">
                         <img ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" ng-src="<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}">
                             <label ng-class="{'checkbox-border' : cleanup.selectedIndex == bib.INDEX && cleanup.selectedLabelIndex == label.INDEX}" class="checkbox" for="{{label.LABEL}}" ng-repeat="label in bib.LABELS_ARRAY">
-                                <input type="checkbox" name="{{bib.IMAGE_FLATTENED}}" id="{{label.LABEL}}" ng-model="(label.REMOVED === '0')"> {{label.LABEL}} </input>
+                                <input type="checkbox" name="{{bib.IMAGE_FLATTENED}}" id="{{label.LABEL}}" ng-model="label.INCLUDED"> {{label.LABEL}} </input>
                             </label>
                     </div>
                 </div>

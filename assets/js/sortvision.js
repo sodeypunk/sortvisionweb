@@ -3,16 +3,62 @@
  */
 
 (function() {
-    var app = angular.module('sortvision', []);
+    var app = angular.module('sortvision', [], function($httpProvider) {
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8'; // To allow PHP servers to read angular's serialization
 
-    app.controller('CleanupController', ['$http', '$anchorScroll', '$location', function($http, $anchorScroll, $location) {
+        /**
+         * The workhorse; converts an object to x-www-form-urlencoded serialization.
+         * @param {Object} obj
+         * @return {String}
+         */
+        var param = function(obj) {
+            var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
+
+            for(name in obj) {
+                value = obj[name];
+
+                if(value instanceof Array) {
+                    for(i=0; i<value.length; ++i) {
+                        subValue = value[i];
+                        fullSubName = name + '[' + i + ']';
+                        innerObj = {};
+                        innerObj[fullSubName] = subValue;
+                        query += param(innerObj) + '&';
+                    }
+                }
+                else if(value instanceof Object) {
+                    for(subName in value) {
+                        subValue = value[subName];
+                        fullSubName = name + '[' + subName + ']';
+                        innerObj = {};
+                        innerObj[fullSubName] = subValue;
+                        query += param(innerObj) + '&';
+                    }
+                }
+                else if(value !== undefined && value !== null)
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+            }
+
+            return query.length ? query.substr(0, query.length - 1) : query;
+        };
+
+        // Override $http service's default transformRequest
+        $httpProvider.defaults.transformRequest = [function(data) {
+            return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+        }];
+    });
+
+    app.controller('CleanupController', ['$scope','$http', '$anchorScroll', '$location', function($scope, $http, $anchorScroll, $location) {
         var cleanupCtrl = this;
         this.bibs = [];
         this.chunkedData = [];
         this.ezRefString = $('input[name=ezRefString]').val();
         this.selectedIndex = 0;
         this.selectedLabelIndex = 0;
+        this.savingIndex = 0;
+        this.saving = false;
         $anchorScroll.yOffset = 100;
+
 
 
         $http({
@@ -45,6 +91,41 @@
             var labelsArray = this.bibs[this.selectedIndex].LABELS_ARRAY;
 
             labelsArray.push({INDEX: labelsArray.length, IDFILE: bib.IDFILE, IMAGE: bib.IMAGE, LABEL: newLabel, REMOVED: "0", COORDINATE: "[0,0,0,0]" });
+        }
+
+        this.markImageCompleted = function(status)
+        {
+            if (status == true)
+            {
+                this.ajaxSave(true);
+            }
+            else
+            {
+                this.ajaxSave(false);
+            }
+        }
+
+        this.ajaxSave = function(status)
+        {
+            var bibsArray = this.bibs[this.selectedIndex];
+            this.savingIndex = this.selectedIndex;
+            this.saving = true;
+
+            $http({
+                method: 'POST',
+                url: '/index.php/cleanup/update',
+                data: {bibsArray: bibsArray, cleaned: status}}
+            ).success(function(data) {
+
+                if (data.success === true) {
+                    $scope.cleanup.bibs[$scope.cleanup.savingIndex].CLEANUP_STATUS = data.bib.CLEANUP_STATUS;
+                    $scope.cleanup.saving = false;
+                }
+
+            }).error(function(data) {
+                $scope.cleanup.saving = false;
+                alert("Saving failed");
+            });
         }
 
         function chunk(myArray, size) {
@@ -105,12 +186,24 @@
                            var currentLabel = scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABELS_ARRAY[scope.$parent.cleanup.selectedLabelIndex];
                            var currentLabelCleanup = currentLabel.REMOVED;
                            currentLabel.REMOVED = currentLabelCleanup === "1" ? "0" : "1";
+                           currentLabel.INCLUDED = currentLabel.REMOVED === "0";
+                           scope.$parent.cleanup.markImageCompleted(false);
                            event.preventDefault();
                            break;
                        // + button
                        case 107:
                            var newLabel = prompt("Please enter new label");
                            scope.$parent.cleanup.addNewLabel(newLabel);
+                           event.preventDefault();
+                           break;
+                       // enter button
+                       case 13:
+                           scope.$parent.cleanup.markImageCompleted(true);
+                           event.preventDefault();
+                           break;
+                       // enter button
+                       case 46:
+                           scope.$parent.cleanup.markImageCompleted(false);
                            event.preventDefault();
                            break;
                    }

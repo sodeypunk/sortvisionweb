@@ -211,6 +211,7 @@ class util
         {
             if ($label['IMAGE'] == $image) {
                 $label['INDEX'] = $index;
+                $label['INCLUDED'] = ($label['REMOVED'] == '0');
                 array_push($newLabelsArray, $label);
                 $index++;
             }
@@ -249,6 +250,11 @@ class util
         }
 
         return $badLabels;
+    }
+
+    public static function CurrentDateTime()
+    {
+        return date("Y-m-d H:i:s");
     }
 
 }

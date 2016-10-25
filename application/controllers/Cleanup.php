@@ -42,5 +42,32 @@ class Cleanup extends CI_Controller {
 		echo json_encode($objectString);
 	}
 
+	public function update() {
+		$resultArray = array();
+		$resultArray['success'] = false;
+		$bibsArray = $_POST['bibsArray'];
+		$cleaned = $_POST['cleaned'];
+		$saveArray = array();
+		if ($cleaned == "true")
+		{
+			$bibsArray['CLEANUP_STATUS'] = 'CLEANED';
+		}
+		else
+		{
+			$bibsArray['CLEANUP_STATUS'] = null;
+		}
+		array_push($saveArray, $bibsArray);
+
+		if (!is_null($bibsArray)) {
+			if ($this->Results_Client_model->UpdateResultsClient($saveArray)) {
+				$resultArray['success'] = true;
+				$resultArray['bib'] = $bibsArray;
+			}
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($resultArray);
+	}
+
 
 }

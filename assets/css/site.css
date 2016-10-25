@@ -88,6 +88,17 @@ body {
     height: auto;
 }
 
+.checkmark {
+	position: relative;
+	top: 75px;
+}
+
+.loading {
+	position: relative;
+	top: 75px;
+	left: 75px;
+}
+
 #filters {
 	border: 1px solid #e5e5e5;
 	padding: 10px;
