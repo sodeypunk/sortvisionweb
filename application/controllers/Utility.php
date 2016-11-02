@@ -178,21 +178,25 @@ class util
 //        return $finalArrayList;
 //    }
 
-    public static function bibArrayToString($labelsArray, $image, $isRemoved)
+    public static function bibArrayToString($labelHashDict, $hash, $isRemoved)
     {
         $labelArray = array();
+        $allLabelsArray = array();
 
-        foreach($labelsArray as $label)
+        if (array_key_exists($hash, $labelHashDict))
         {
-            if ($label['IMAGE'] == $image || $image == null) {
-                if ($isRemoved == true) {
-                    if ((int)$label['REMOVED'] == 1) {
-                        array_push($labelArray, $label['LABEL']);
-                    }
-                } else {
-                    if ((int)$label['REMOVED'] == 0) {
-                        array_push($labelArray, $label['LABEL']);
-                    }
+            $allLabelsArray = $labelHashDict[$hash];
+        }
+
+        foreach($allLabelsArray as $label)
+        {
+            if ($isRemoved == true) {
+                if ((int)$label['REMOVED'] == 1) {
+                    array_push($labelArray, $label['LABEL']);
+                }
+            } else {
+                if ((int)$label['REMOVED'] == 0) {
+                    array_push($labelArray, $label['LABEL']);
                 }
             }
         }
@@ -202,19 +206,23 @@ class util
 
     }
 
-    public static function labelsArrayFromAllArray($allLabelsArray, $image)
+    public static function labelsArrayFromAllArray($labelHashDict, $hash)
     {
         $newLabelsArray = array();
+        $allLabelsArray = array();
+
+        if (array_key_exists($hash, $labelHashDict))
+        {
+            $allLabelsArray = $labelHashDict[$hash];
+        }
 
         $index = 0;
         foreach($allLabelsArray as $label)
         {
-            if ($label['IMAGE'] == $image) {
-                $label['INDEX'] = $index;
-                $label['INCLUDED'] = ($label['REMOVED'] == '0');
-                array_push($newLabelsArray, $label);
-                $index++;
-            }
+            $label['INDEX'] = $index;
+            $label['INCLUDED'] = ($label['REMOVED'] == '0');
+            array_push($newLabelsArray, $label);
+            $index++;
         }
 
         return $newLabelsArray;

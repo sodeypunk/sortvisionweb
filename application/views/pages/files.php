@@ -50,13 +50,6 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="col-sm-6">
-			<?php
-			if ($status != null && $status != "")
-			{
-                echo $tiledUploadedImages;
-			}?>
-		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
@@ -70,23 +63,6 @@
 				if ($status == "COMPLETED")
 				{
                     echo $tiledResultImages;
-				}
-				?>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<h2>Cleanup</h2>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<div id="result-image-cleanup">
-				<?php
-				if ($status == "COMPLETED")
-				{
-					echo $tiledCleanupResultImages;
 				}
 				?>
 			</div>

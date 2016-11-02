@@ -19,7 +19,7 @@ class Analysis extends CI_Controller {
 
 	private function setDefaultFilterValues(&$data) {
 
-		$DEFAULT_LABEL_CONTAINS_VALUE = "1-9; 2000-2017";
+		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017";
 		$DEFAULT_LABEL_LENGTH_VALUE = "5";
 
 		$data['filterAtLeastOne'] = true;
@@ -34,8 +34,8 @@ class Analysis extends CI_Controller {
 			$data['status'] = null;
 		}
 		else {
-			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false' );
-			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'true' );
+			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false', 100);
+			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'true', 100);
 
 			$data['resultsClientGood'] = $resultsClientGood;
 			$data['resultsClientCleanup'] = $resultsClientCleanup;
@@ -52,6 +52,7 @@ class Analysis extends CI_Controller {
 	}
 
 	public function analysis() {
+		set_time_limit (3000);
 		$action = $_POST['action'];
 		$ezRefString = $_POST['ezRefString'];
 
@@ -68,7 +69,7 @@ class Analysis extends CI_Controller {
 		$labelLengthChoice = $_POST['filter-label-length-choice'];
 		$labelLengthValue = $_POST['filter-label-length-value'];
 
-		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString );
+		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, '', 100);
 
 		$resultsClientGood = array();
 		$resultsClientCleanup = array();
@@ -112,8 +113,8 @@ class Analysis extends CI_Controller {
 			$this->Results_Client_model->UpdateResultsClient ( $saveArray );
 		}
 
-		$data['resultsClientGood'] = $resultsClientGood;
-		$data['resultsClientCleanup'] = $resultsClientCleanup;
+		$data['resultsClientGood'] = array_slice($resultsClientGood, 0, 100);
+		$data['resultsClientCleanup'] = array_slice($resultsClientCleanup, 0, 100);
 		$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
 		$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
 		$data['ezRefString'] = $ezRefString;

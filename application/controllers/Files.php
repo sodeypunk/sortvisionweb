@@ -38,14 +38,8 @@ class Files extends CI_Controller {
 				$data ['ezRefString'] = $ezRefString;
 				$data ['filesHistory'] = $result;
 
-                $uploadedFiles = $this->getImageFilePaths($ezRefString, "assets/uploads/");
-                $resultFiles = $this->getImageFilePaths($ezRefString, "assets/result_images/");
-
-				$resultImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'false', 10);
-				$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 10);
-                $data ['tiledUploadedImages'] =  util::getImagesTiled("assets/uploads/", $uploadedFiles);
+				$resultImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'false', 100);
                 $data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, "assets/result_images/", $ezRefString);
-				$data ['tiledCleanupResultImages'] =  util::getImagesTiledFromDB($resultCleanupImages, "assets/result_images/", $ezRefString);
 			}
 		}
 		

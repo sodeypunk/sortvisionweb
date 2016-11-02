@@ -21,7 +21,7 @@ class Cleanup extends CI_Controller {
 
 	
 	public function index($ezRefString = '') {
-		$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true');
+		$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 100);
 		$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/", $ezRefString, 'true');
 		$data['ezRefString'] = $ezRefString;
 
@@ -35,7 +35,7 @@ class Cleanup extends CI_Controller {
 		$objectString = "";
 		if (!empty ( $ezRefString )) {
 
-			$objectString = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true');
+			$objectString = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 100);
 		}
 
 		header('Content-Type: application/json');

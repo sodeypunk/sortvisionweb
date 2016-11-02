@@ -18,8 +18,7 @@ class Results_Client_model extends CI_Model {
 
 
         if ($cleanUp == 'true') {
-            $imageSql .= "AND " .
-                    "(c.CLEANUP = 'Cleanup') || (c.CLEANUP = 'PARTIAL')";
+            $imageSql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'PARTIAL')";
         }
         elseif ($cleanUp == 'false') {
             $imageSql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) ";
@@ -32,30 +31,54 @@ class Results_Client_model extends CI_Model {
             $imageSql .= "LIMIT " . $numberOfRecords . " ";
         }
 
-        $labelSql = "SELECT * FROM RESULTS_LABELS l " .
-            "INNER JOIN FILES f " .
-            "ON f.IDFILE = l.IDFILE " .
-            "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' " .
-            "ORDER BY REMOVED DESC, LABEL";
-
         $imageQuery = $this->db->query($imageSql);
-        $LabelsQuery = $this->db->query($labelSql);
-        $labelsResults = $LabelsQuery->result_array();
+        $imageResults = $imageQuery->result_array();
 
-        if($imageQuery->num_rows() != 0)
+        if($imageQuery->num_rows() > 0)
         {
-            $results = $imageQuery->result_array();
+            $hashArray = array();
+            foreach ($imageResults as $row) {
+                array_push($hashArray, "'" . $row['HASH'] . "'");
+            }
+            $hashList = implode(",", $hashArray);
+
+            $labelSql = "SELECT * FROM RESULTS_LABELS l " .
+                "INNER JOIN FILES f " .
+                "ON f.IDFILE = l.IDFILE " .
+                "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' " .
+                "AND l.HASH IN (" . $hashList . ") " .
+                "ORDER BY REMOVED DESC, LABEL";
+
+
+            $LabelsQuery = $this->db->query($labelSql);
+            $labelsResults = $LabelsQuery->result_array();
+
+            $labelHashDict = array();
+            foreach ($labelsResults as $row) {
+                $hash = $row['HASH'];
+                if (array_key_exists($hash, $labelHashDict))
+                {
+                    array_push($labelHashDict[$hash], $row);
+                }
+                else
+                {
+                    $labelHashDict[$hash] = array();
+                    array_push($labelHashDict[$hash], $row);
+                }
+            }
+
             $index = 0;
-            foreach ($results as &$row)
-            {
-                $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelsResults, $row['IMAGE']);
-                $row['LABELS_STRING'] = util::bibArrayToString($labelsResults, $row['IMAGE'], false);
-                $row['LABELS_STRING_REMOVED'] = util::bibArrayToString($labelsResults, $row['IMAGE'], true);
+            foreach ($imageResults as &$row) {
+
+                $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);
+                $row['LABELS_STRING'] = util::bibArrayToString($labelHashDict, $row['HASH'], false);
+                $row['LABELS_STRING_REMOVED'] = util::bibArrayToString($labelHashDict, $row['HASH'], true);
+
                 $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
                 $row['INDEX'] = $index;
                 $index++;
             }
-            return $results;
+            return $imageResults;
         }
         else
         {
