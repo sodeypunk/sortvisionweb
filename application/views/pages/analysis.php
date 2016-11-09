@@ -8,8 +8,11 @@
 				<div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $goodPercent; ?>%">
 					Good <span id="good-percent"><?php echo $goodPercent; ?>%</span>
 				</div>
+				<div class="progress-bar progress-bar-warning" role="progressbar" style="width:<?php echo $partialPercent; ?>%">
+					Partial <span id="good-percent"><?php echo $partialPercent; ?>%</span>
+				</div>
 				<div class="progress-bar progress-bar-danger" role="progressbar" style="width:<?php echo $cleanupPercent; ?>%">
-					Analysis <span id="good-percent"><?php echo $cleanupPercent; ?>%</span>
+					Cleanup <span id="good-percent"><?php echo $cleanupPercent; ?>%</span>
 				</div>
 			</div>
 		</div>
@@ -56,6 +59,7 @@
 			<table id="results-table" class="table table-striped">
 				<thead>
 				<tr>
+					<th>#</th>
 					<th>ID</th>
 					<th>IDFILE</th>
 					<th>IMAGE</th>
@@ -67,9 +71,12 @@
 				</thead>
 				<tbody>
 				<?php
+				$rowNum = 0;
 				foreach ($resultsClientGood as $row)
 				{
+					$rowNum++;
 					echo "<tr>";
+					echo "<td>" . $rowNum . "</td>";
 					echo "<td>" . $row["ID"] . "</td>";
 					echo "<td>" . $row["IDFILE"] . "</td>";
 					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
@@ -85,10 +92,11 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<h3>Analysis</h3>
+			<h3>Partial</h3>
 			<table id="results-table" class="table table-striped">
 				<thead>
 				<tr>
+					<th>#</th>
 					<th>ID</th>
 					<th>IDFILE</th>
 					<th>IMAGE</th>
@@ -100,9 +108,51 @@
 				</thead>
 				<tbody>
 				<?php
+
+				$rowNum = 0;
+				foreach ($resultsClientPartial as $row)
+				{
+					$rowNum++;
+					echo "<tr>";
+					echo "<td>" . $rowNum . "</td>";
+					echo "<td>" . $row["ID"] . "</td>";
+					echo "<td>" . $row["IDFILE"] . "</td>";
+					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+					echo "<td>" . $row["CLEANUP"] . "</td>";
+					echo "<td>" . $row["UPDT"] . "</td>";
+					echo "</tr>";
+				}
+				?>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<h3>Bad</h3>
+			<table id="results-table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>ID</th>
+					<th>IDFILE</th>
+					<th>IMAGE</th>
+					<th>LABELS</th>
+					<th>LABELS REMOVED</th>
+					<th>CLEANUP</th>
+					<th>UPDT</th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php
+
+				$rowNum = 0;
 				foreach ($resultsClientCleanup as $row)
 				{
+					$rowNum++;
 					echo "<tr>";
+					echo "<td>" . $rowNum . "</td>";
 					echo "<td>" . $row["ID"] . "</td>";
 					echo "<td>" . $row["IDFILE"] . "</td>";
 					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";

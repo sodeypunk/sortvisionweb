@@ -34,13 +34,16 @@ class Analysis extends CI_Controller {
 			$data['status'] = null;
 		}
 		else {
-			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false', 100);
-			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'true', 100);
+			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false');
+			$resultsClientPartial = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'partial');
+			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'cleanup');
 
 			$data['resultsClientGood'] = $resultsClientGood;
+			$data['resultsClientPartial'] = $resultsClientPartial;
 			$data['resultsClientCleanup'] = $resultsClientCleanup;
-			$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
-			$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
+			$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+			$data['partialPercent'] = round(count($resultsClientPartial) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+			$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
 			$data['ezRefString'] = $ezRefString;
 			$this->setDefaultFilterValues($data);
 
@@ -52,7 +55,6 @@ class Analysis extends CI_Controller {
 	}
 
 	public function analysis() {
-		set_time_limit (3000);
 		$action = $_POST['action'];
 		$ezRefString = $_POST['ezRefString'];
 
@@ -69,10 +71,11 @@ class Analysis extends CI_Controller {
 		$labelLengthChoice = $_POST['filter-label-length-choice'];
 		$labelLengthValue = $_POST['filter-label-length-value'];
 
-		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, '', 100);
+		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, '');
 
 		$resultsClientGood = array();
 		$resultsClientCleanup = array();
+		$resultsClientPartial = array();
 
 		$invalidNumbersToCheck = $this->GetInvalidLabels($labelContainsValue);
 		foreach ($resultsClientAll as $row)
@@ -82,14 +85,14 @@ class Analysis extends CI_Controller {
 
 			$pass = $this->CheckAtLeastOneLabelFilter($row, $atLeastOne);
 
-			$row['LABELS_STRING'] = util::bibArrayToString($row['LABELS_ARRAY'], null, false);
-			$row['LABELS_STRING_REMOVED'] = util::bibArrayToString($row['LABELS_ARRAY'], null, true);
+			$row['LABELS_STRING'] = util::bibArrayToStringSlow($row['LABELS_ARRAY'], null, false);
+			$row['LABELS_STRING_REMOVED'] = util::bibArrayToStringSlow($row['LABELS_ARRAY'], null, true);
 			$row['UPDT'] = date("Y-m-d H:i:s");
 
 			if (count(util::GoodLabels($row)) > 0 && count(util::BadLabels($row)) > 0 && $pass == true)
 			{
 				$row['CLEANUP'] = 'Partial';
-				array_push($resultsClientCleanup, $row);
+				array_push($resultsClientPartial, $row);
 
 			}
 			else if (count(util::GoodLabels($row)) > 0 && count(util::BadLabels($row)) == 0 && $pass == true)
@@ -109,14 +112,16 @@ class Analysis extends CI_Controller {
 
 		if ($action == 'Update')
 		{
-			$saveArray = array_merge($resultsClientGood, $resultsClientCleanup);
+			$saveArray = array_merge($resultsClientGood, $resultsClientCleanup, $resultsClientPartial);
 			$this->Results_Client_model->UpdateResultsClient ( $saveArray );
 		}
 
-		$data['resultsClientGood'] = array_slice($resultsClientGood, 0, 100);
-		$data['resultsClientCleanup'] = array_slice($resultsClientCleanup, 0, 100);
-		$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
-		$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup)) * 100);
+		$data['resultsClientGood'] = $resultsClientGood;
+		$data['resultsClientPartial'] = $resultsClientPartial;
+		$data['resultsClientCleanup'] = $resultsClientCleanup;
+		$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+		$data['partialPercent'] = round(count($resultsClientPartial) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+		$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
 		$data['ezRefString'] = $ezRefString;
 		$data['filterAtLeastOne'] = $atLeastOne;
 		$data['filterLabelContainsChoice'] = $labelContainsChoice;

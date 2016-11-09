@@ -18,10 +18,16 @@ class Results_Client_model extends CI_Model {
 
 
         if ($cleanUp == 'true') {
-            $imageSql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'PARTIAL')";
+            $imageSql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial')";
         }
         elseif ($cleanUp == 'false') {
             $imageSql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) ";
+        }
+        elseif ($cleanUp == 'cleanup') {
+            $imageSql .= "AND c.CLEANUP = 'Cleanup' ";
+        }
+        elseif ($cleanUp == 'partial') {
+            $imageSql .= "AND c.CLEANUP = 'Partial' ";
         }
 
         $imageSql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";

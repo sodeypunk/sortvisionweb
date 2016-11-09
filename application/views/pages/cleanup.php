@@ -10,7 +10,7 @@
             </div>
         </div>
         <div id="bibs">
-            <div class="row" ng-repeat="rows in cleanup.chunkedData">
+            <div class="row image-row" ng-repeat="rows in cleanup.chunkedData">
                 <div class="col-md-4" ng-repeat="bib in rows">
                     <div id="{{bib.IMAGE_FLATTENED}}">
                         <!--<div ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" style="background-image:url(<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}});">-->

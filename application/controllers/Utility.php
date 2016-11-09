@@ -178,6 +178,30 @@ class util
 //        return $finalArrayList;
 //    }
 
+    public static function bibArrayToStringSlow($labelsArray, $image, $isRemoved)
+    {
+        $labelArray = array();
+
+        foreach($labelsArray as $label)
+        {
+            if ($label['IMAGE'] == $image || $image == null) {
+                if ($isRemoved == true) {
+                    if ((int)$label['REMOVED'] == 1) {
+                        array_push($labelArray, $label['LABEL']);
+                    }
+                } else {
+                    if ((int)$label['REMOVED'] == 0) {
+                        array_push($labelArray, $label['LABEL']);
+                    }
+                }
+            }
+        }
+
+        $bibString = implode(',', $labelArray);
+        return $bibString;
+
+    }
+
     public static function bibArrayToString($labelHashDict, $hash, $isRemoved)
     {
         $labelArray = array();
