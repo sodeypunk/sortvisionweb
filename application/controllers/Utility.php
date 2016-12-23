@@ -31,7 +31,7 @@ class util
         return $resultHTML;
     }
 
-    public static function  getImagesTiledFromDB($data, $sourcePath, $ezRefString)
+    public static function  getImagesTiledFromDB($data, $sourcePath, $fileId)
     {
 
         $resultHTML = "";
@@ -40,7 +40,7 @@ class util
 
             foreach ($data as $row) {
 
-                $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString);
+                $image_properties = self::buildImageHTML($row, $sourcePath);
 
                 if ($count % 3 == 0 || $count == 0) {
                     $resultHTML .= '<div class="row">';
@@ -110,7 +110,7 @@ class util
         return $resultHTML;
     }
 
-    public static function buildImageHTML($row, $sourcePath, $ezRefString, $selected = false)
+    public static function buildImageHTML($row, $sourcePath, $selected = false)
     {
         $src = "";
         $cleanUp = 'false';
@@ -121,13 +121,13 @@ class util
 
         if ($cleanUp == 'true')
         {
-            $src = $sourcePath . $ezRefString . "/cleanup/" . $row["IMAGE_FLATTENED"];
+            $src = $sourcePath . "cleanup/" . $row["IMAGE_FLATTENED"];
         }
 
         elseif
         ($cleanUp == 'false')
         {
-            $src = $sourcePath . $ezRefString . "/" . $row["IMAGE_FLATTENED"];
+            $src = $sourcePath . $row["IMAGE_FLATTENED"];
         }
 
         $glowBorderClass = "";
@@ -153,6 +153,8 @@ class util
     {
         $newString = str_replace("/", "^", $string);
         $newString = str_replace(" ", "+", $newString);
+        $newString = preg_replace('/\\.[^.\\s]{3,4}$/', '', $newString);
+        $newString = $newString . ".jpg"; // for showing result images
 
         return $newString;
     }

@@ -23,12 +23,12 @@ class Results_Client_model extends CI_Model {
 
         return (int)$countResults[0]['COUNT'];
     }
-    public function get_by_s3Path($ezRefString, $cleanUp = '', $numberOfRecords = 0) {
+    public function get_by_fileId($fileId, $cleanUp = '', $numberOfRecords = 0) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
-                "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
+                "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
         $imageSql = $this->AddWhereClause($imageSql, $cleanUp, $numberOfRecords);
@@ -47,7 +47,7 @@ class Results_Client_model extends CI_Model {
             $labelSql = "SELECT * FROM RESULTS_LABELS l " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = l.IDFILE " .
-                "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' " .
+                "WHERE f.IDFILE = '" . $fileId . "' " .
                 "AND l.HASH IN (" . $hashList . ") " .
                 "ORDER BY REMOVED DESC, LABEL";
 

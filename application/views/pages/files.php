@@ -40,7 +40,7 @@
 							{
 								echo "<tr>";
 								echo "<td>" . $row['DESCR'] . "</td>";
-								echo "<td>" . $row['UPDT'] . "</td>";
+								echo "<td>" . $row['HIST_UPDT'] . "</td>";
 								echo "</tr>";
 							}
 						}

@@ -29,18 +29,27 @@ class Files extends CI_Controller {
 			$data ['status'] = null;
 		} 
 		else {
-			$s3Path = $_GET['s3path'];
-			$result = $this->files_model->get_by_s3Path( $s3Path );
+			$fileId = $_GET['fileid'];
+			$result = $this->files_model->get_by_fileId( $fileId );
 			
 			if ($result != false) {
+				$s3Bucket = $result[0]['S3_BUCKET'];
+				$jobId = $result[0]['IDJOB'];
+				$fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $result[0]['FILE_NAME']);
+
                 $data ['fileNm'] = $result[0]['FILE_NAME'];
 				$data ['status'] = $result[0]['STATUS'];
 				$data ['uploadedDt'] = $result[0]['UPDT'];
-				$data ['s3Path'] = $s3Path;
+				$data ['fileId'] = $fileId;
 				$data ['filesHistory'] = $result;
+				$data ['s3Bucket'] = $result[0]['S3_BUCKET'];
+				$data ['fileName'] = $result[0]['FILE_NAME'];
+				$data ['s3Path'] = $result[0]['S3_BUCKET'] . "/" . $result[0]['FILE_NAME'];
 
-				$resultImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'false', 100);
-                //$data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, "assets/result_images/", $ezRefString);
+				$resultImages = $this->Results_Client_model->get_by_fileId($fileId, 'false', 100);
+
+				$resultImagePath = sprintf("http://www.sortvision.com/bibcommander/assets/result_images/%s/%s/%s/%s/recognition_images/", $s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
+                $data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, $resultImagePath, $fileId);
 			}
 		}
 		

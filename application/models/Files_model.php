@@ -55,24 +55,13 @@ class Files_model extends CI_Model {
 		
 	}
 
-	public function get_by_s3Path($s3Path, $numberOfRecords = 0) {
+	public function get_by_fileId($fileId, $numberOfRecords = 0) {
 
-		$indexOfSlash = strrpos($s3Path, "/");
-
-		if ($indexOfSlash === false)
-		{
-			print ("Incorrect s3 path");
-			return;
-		}
-
-		$s3Bucket = substr($s3Path, 0, $indexOfSlash);
-		$s3File = substr($s3Path, $indexOfSlash + 1);
-
-		$this->db->select('*');
+		$this->db->select('f.S3_BUCKET, f.FILE_NAME, f.STATUS, f.UPDT, j.IDJOB, h.DESCR, h.UPDT as HIST_UPDT');
 		$this->db->from('FILES f');
+		$this->db->join('SPARK_JOBS j', 'f.IDFILE = j.IDFILE', 'inner');
 		$this->db->join('FILES_HISTORY h', 'f.IDFILE = h.IDFILE', 'left');
-		$this->db->where('f.S3_BUCKET', $s3Bucket);
-		$this->db->where('f.FILE_NAME', $s3File);
+		$this->db->where('f.IDFILE', $fileId);
 		$this->db->order_by('h.IDFILE_HIST', 'asc');
 		if ($numberOfRecords > 0)
 		{
