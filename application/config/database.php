@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
+	'hostname' => 'www.sharevine.com',
+	'username' => 'share7_root',
 	'password' => 'makingitrain2015',
-	'database' => 'BIBSMART_DETECTION',
+	'database' => 'share7_sortvision_dev',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

@@ -24,22 +24,23 @@ class Files extends CI_Controller {
 		$this->load->view ( 'templates/footer' );
 	}
 	
-	public function Status($ezRefString = '') {
-		if (empty ( $ezRefString )) {
+	public function Status() {
+		if (empty ( $_GET )) {
 			$data ['status'] = null;
 		} 
 		else {
-			$result = $this->files_model->get_by_ezRefString ( $ezRefString );
+			$s3Path = $_GET['s3path'];
+			$result = $this->files_model->get_by_s3Path( $s3Path );
 			
 			if ($result != false) {
                 $data ['fileNm'] = $result[0]['FILE_NAME'];
 				$data ['status'] = $result[0]['STATUS'];
 				$data ['uploadedDt'] = $result[0]['UPDT'];
-				$data ['ezRefString'] = $ezRefString;
+				$data ['s3Path'] = $s3Path;
 				$data ['filesHistory'] = $result;
 
 				$resultImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'false', 100);
-                $data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, "assets/result_images/", $ezRefString);
+                //$data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, "assets/result_images/", $ezRefString);
 			}
 		}
 		

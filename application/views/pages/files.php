@@ -2,12 +2,12 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-sm-6">
-			<?php echo '<h2>FILE STATUS | <a href="http://sortvision.localhost.com/index.php/analysis/index/' . $ezRefString . '">Cleanup</a></h2>'; ?>
+			<?php echo '<h2>FILE STATUS | <a href="http://sortvision.localhost.com/index.php/analysis/index?s3path=' . $s3Path . '">Cleanup</a></h2>'; ?>
 			<h5>Note: Please refresh this page for updates on your image</h5>
 			<?php 
 			if ($status != null && $status != "") 
 			{
-				echo '<p>Image: ' . $fileNm . '</p>';
+				echo '<p>File: ' . $s3Path . '</p>';
 				echo '<p>Status: <span id="status">' . $status . '</span></p>';
 				echo '<p>Last Update: ' . $uploadedDt . '</p>';
 				echo '<div class="progress">';
@@ -53,7 +53,7 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<h2>Result</h2>
+			<h2>Result Images</h2>
 		</div>
 	</div>
 	<div class="row">

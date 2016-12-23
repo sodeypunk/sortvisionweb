@@ -43,10 +43,10 @@
         <table id="status-table" class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>IDFILE</th>
                 <th>FILE</th>
                 <th>STATUS</th>
-                <th>LOCATION</th>
+                <th>S3 BUCKET</th>
                 <th>TIMESTAMP</th>
             </tr>
             </thead>
@@ -58,7 +58,7 @@
                     echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status/" . $row["EZ_REF_STRING"] . "\">" . $row["IDFILE"] . "</a></td>";
                     echo "<td>" . $row["FILE_NAME"] . "</td>";
                     echo "<td>" . $row["STATUS"] . "</td>";
-                    echo "<td>" . $row["FILE_PATH"] . $row["EZ_REF_STRING"] . "</td>";
+                    echo "<td>" . $row["S3_BUCKET"] . "</td>";
                     echo "<td>" . $row["UPDT"] . "</td>";
                     echo "</tr>";
                 }

@@ -37,13 +37,15 @@ class Analysis extends CI_Controller {
 			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false');
 			$resultsClientPartial = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'partial');
 			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'cleanup');
+			$sumOfTotal = count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial);
+			if ($sumOfTotal == 0) $sumOfTotal = 1;
 
 			$data['resultsClientGood'] = $resultsClientGood;
 			$data['resultsClientPartial'] = $resultsClientPartial;
 			$data['resultsClientCleanup'] = $resultsClientCleanup;
-			$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
-			$data['partialPercent'] = round(count($resultsClientPartial) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
-			$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+			$data['goodPercent'] = round((count($resultsClientGood) / $sumOfTotal) * 100);
+			$data['partialPercent'] = round((count($resultsClientPartial) / $sumOfTotal) * 100);
+			$data['cleanupPercent'] = round((count($resultsClientCleanup) / $sumOfTotal) * 100);
 			$data['ezRefString'] = $ezRefString;
 			$this->setDefaultFilterValues($data);
 

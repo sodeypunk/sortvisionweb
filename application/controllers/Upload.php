@@ -34,7 +34,7 @@ class Upload extends CI_Controller {
 
             if (!file_exists($targetPath))
             {
-                mkdir($targetPath, 0777);
+                mkdir($targetPath, 0777, true);
             }
 
             $targetFile = $targetPath . $fileName ;

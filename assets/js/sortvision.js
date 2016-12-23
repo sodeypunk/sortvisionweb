@@ -57,9 +57,10 @@
         this.selectedLabelIndex = 0;
         this.savingIndex = 0;
         this.saving = false;
+        this.imageCount = 0;
+        this.pages = [];
+        this.currentPage = 1;
         $anchorScroll.yOffset = 100;
-
-
 
         $http({
             method: 'POST',
@@ -70,6 +71,23 @@
             cleanupCtrl.bibs = data;
             cleanupCtrl.chunkedData = chunk(data, 3);
 
+        });
+
+        $http({
+            method: 'POST',
+            url: '/index.php/cleanup/getTotalCleanupImageCount',
+            params: {ezRefString: this.ezRefString, batch: 100}}
+        ).success(function(data) {
+
+            cleanupCtrl.imageCount = data['COUNT'];
+            cleanupCtrl.pages = data['PAGES'];
+
+        });
+
+        $scope.$watch('cleanup.currentPage', function(newValue, oldValue){
+            if (newValue !== oldValue) {
+                alert("Property has changed to " + newValue + " from " + oldValue);
+            }
         });
 
         this.scrollToElement = function()
@@ -90,7 +108,7 @@
             var bib = this.bibs[this.selectedIndex];
             var labelsArray = this.bibs[this.selectedIndex].LABELS_ARRAY;
 
-            labelsArray.push({INDEX: labelsArray.length, IDFILE: bib.IDFILE, IMAGE: bib.IMAGE, LABEL: newLabel, REMOVED: "0", COORDINATE: "[0,0,0,0]" });
+            labelsArray.push({INDEX: labelsArray.length, ID: -1, IDFILE: bib.IDFILE, IMAGE: bib.IMAGE, LABEL: newLabel, REMOVED: "0", COORDINATE: "[0,0,0,0]", CHECKED: true });
         }
 
         this.markImageCompleted = function(status)
@@ -186,7 +204,7 @@
                            var currentLabel = scope.$parent.cleanup.bibs[scope.$parent.cleanup.selectedIndex].LABELS_ARRAY[scope.$parent.cleanup.selectedLabelIndex];
                            var currentLabelCleanup = currentLabel.REMOVED;
                            currentLabel.REMOVED = currentLabelCleanup === "1" ? "0" : "1";
-                           currentLabel.INCLUDED = currentLabel.REMOVED === "0";
+                           currentLabel.CHECKED = currentLabel.REMOVED === "0";
                            scope.$parent.cleanup.markImageCompleted(false);
                            event.preventDefault();
                            break;
@@ -201,7 +219,7 @@
                            scope.$parent.cleanup.markImageCompleted(true);
                            event.preventDefault();
                            break;
-                       // enter button
+                       // delete button
                        case 46:
                            scope.$parent.cleanup.markImageCompleted(false);
                            event.preventDefault();
