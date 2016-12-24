@@ -29,6 +29,10 @@ class Bibcommander extends CI_Controller {
             $this->load->view('pages/bibcommander', $data);
             $this->load->view('templates/footer');
         }
+        else
+        {
+            redirect('home');
+        }
 
     }
 
