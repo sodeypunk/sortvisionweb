@@ -1,4 +1,4 @@
-<?php $TITLE = "BibSmart"; ?>
+<?php $TITLE = "BibSmart - Dashboard"; ?>
 
 <div class="container">
     <h2><?php echo $TITLE; ?></h2>
@@ -26,7 +26,7 @@
                         $count++;
                         echo "<tr>";
                         echo "<td>" . $count . "</td>";
-                        echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status?fileid=" . $row["IDFILE"] . "\">" . $row["IDFILE"] . "</a></td>";
+                        echo "<td><a href=\"" . base_url("index.php/files/status") . "?fileid=" . $row["IDFILE"] . "\">" . $row["IDFILE"] . "</a></td>";
                         echo "<td>" . $row["FILE_NAME"] . "</td>";
                         echo "<td>" . $row["STATUS"] . "</td>";
                         echo "<td>" . $row["S3_BUCKET"] . "</td>";

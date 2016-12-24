@@ -64,7 +64,7 @@ class Files extends CI_Controller {
 			}
 		}
 
-		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander'). '">BibSmart</a></li>' .
+		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander'). '">Dashboard</a></li>' .
 								'<li class="active">Status</li>';
 
 		$this->load->view ( 'templates/header', $data );
