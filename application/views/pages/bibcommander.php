@@ -1,69 +1,41 @@
-<?php $TITLE = "BibCommander v0.1"; ?>
+<?php $TITLE = "BibSmart"; ?>
 
-<h2><?php echo $TITLE; ?></h2>
-<div class="row">
-    <div class="col-sm-12">
-        Current Machine:
-        <select id="user-system">
-        <?php
-            foreach ($systems as $system)
-            {
-                if ($system["HOSTNAME"] == "soda-desktop")
-                {
-                    echo '<option value="' . $system["IDSYSTEM"] . '" selected>' . $system["HOSTNAME"] . '</option>';
-                }
-                else
-                    echo '<option value="' . $system["IDSYSTEM"] . '">' . $system["HOSTNAME"] . '</option>';
-            }
-        ?>
-        </select>
-        <br>
-        Unzip Files After Upload: <input id="unzip-after-upload" type="checkbox">
-    </div>
-</div>
-<br><br>
-<div class="row">
-    <div class="col-sm-6">
-        Drag and drop an image into the box below to see the software in action.<br>
-        Accepted files: *.jpg, *.png, *.zip (for multiple images)<br>
-        <br>
-            <span id="result-status"></span>
+<div class="container">
+    <h2><?php echo $TITLE; ?></h2>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Your Files</h3>
             <br>
-            <span id="result-descr"></span>
-        <br>
-    </div>
-    <div class="col-sm-6">
-        <div id="dropzone" class="dropzone"></div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-sm-12">
-        <h2>Job History</h2>
-        <br><Br>
-        <table id="status-table" class="table table-striped">
-            <thead>
-            <tr>
-                <th>IDFILE</th>
-                <th>FILE</th>
-                <th>STATUS</th>
-                <th>S3 BUCKET</th>
-                <th>TIMESTAMP</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-                foreach ($files as $row)
-                {
-                    echo "<tr>";
-                    echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status/" . $row["EZ_REF_STRING"] . "\">" . $row["IDFILE"] . "</a></td>";
-                    echo "<td>" . $row["FILE_NAME"] . "</td>";
-                    echo "<td>" . $row["STATUS"] . "</td>";
-                    echo "<td>" . $row["S3_BUCKET"] . "</td>";
-                    echo "<td>" . $row["UPDT"] . "</td>";
-                    echo "</tr>";
-                }
-            ?>
-        </table>
+            <table id="status-table" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>IDFILE</th>
+                    <th>FILE</th>
+                    <th>STATUS</th>
+                    <th>S3 BUCKET</th>
+                    <th>TIMESTAMP</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $count = 0;
+                    foreach ($files as $row)
+                    {
+                        $count++;
+                        echo "<tr>";
+                        echo "<td>" . $count . "</td>";
+                        echo "<td><a href=\"http://sortvision.localhost.com/index.php/files/status?fileid=" . $row["IDFILE"] . "\">" . $row["IDFILE"] . "</a></td>";
+                        echo "<td>" . $row["FILE_NAME"] . "</td>";
+                        echo "<td>" . $row["STATUS"] . "</td>";
+                        echo "<td>" . $row["S3_BUCKET"] . "</td>";
+                        echo "<td>" . $row["UPDT"] . "</td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </table>
+        </div>
     </div>
 </div>
 <script>

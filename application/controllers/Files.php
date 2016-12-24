@@ -5,6 +5,8 @@ include 'Utility.php';
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
+session_start();
+
 class Files extends CI_Controller {
 	public function __construct() {
 		parent::__construct ();
@@ -25,10 +27,19 @@ class Files extends CI_Controller {
 	}
 	
 	public function Status() {
-		if (empty ( $_GET )) {
-			$data ['status'] = null;
-		} 
-		else {
+		$data = array();
+		$data ['fileNm'] = "";
+		$data ['status'] = "";
+		$data ['uploadedDt'] = "";
+		$data ['fileId'] = "";
+		$data ['filesHistory'] = "";
+		$data ['s3Bucket'] = "";
+		$data ['fileName'] = "";
+		$data ['s3Path'] = "";
+		$data ['tiledResultImages'] = "";
+
+		if (!empty ( $_GET ))
+		{
 			$fileId = $_GET['fileid'];
 			$result = $this->files_model->get_by_fileId( $fileId );
 			
@@ -52,7 +63,10 @@ class Files extends CI_Controller {
                 $data ['tiledResultImages'] =  util::getImagesTiledFromDB($resultImages, $resultImagePath, $fileId);
 			}
 		}
-		
+
+		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander'). '">BibSmart</a></li>' .
+								'<li class="active">Status</li>';
+
 		$this->load->view ( 'templates/header', $data );
 		$this->load->view ( 'pages/files', $data );
 		$this->load->view ( 'templates/footer' );

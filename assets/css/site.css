@@ -6,7 +6,7 @@ body {
 }
 
 .jumbotron {
-	background-image: url("../img/frontpage_cropped.jpg");
+	background-image: url("../img/frontpage_cropped_dark.jpg");
 	background-size: cover;
 	height: 80%;
 	color: white;
@@ -103,7 +103,24 @@ body {
 	padding: 10px;
 }
 
+.center-div{
+	margin: 0 auto;
+	width:20% /* value of your choice which suits your alignment */
+}
+
+.breadcrumb-container{
+	float: left;
+}
+
+.breadcrumb-container ul{
+	background-color: transparent;
+}
+
 #filters {
 	border: 1px solid #e5e5e5;
 	padding: 10px;
+}
+
+#navbar {
+	color: #fff;
 }

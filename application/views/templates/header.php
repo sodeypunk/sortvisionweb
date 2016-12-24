@@ -40,17 +40,27 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="<?php echo site_url('home')?>"><img src="../../../assets/img/SORTVISION_100x43.png"></a>
+			<div class="breadcrumb-container">
+				<ul class="breadcrumb">
+					<?php if(isset($breadcrumb))
+					{
+						echo $breadcrumb;
+					}
+					?>
+				</ul>
+			</div>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
+		  <div id="navbar" class="navbar-collapse collapse">
+			  <?php
+			  	if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true)
+				{
+					echo '<div class="navbar-right">';
+            		echo 	'<div class="form-group">';
+					echo 		$_SESSION['email'] . ' | ' . '<a href= "' . site_url('account/signout') . '"> Sign Out </a>';
+					echo 	'</div>';
+					echo '</div>';
+				}
+			  ?>
+		  </div>
       </div>
     </nav>
