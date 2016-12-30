@@ -46,9 +46,13 @@ class util
                     $resultHTML .= '<div class="row">';
                 }
 
-                $resultHTML .= '<div class="col-md-4">';
+                $resultHTML .= '<a href="' . $sourcePath . $row["IMAGE_FLATTENED"] . '" data-toggle="lightbox" data-gallery="image-gallery" class="col-sm-4">';
                 $resultHTML .= img($image_properties);
-                $resultHTML .= '</div>';
+                $resultHTML .= '</a>';
+
+                //$resultHTML .= '<div class="col-md-4">';
+                //$resultHTML .= img($image_properties);
+                //$resultHTML .= '</div>';
 
                 if (($count + 1) % 3 == 0) {
                     $resultHTML .= '</div>';

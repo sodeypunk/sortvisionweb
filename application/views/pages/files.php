@@ -71,18 +71,23 @@
 </div>
 
 <script>
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+	event.preventDefault();
+	$(this).ekkoLightbox();
+});
+
 $(document).ready(function() {
 //$(function() {
 
 	//update_status();
-    var intervalId = setInterval(function(){ update_status(); }, 5000);
-    $("#status-table tr:last td:first").prepend('<img id="statusgif" src="../../../assets/img/loading_sm_tr.gif">')
+    //var intervalId = setInterval(function(){ update_status(); }, 5000);
+    //$("#status-table tr:last td:first").prepend('<img id="statusgif" src="../../../bibcommander/assets/img/loading_sm_tr.gif">')
 
 	function update_status() {
 		$.ajax({
 			type: "POST",
 			url: "<?php echo base_url(); ?>index.php/files/getupdate",
-			data: { ezRefString: "<?php echo $ezRefString; ?>" }
+			data: { ezRefString: "" }
 		}).done(function(data, response) {
 			
 			var jsonResponse = JSON.parse(data);

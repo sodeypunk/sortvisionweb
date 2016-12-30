@@ -14,6 +14,7 @@
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <link href="<?php echo base_url("assets/css/ie10-viewport-bug-workaround.css"); ?>" rel="stylesheet">
 	    <link href="<?php echo base_url("assets/css/dropzone.css"); ?>" rel="stylesheet">
+		<link href="<?php echo base_url("assets/css/ekko-lightbox.min.css"); ?>" rel="stylesheet">
 	    <!-- Custom styles for this template -->
 	    <link href="<?php echo base_url("assets/css/site.css"); ?>" rel="stylesheet">
 
@@ -23,6 +24,7 @@
 	    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <script src="<?php echo base_url("assets/js/ie10-viewport-bug-workaround.js"); ?>"></script>
 	    <script src="<?php echo base_url("assets/js/dropzone.js"); ?>"></script>
+		<script src="<?php echo base_url("assets/js/ekko-lightbox.min.js"); ?>"></script>
 	    <script type="text/javascript" src="<?php echo base_url("assets/js/ie-emulation-modes-warning.js"); ?>"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
         <script src="<?php echo base_url("assets/js/sortvision.js"); ?>"></script>
