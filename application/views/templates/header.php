@@ -41,7 +41,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo site_url('home')?>"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
+          <a class="navbar-brand" href="http://sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
 			<div class="breadcrumb-container">
 				<ul class="breadcrumb">
 					<?php if(isset($breadcrumb))
@@ -53,16 +53,17 @@
 			</div>
         </div>
 		  <div id="navbar" class="navbar-collapse collapse">
-			  <?php
-			  	if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true)
-				{
-					echo '<div class="navbar-right">';
-            		echo 	'<div class="form-group">';
-					echo 		$_SESSION['email'] . ' | ' . '<a href= "' . site_url('account/signout') . '"> Sign Out </a>';
-					echo 	'</div>';
-					echo '</div>';
-				}
-			  ?>
+			  <div class="navbar-right">
+				  <?php
+					if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true)
+					{
+
+						echo 	'<div style="display: block;">';
+						echo 		$_SESSION['email'] . ' | ' . '<a href= "' . site_url('account/signout') . '"> Sign Out </a>';
+						echo 	'</div>';
+					}
+				  ?>
+			  </div>
 		  </div>
       </div>
     </nav>

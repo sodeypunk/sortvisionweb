@@ -2,6 +2,19 @@
 
 <div class="container">
     <h2><?php echo $TITLE; ?></h2>
+    <div style = "color: #aaa; display: block;">
+        Demo server -
+        <?php
+        if ($demo_server_online == true)
+        {
+            echo '<span style = "color: green;">Online</span>';
+        }
+        else
+        {
+            echo 'Offline';
+        }
+        ?>
+    </div>
 
     <div class="row">
         <div class="col-sm-12">
