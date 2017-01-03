@@ -19,7 +19,7 @@ class Analysis extends CI_Controller {
 
 	private function setDefaultFilterValues(&$data) {
 
-		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017";
+		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017; 9999+";
 		$DEFAULT_LABEL_LENGTH_VALUE = "5";
 
 		$data['filterAtLeastOne'] = true;
@@ -30,13 +30,12 @@ class Analysis extends CI_Controller {
 	}
 	
 	public function index($ezRefString = '') {
-		if (empty ( $ezRefString )) {
-			$data['status'] = null;
-		}
-		else {
-			$resultsClientGood = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'false');
-			$resultsClientPartial = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'partial');
-			$resultsClientCleanup = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, 'cleanup');
+		if (!empty ($_GET)) {
+			$fileId = $_GET['fileid'];
+
+			$resultsClientGood = $this->Results_Client_model->get_by_fileId($fileId, 'false');
+			$resultsClientPartial = $this->Results_Client_model->get_by_fileId($fileId, 'partial');
+			$resultsClientCleanup = $this->Results_Client_model->get_by_fileId($fileId, 'cleanup');
 			$sumOfTotal = count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial);
 			if ($sumOfTotal == 0) $sumOfTotal = 1;
 
@@ -46,22 +45,26 @@ class Analysis extends CI_Controller {
 			$data['goodPercent'] = round((count($resultsClientGood) / $sumOfTotal) * 100);
 			$data['partialPercent'] = round((count($resultsClientPartial) / $sumOfTotal) * 100);
 			$data['cleanupPercent'] = round((count($resultsClientCleanup) / $sumOfTotal) * 100);
-			$data['ezRefString'] = $ezRefString;
+			$data['fileId'] = $fileId;
 			$this->setDefaultFilterValues($data);
 
-		}
 
-		$this->load->view ( 'templates/header' );
-		$this->load->view ( 'pages/analysis', $data);
-		$this->load->view ( 'templates/footer' );
+			$this->load->view('templates/header');
+			$this->load->view('pages/analysis', $data);
+			$this->load->view('templates/footer');
+		}
+		else
+		{
+			redirect('home');
+		}
 	}
 
 	public function analysis() {
 		$action = $_POST['action'];
-		$ezRefString = $_POST['ezRefString'];
+		$fileId = $_POST['fileId'];
 
 		if ($action == 'Reset') {
-			$this->Index($ezRefString);
+			$this->Index($fileId);
 		}
 
 		$atLeastOne = false;
@@ -70,10 +73,10 @@ class Analysis extends CI_Controller {
 		}
 		$labelContainsChoice = $_POST['filter-label-contains-choice'];
 		$labelContainsValue = $_POST['filter-label-contains-value'];
-		$labelLengthChoice = $_POST['filter-label-length-choice'];
-		$labelLengthValue = $_POST['filter-label-length-value'];
+//		$labelLengthChoice = $_POST['filter-label-length-choice'];
+//		$labelLengthValue = $_POST['filter-label-length-value'];
 
-		$resultsClientAll = $this->Results_Client_model->get_by_ezRefString ( $ezRefString, '');
+		$resultsClientAll = $this->Results_Client_model->get_by_fileId ( $fileId, '');
 
 		$resultsClientGood = array();
 		$resultsClientCleanup = array();
@@ -83,7 +86,7 @@ class Analysis extends CI_Controller {
 		foreach ($resultsClientAll as $row)
 		{
 			$this->CheckLabelsContainsFilters($row, $invalidNumbersToCheck);
-			$this->CheckLabelsLengthFilters($row, $labelLengthValue);
+			//$this->CheckLabelsLengthFilters($row, $labelLengthValue);
 
 			$pass = $this->CheckAtLeastOneLabelFilter($row, $atLeastOne);
 
@@ -124,12 +127,12 @@ class Analysis extends CI_Controller {
 		$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
 		$data['partialPercent'] = round(count($resultsClientPartial) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
 		$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
-		$data['ezRefString'] = $ezRefString;
+		$data['fileId'] = $fileId;
 		$data['filterAtLeastOne'] = $atLeastOne;
 		$data['filterLabelContainsChoice'] = $labelContainsChoice;
 		$data['filterLabelContainsValue'] = $labelContainsValue;
-		$data['filterLabelLengthChoice'] = $labelLengthChoice;
-		$data['filterLabelLengthValue'] = $labelLengthValue;
+//		$data['filterLabelLengthChoice'] = $labelLengthChoice;
+//		$data['filterLabelLengthValue'] = $labelLengthValue;
 
 		$this->load->view ( 'templates/header' );
 		$this->load->view ( 'pages/analysis', $data);

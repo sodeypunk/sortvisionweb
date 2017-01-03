@@ -2,7 +2,7 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-sm-6">
-			<?php echo '<h2>File Status | <a href="#">Cleanup</a></h2>'; ?>
+			<?php echo '<h2>File Status | <a href="' . base_url("index.php/analysis/index") . '?fileid=' . $fileId . '">Cleanup</a></h2>'; ?>
 			<h5>Note: Please refresh this page for updates on your image</h5>
 			<?php 
 			if ($status != null && $status != "") 
@@ -30,7 +30,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr><td>Initializing...</td><td></td></tr>
+					<tr><td>Job created</td><td></td></tr>
 					<?php
 					if (!empty($filesHistory))
 					{

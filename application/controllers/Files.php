@@ -98,7 +98,7 @@ class Files extends CI_Controller {
 			$completedPercent = round(($maxStatus / 7) * 100);
 
 			// Get the table data
-			$statusHTML .= '<tr><td>Initializing...</td><td></td></tr>';
+			$statusHTML .= '<tr><td>Job created</td><td></td></tr>';
 			if (!empty($result))
 			{
 				foreach ($result as $row)
