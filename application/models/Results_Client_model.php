@@ -14,6 +14,8 @@ class Results_Client_model extends CI_Model {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
             "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
 
 
@@ -28,6 +30,8 @@ class Results_Client_model extends CI_Model {
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
+                "INNER JOIN SPARK_JOBS j " .
+                "ON f.IDFILE = j.IDFILE " .
                 "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
@@ -70,6 +74,10 @@ class Results_Client_model extends CI_Model {
             }
 
             $index = 0;
+
+            // Construct the image path
+            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageResults[0]['FILE_NAME']);
+            $sourcePath = Util::GetResultImagePath($imageResults[0]['S3_BUCKET'], $imageResults[0]['IDFILE'], $imageResults[0]['IDJOB'], $fileNameWithoutExt);
             foreach ($imageResults as &$row) {
 
                 $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);
@@ -77,6 +85,12 @@ class Results_Client_model extends CI_Model {
                 $row['LABELS_STRING_REMOVED'] = util::bibArrayToString($labelHashDict, $row['HASH'], true);
 
                 $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
+
+                $imagePath = '<a href="' . $sourcePath . $row["IMAGE_FLATTENED"] . '" data-toggle="lightbox" data-gallery="image-gallery" class="col-sm-4">';
+                $imagePath .= $row['IMAGE_FLATTENED'];
+                $imagePath .= '</a>';
+
+                $row['IMAGE_PATH'] = $imagePath;
                 $row['INDEX'] = $index;
                 $index++;
             }

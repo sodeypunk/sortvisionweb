@@ -3,6 +3,8 @@
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
+session_start();
+
 class Analysis extends CI_Controller {
 
 	public function __construct() {
@@ -19,7 +21,7 @@ class Analysis extends CI_Controller {
 
 	private function setDefaultFilterValues(&$data) {
 
-		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017; 9999+";
+		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017; 20000+";
 		$DEFAULT_LABEL_LENGTH_VALUE = "5";
 
 		$data['filterAtLeastOne'] = true;
@@ -158,6 +160,16 @@ class Analysis extends CI_Controller {
 
 		$labelsArray = &$row['LABELS_ARRAY'];
 
+		$greaterThanNumbers = array();
+		foreach ($invalidNumbersToCheck as $number)
+		{
+			if (strpos($number, "+") !== false)
+			{
+				$newNumber = (int)str_replace("+", "", $number);
+				array_push($greaterThanNumbers, $newNumber);
+			}
+		}
+
 		if (count($invalidNumbersToCheck) > 0)
 		{
 			foreach ($labelsArray as &$label)
@@ -168,7 +180,17 @@ class Analysis extends CI_Controller {
 					$label['REMOVED'] = "1";
 					$label['UPDT'] = date("Y-m-d H:i:s");
 				}
+				else {
+					foreach ($greaterThanNumbers as $number) {
+						if ($labelNum >= $number)
+						{
+							$label['REMOVED'] = "1";
+							$label['UPDT'] = date("Y-m-d H:i:s");
+						}
+					}
+				}
 			}
+
 		}
 
 	}

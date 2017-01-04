@@ -59,7 +59,7 @@ class Files extends CI_Controller {
 
 					$resultImages = $this->Results_Client_model->get_by_fileId($fileId, 'false', 100);
 
-					$resultImagePath = sprintf("http://www.sortvision.com/bibcommander/assets/result_images/%s/%s/%s/%s/recognition_images/", $s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
+					$resultImagePath = Util::GetResultImagePath($s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
 					$data ['tiledResultImages'] = util::getImagesTiledFromDB($resultImages, $resultImagePath, $fileId);
 				}
 			}

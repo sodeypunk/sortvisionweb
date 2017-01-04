@@ -47,9 +47,14 @@
 							<span class="input-group-addon" id="basic-addon1">Labels that contains (ex: 1,2,3; 6-10; 9999+)</span>
 							<input type="text" class="form-control" name="filter-label-contains-value" value="<?php echo $filterLabelContainsValue; ?>">
 						</div>
-<!--						<br><br>-->
+						<br><br>
+						<input type="submit" class="btn btn-primary" name="action" value="Preview"/>
+						<input type="submit" class="btn btn-primary" name="action" value="Reset"/>
+						<input type="submit" class="btn btn-primary" name="action" value="Update"/>
+						<input type="button" class="btn btn-primary" value="Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup/index/<?php echo $fileId; ?>'"/>
 
-	<!--					<input type="radio" name="filter-label-length-choice" value="label" --><?php //if ($filterLabelLengthChoice == "label") echo "checked"; ?><!--> <!--Remove label from image-->
+
+						<!--					<input type="radio" name="filter-label-length-choice" value="label" --><?php //if ($filterLabelLengthChoice == "label") echo "checked"; ?><!--> <!--Remove label from image-->
 	<!--					<input type="radio" name="filter-label-length-choice" value="image" --><?php //if ($filterLabelLengthChoice == "image") echo "checked"; ?><!--> <!--Remove image from clean set-->
 	<!--					<span style="margin-left: 10px;" id="filter-help-at-least-one" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>-->
 	<!--					<div class="input-group">-->
@@ -70,101 +75,17 @@
 					Partial <span id="good-percent"><?php echo $partialPercent; ?>%</span>
 				</div>
 				<div class="progress-bar progress-bar-danger" role="progressbar" style="width:<?php echo $cleanupPercent; ?>%">
-					Cleanup <span id="good-percent"><?php echo $cleanupPercent; ?>%</span>
+					Full Cleanup <span id="good-percent"><?php echo $cleanupPercent; ?>%</span>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<br><br>
-			<input type="submit" class="btn btn-primary" name="action" value="Preview"/>
-			<input type="submit" class="btn btn-primary" name="action" value="Reset"/>
-			<input type="submit" class="btn btn-primary" name="action" value="Update"/>
-			<input type="button" class="btn btn-primary" value="Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup/index/<?php echo $fileId; ?>'"/>
-		</div>
-	</div>
 	</form>
 
 	<div class="row">
 		<div class="col-sm-12">
-			<h3>Good</h3>
-			<table id="results-table" class="table table-striped">
-				<thead>
-				<tr>
-					<th>#</th>
-					<th>ID</th>
-					<th>IDFILE</th>
-					<th>IMAGE</th>
-					<th>LABELS</th>
-					<th>LABELS REMOVED</th>
-					<th>CLEANUP</th>
-					<th>UPDT</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-				$rowNum = 0;
-				foreach ($resultsClientGood as $row)
-				{
-					$rowNum++;
-					echo "<tr>";
-					echo "<td>" . $rowNum . "</td>";
-					echo "<td>" . $row["ID"] . "</td>";
-					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
-					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["UPDT"] . "</td>";
-					echo "</tr>";
-				}
-				?>
-			</table>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<h3>Partial</h3>
-			<table id="results-table" class="table table-striped">
-				<thead>
-				<tr>
-					<th>#</th>
-					<th>ID</th>
-					<th>IDFILE</th>
-					<th>IMAGE</th>
-					<th>LABELS</th>
-					<th>LABELS REMOVED</th>
-					<th>CLEANUP</th>
-					<th>UPDT</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-
-				$rowNum = 0;
-				foreach ($resultsClientPartial as $row)
-				{
-					$rowNum++;
-					echo "<tr>";
-					echo "<td>" . $rowNum . "</td>";
-					echo "<td>" . $row["ID"] . "</td>";
-					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
-					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["UPDT"] . "</td>";
-					echo "</tr>";
-				}
-				?>
-			</table>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<h3>Bad</h3>
+			<h3><span style="color: red;">Full Cleanup</span> - <?php echo $cleanupPercent; ?>%</h3>
 			<table id="results-table" class="table table-striped">
 				<thead>
 				<tr>
@@ -189,7 +110,84 @@
 					echo "<td>" . $rowNum . "</td>";
 					echo "<td>" . $row["ID"] . "</td>";
 					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_FLATTENED"] . "</td>";
+					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+					echo "<td>" . $row["CLEANUP"] . "</td>";
+					echo "<td>" . $row["UPDT"] . "</td>";
+					echo "</tr>";
+				}
+				?>
+			</table>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<h3><span style="color: orange;">Partial Cleanup</span> - <?php echo $partialPercent; ?>%</h3>
+			<table id="results-table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>ID</th>
+					<th>IDFILE</th>
+					<th>IMAGE</th>
+					<th>LABELS</th>
+					<th>LABELS REMOVED</th>
+					<th>CLEANUP</th>
+					<th>UPDT</th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php
+
+				$rowNum = 0;
+				foreach ($resultsClientPartial as $row)
+				{
+					$rowNum++;
+					echo "<tr>";
+					echo "<td>" . $rowNum . "</td>";
+					echo "<td>" . $row["ID"] . "</td>";
+					echo "<td>" . $row["IDFILE"] . "</td>";
+					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING"] . "</td>";
+					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+					echo "<td>" . $row["CLEANUP"] . "</td>";
+					echo "<td>" . $row["UPDT"] . "</td>";
+					echo "</tr>";
+				}
+				?>
+			</table>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<h3><span style="color: green;">Good</span> - <?php echo $goodPercent; ?>%</h3>
+			<table id="results-table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>ID</th>
+					<th>IDFILE</th>
+					<th>IMAGE</th>
+					<th>LABELS</th>
+					<th>LABELS REMOVED</th>
+					<th>CLEANUP</th>
+					<th>UPDT</th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php
+				$rowNum = 0;
+				foreach ($resultsClientGood as $row)
+				{
+					$rowNum++;
+					echo "<tr>";
+					echo "<td>" . $rowNum . "</td>";
+					echo "<td>" . $row["ID"] . "</td>";
+					echo "<td>" . $row["IDFILE"] . "</td>";
+					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
 					echo "<td>" . $row["LABELS_STRING"] . "</td>";
 					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 					echo "<td>" . $row["CLEANUP"] . "</td>";
@@ -203,6 +201,11 @@
 </div>
 
 <script>
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+	event.preventDefault();
+	$(this).ekkoLightbox();
+});
+
 $(function () {
 	$('#filter-help-atleast-one').popover({
 		trigger: 'click',
