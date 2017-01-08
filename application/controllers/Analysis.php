@@ -31,7 +31,7 @@ class Analysis extends CI_Controller {
 		$data['filterLabelLengthValue'] = $DEFAULT_LABEL_LENGTH_VALUE;
 	}
 	
-	public function index($ezRefString = '') {
+	public function index() {
 		if (!empty ($_GET)) {
 			$fileId = $_GET['fileid'];
 
@@ -48,10 +48,16 @@ class Analysis extends CI_Controller {
 			$data['partialPercent'] = round((count($resultsClientPartial) / $sumOfTotal) * 100);
 			$data['cleanupPercent'] = round((count($resultsClientCleanup) / $sumOfTotal) * 100);
 			$data['fileId'] = $fileId;
+			$data['numGoodImages'] = $sumOfTotal;
+			$data['numPartialImages'] = 0;
+			$data['numCleanupImages'] = 0;
 			$this->setDefaultFilterValues($data);
 
+			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
+				'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileId . '">Status</a></li>' .
+				'<li class="active">Analysis</li>';
 
-			$this->load->view('templates/header');
+			$this->load->view('templates/header', $data);
 			$this->load->view('pages/analysis', $data);
 			$this->load->view('templates/footer');
 		}
@@ -75,8 +81,6 @@ class Analysis extends CI_Controller {
 		}
 		$labelContainsChoice = $_POST['filter-label-contains-choice'];
 		$labelContainsValue = $_POST['filter-label-contains-value'];
-//		$labelLengthChoice = $_POST['filter-label-length-choice'];
-//		$labelLengthValue = $_POST['filter-label-length-value'];
 
 		$resultsClientAll = $this->Results_Client_model->get_by_fileId ( $fileId, '');
 
@@ -123,20 +127,40 @@ class Analysis extends CI_Controller {
 			$this->Results_Client_model->UpdateResultsClient ( $saveArray );
 		}
 
+		$totalImages = count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial);
+		$goodPercent = round(count($resultsClientGood) / ($totalImages) * 100);
+		$partialPercent = round(count($resultsClientPartial) / ($totalImages) * 100);
+		$cleanupPercent = round(count($resultsClientCleanup) / ($totalImages) * 100);
+
+		if (($goodPercent + $partialPercent + $cleanupPercent) > 100 )
+		{
+			$subtractValue = ($goodPercent + $partialPercent + $cleanupPercent) - 100;
+			$goodPercent = $goodPercent - $subtractValue;
+		}
+
+		$numGoodImages = count($resultsClientGood);
+		$numPartialImages = count($resultsClientPartial);
+		$numCleanupImages = count($resultsClientCleanup);
+
 		$data['resultsClientGood'] = $resultsClientGood;
 		$data['resultsClientPartial'] = $resultsClientPartial;
 		$data['resultsClientCleanup'] = $resultsClientCleanup;
-		$data['goodPercent'] = round(count($resultsClientGood) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
-		$data['partialPercent'] = round(count($resultsClientPartial) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
-		$data['cleanupPercent'] = round(count($resultsClientCleanup) / (count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial)) * 100);
+		$data['goodPercent'] = $goodPercent;
+		$data['partialPercent'] = $partialPercent;
+		$data['cleanupPercent'] = $cleanupPercent;
+		$data['numGoodImages'] = $numGoodImages;
+		$data['numPartialImages'] = $numPartialImages;
+		$data['numCleanupImages'] = $numCleanupImages;
 		$data['fileId'] = $fileId;
 		$data['filterAtLeastOne'] = $atLeastOne;
 		$data['filterLabelContainsChoice'] = $labelContainsChoice;
 		$data['filterLabelContainsValue'] = $labelContainsValue;
-//		$data['filterLabelLengthChoice'] = $labelLengthChoice;
-//		$data['filterLabelLengthValue'] = $labelLengthValue;
 
-		$this->load->view ( 'templates/header' );
+		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
+			'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileId . '">Status</a></li>' .
+			'<li class="active">Analysis</li>';
+
+		$this->load->view ( 'templates/header', $data);
 		$this->load->view ( 'pages/analysis', $data);
 		$this->load->view ( 'templates/footer' );
 	}

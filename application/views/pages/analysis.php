@@ -83,119 +83,145 @@
 
 	</form>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<h3><span style="color: red;">Full Cleanup</span> - <?php echo $cleanupPercent; ?>%</h3>
-			<table id="results-table" class="table table-striped">
-				<thead>
-				<tr>
-					<th>#</th>
-					<th>ID</th>
-					<th>IDFILE</th>
-					<th>IMAGE</th>
-					<th>LABELS</th>
-					<th>LABELS REMOVED</th>
-					<th>CLEANUP</th>
-					<th>UPDT</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
+	<h4>Click on each section below to see filter results</h4>
 
-				$rowNum = 0;
-				foreach ($resultsClientCleanup as $row)
-				{
-					$rowNum++;
-					echo "<tr>";
-					echo "<td>" . $rowNum . "</td>";
-					echo "<td>" . $row["ID"] . "</td>";
-					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
-					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["UPDT"] . "</td>";
-					echo "</tr>";
-				}
-				?>
-			</table>
+	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="headingOne">
+				<h4 class="panel-title">
+					<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+						<span style="color: red;">Full Cleanup</span> - <?php echo $cleanupPercent; ?>% - <?php echo $numCleanupImages; ?> images
+					</a>
+				</h4>
+			</div>
+			<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+				<div class="panel-body">
+					<table id="cleanup-results-table" class="table table-striped">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>ID</th>
+							<th>IDFILE</th>
+							<th>IMAGE</th>
+							<th>LABELS</th>
+							<th>LABELS REMOVED</th>
+							<th>CLEANUP</th>
+							<th>UPDT</th>
+						</tr>
+						</thead>
+						<tbody>
+						<?php
+
+						$rowNum = 0;
+						foreach ($resultsClientCleanup as $row)
+						{
+							$rowNum++;
+							echo "<tr>";
+							echo "<td>" . $rowNum . "</td>";
+							echo "<td>" . $row["ID"] . "</td>";
+							echo "<td>" . $row["IDFILE"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+							echo "<td>" . $row["CLEANUP"] . "</td>";
+							echo "<td>" . $row["UPDT"] . "</td>";
+							echo "</tr>";
+						}
+						?>
+					</table>
+				</div>
+			</div>
 		</div>
-	</div>
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="headingTwo">
+				<h4 class="panel-title">
+					<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+						<span style="color: orange;">Partial Cleanup</span> - <?php echo $partialPercent; ?>% - <?php echo $numPartialImages; ?> images
+					</a>
+				</h4>
+			</div>
+			<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+				<div class="panel-body">
+					<table id="partial-results-table" class="table table-striped">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>ID</th>
+							<th>IDFILE</th>
+							<th>IMAGE</th>
+							<th>LABELS</th>
+							<th>LABELS REMOVED</th>
+							<th>CLEANUP</th>
+							<th>UPDT</th>
+						</tr>
+						</thead>
+						<tbody>
+						<?php
 
-	<div class="row">
-		<div class="col-sm-12">
-			<h3><span style="color: orange;">Partial Cleanup</span> - <?php echo $partialPercent; ?>%</h3>
-			<table id="results-table" class="table table-striped">
-				<thead>
-				<tr>
-					<th>#</th>
-					<th>ID</th>
-					<th>IDFILE</th>
-					<th>IMAGE</th>
-					<th>LABELS</th>
-					<th>LABELS REMOVED</th>
-					<th>CLEANUP</th>
-					<th>UPDT</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-
-				$rowNum = 0;
-				foreach ($resultsClientPartial as $row)
-				{
-					$rowNum++;
-					echo "<tr>";
-					echo "<td>" . $rowNum . "</td>";
-					echo "<td>" . $row["ID"] . "</td>";
-					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
-					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["UPDT"] . "</td>";
-					echo "</tr>";
-				}
-				?>
-			</table>
+						$rowNum = 0;
+						foreach ($resultsClientPartial as $row)
+						{
+							$rowNum++;
+							echo "<tr>";
+							echo "<td>" . $rowNum . "</td>";
+							echo "<td>" . $row["ID"] . "</td>";
+							echo "<td>" . $row["IDFILE"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+							echo "<td>" . $row["CLEANUP"] . "</td>";
+							echo "<td>" . $row["UPDT"] . "</td>";
+							echo "</tr>";
+						}
+						?>
+					</table>
+				</div>
+			</div>
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-sm-12">
-			<h3><span style="color: green;">Good</span> - <?php echo $goodPercent; ?>%</h3>
-			<table id="results-table" class="table table-striped">
-				<thead>
-				<tr>
-					<th>#</th>
-					<th>ID</th>
-					<th>IDFILE</th>
-					<th>IMAGE</th>
-					<th>LABELS</th>
-					<th>LABELS REMOVED</th>
-					<th>CLEANUP</th>
-					<th>UPDT</th>
-				</tr>
-				</thead>
-				<tbody>
-				<?php
-				$rowNum = 0;
-				foreach ($resultsClientGood as $row)
-				{
-					$rowNum++;
-					echo "<tr>";
-					echo "<td>" . $rowNum . "</td>";
-					echo "<td>" . $row["ID"] . "</td>";
-					echo "<td>" . $row["IDFILE"] . "</td>";
-					echo "<td>" . $row["IMAGE_PATH"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING"] . "</td>";
-					echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
-					echo "<td>" . $row["CLEANUP"] . "</td>";
-					echo "<td>" . $row["UPDT"] . "</td>";
-					echo "</tr>";
-				}
-				?>
-			</table>
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="headingThree">
+				<h4 class="panel-title">
+					<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+						<span style="color: green;">Good</span> - <?php echo $goodPercent; ?>% - <?php echo $numGoodImages; ?> images
+					</a>
+				</h4>
+			</div>
+			<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+				<div class="panel-body">
+					<table id="good-results-table" class="table table-striped">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>ID</th>
+							<th>IDFILE</th>
+							<th>IMAGE</th>
+							<th>LABELS</th>
+							<th>LABELS REMOVED</th>
+							<th>CLEANUP</th>
+							<th>UPDT</th>
+						</tr>
+						</thead>
+						<tbody>
+						<?php
+						$rowNum = 0;
+						foreach ($resultsClientGood as $row)
+						{
+							$rowNum++;
+							echo "<tr>";
+							echo "<td>" . $rowNum . "</td>";
+							echo "<td>" . $row["ID"] . "</td>";
+							echo "<td>" . $row["IDFILE"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING"] . "</td>";
+							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
+							echo "<td>" . $row["CLEANUP"] . "</td>";
+							echo "<td>" . $row["UPDT"] . "</td>";
+							echo "</tr>";
+						}
+						?>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -207,6 +233,19 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
 });
 
 $(function () {
+
+	$("#cleanup-results-table").DataTable( {
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+	} );
+
+	$("#partial-results-table").DataTable( {
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+	} );
+
+	$("#good-results-table").DataTable( {
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+	} );
+
 	$('#filter-help-atleast-one').popover({
 		trigger: 'click',
 		placement: 'right',
