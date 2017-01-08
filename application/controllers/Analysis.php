@@ -23,18 +23,18 @@ class Analysis extends CI_Controller {
 	private function setDefaultFilterValues(&$data) {
 
 		$DEFAULT_LABEL_CONTAINS_VALUE = "0-9; 2000-2017; 20000+";
-		$DEFAULT_LABEL_LENGTH_VALUE = "5";
 
 		$data['filterAtLeastOne'] = true;
 		$data['filterLabelContainsChoice'] = "label";
 		$data['filterLabelContainsValue'] = $DEFAULT_LABEL_CONTAINS_VALUE;
-		$data['filterLabelLengthChoice'] = "label";
-		$data['filterLabelLengthValue'] = $DEFAULT_LABEL_LENGTH_VALUE;
 	}
 	
-	public function index() {
-		if (!empty ($_GET)) {
-			$fileId = $_GET['fileid'];
+	public function index($fileId = 0) {
+		if (!empty ($_GET) || $fileId > 0) {
+
+			if (!empty ($_GET)){
+				$fileId = $_GET['fileid'];
+			}
 
 			$resultsClientGood = $this->Results_Client_model->get_by_fileId($fileId, 'false');
 			$resultsClientPartial = $this->Results_Client_model->get_by_fileId($fileId, 'partial');
@@ -49,9 +49,10 @@ class Analysis extends CI_Controller {
 			$data['partialPercent'] = round((count($resultsClientPartial) / $sumOfTotal) * 100);
 			$data['cleanupPercent'] = round((count($resultsClientCleanup) / $sumOfTotal) * 100);
 			$data['fileId'] = $fileId;
-			$data['numGoodImages'] = $sumOfTotal;
-			$data['numPartialImages'] = 0;
-			$data['numCleanupImages'] = 0;
+			$data['numGoodImages'] = count($resultsClientGood);
+			$data['numPartialImages'] = count($resultsClientPartial);
+			$data['numCleanupImages'] = count($resultsClientCleanup);
+			$data['lastAction'] = "";
 			$this->setDefaultFilterValues($data);
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
@@ -71,10 +72,7 @@ class Analysis extends CI_Controller {
 	public function analysis() {
 		$action = $_POST['action'];
 		$fileId = $_POST['fileId'];
-
-		if ($action == 'Reset') {
-			$this->Index($fileId);
-		}
+		$lastAction = $_POST['last-action'];
 
 		$atLeastOne = false;
 		if (array_key_exists("filter-atleast-one", $_POST)) {
@@ -84,6 +82,17 @@ class Analysis extends CI_Controller {
 		$labelContainsValue = $_POST['filter-label-contains-value'];
 
 		$resultsClientAll = $this->Results_Client_model->get_by_fileId ( $fileId, '');
+
+		$atLeastOneTemp = false;
+		$labelContainsValueTemp = "";
+		if ($action == 'Reset' || ($action == "Save" && $lastAction == "Reset")) {
+			$atLeastOneTemp = $atLeastOne;
+			$labelContainsValueTemp = $labelContainsValue;
+			$atLeastOne = false;
+			$labelContainsValue = "";
+
+			$this->ResetAllImages($resultsClientAll);
+		}
 
 		$resultsClientGood = array();
 		$resultsClientCleanup = array();
@@ -122,7 +131,7 @@ class Analysis extends CI_Controller {
 
 		}
 
-		if ($action == 'Update')
+		if ($action == 'Save')
 		{
 			$saveArray = array_merge($resultsClientGood, $resultsClientCleanup, $resultsClientPartial);
 			$this->Results_Client_model->UpdateResultsClient ( $saveArray );
@@ -143,6 +152,11 @@ class Analysis extends CI_Controller {
 		$numPartialImages = count($resultsClientPartial);
 		$numCleanupImages = count($resultsClientCleanup);
 
+		if ($action == 'Reset' || ($action == "Save" && $lastAction == "Reset")) {
+			$atLeastOne = $atLeastOneTemp;
+			$labelContainsValue = $labelContainsValueTemp;
+		}
+
 		$data['resultsClientGood'] = $resultsClientGood;
 		$data['resultsClientPartial'] = $resultsClientPartial;
 		$data['resultsClientCleanup'] = $resultsClientCleanup;
@@ -156,6 +170,7 @@ class Analysis extends CI_Controller {
 		$data['filterAtLeastOne'] = $atLeastOne;
 		$data['filterLabelContainsChoice'] = $labelContainsChoice;
 		$data['filterLabelContainsValue'] = $labelContainsValue;
+		$data['lastAction'] = $action;
 
 		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
 			'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileId . '">Status</a></li>' .
@@ -218,6 +233,20 @@ class Analysis extends CI_Controller {
 
 		}
 
+	}
+
+	private function ResetAllImages(&$resultsClientAll)
+	{
+		foreach ($resultsClientAll as &$row) {
+			$row['Cleanup'] = '';
+
+			$labelsArray = &$row['LABELS_ARRAY'];
+
+			foreach ($labelsArray as &$label) {
+				$label['REMOVED'] = "0";
+				$label['UPDT'] = date("Y-m-d H:i:s");
+			}
+		}
 	}
 
 	private function CheckLabelsLengthFilters(&$row, $labelLengthValue) {

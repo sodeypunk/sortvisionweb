@@ -50,17 +50,14 @@
 						<br><br>
 						<input type="submit" class="btn btn-primary" name="action" value="Preview"/>
 						<input type="submit" class="btn btn-primary" name="action" value="Reset"/>
-						<input type="submit" class="btn btn-primary" name="action" value="Update"/>
-						<input type="button" class="btn btn-primary" value="Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup/index/<?php echo $fileId; ?>'"/>
+						<span style="margin-left: 10px;" id="action-help-filters" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>
+						<br/>
 
+						<input type="submit" class="btn btn-primary" style="margin-top: 5px;" name="action" value="Save"/>
+						<input type="button" class="btn btn-primary" style="margin-top: 5px;" value="Go to Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup/index/<?php echo $fileId; ?>'"/>
+						<span style="margin-left: 10px;" id="action-help-save" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>
 
-						<!--					<input type="radio" name="filter-label-length-choice" value="label" --><?php //if ($filterLabelLengthChoice == "label") echo "checked"; ?><!--> <!--Remove label from image-->
-	<!--					<input type="radio" name="filter-label-length-choice" value="image" --><?php //if ($filterLabelLengthChoice == "image") echo "checked"; ?><!--> <!--Remove image from clean set-->
-	<!--					<span style="margin-left: 10px;" id="filter-help-at-least-one" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>-->
-	<!--					<div class="input-group">-->
-	<!--						<span class="input-group-addon" id="basic-addon2">Labels that have lengths greater than</span>-->
-	<!--						<input type="text" class="form-control" name="filter-label-length-value" value="--><?php //echo $filterLabelLengthValue; ?><!--">-->
-	<!--					</div>-->
+						<input type="hidden" name="last-action" value="<?php echo $lastAction; ?>"/>
 					</div>
 				</div>
 		</div>
@@ -235,15 +232,18 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
 $(function () {
 
 	$("#cleanup-results-table").DataTable( {
-		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+		destroy: true
 	} );
 
 	$("#partial-results-table").DataTable( {
-		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+		destroy: true
 	} );
 
 	$("#good-results-table").DataTable( {
-		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+		"lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+		destroy: true
 	} );
 
 	$('#filter-help-atleast-one').popover({
@@ -256,6 +256,18 @@ $(function () {
 		trigger: 'click',
 		placement: 'right',
 		content: 'Filter out any bibs/labels that should not be in this race set. Single digits, years, and very large numbers are recommended here.'
+	})
+
+	$('#action-help-filters').popover({
+		trigger: 'click',
+		placement: 'right',
+		content: 'Use these two buttons to preview the image results from the filter set above. You may also clear the filters at anytime.'
+	})
+
+	$('#action-help-save').popover({
+		trigger: 'click',
+		placement: 'right',
+		content: 'Once the results look correct, save the results to the database. This is a permanent action and cannot be undone. Go to cleanup afterwards to fix any images set for cleanup.'
 	})
 })
 </script>
