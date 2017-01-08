@@ -4,6 +4,7 @@ if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
 session_start();
+date_default_timezone_set('America/Chicago');
 
 class Analysis extends CI_Controller {
 
