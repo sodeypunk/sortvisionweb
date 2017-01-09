@@ -65,7 +65,7 @@ class util
         return $resultHTML;
     }
 
-    public static function  getImagesTiledFromDBForCleanup($data, $sourcePath, $ezRefString)
+    public static function  getImagesTiledFromDBForCleanup($data, $sourcePath)
     {
 
         $resultHTML = "";
@@ -78,11 +78,11 @@ class util
                 $goodLabels = self::GoodLabels($row);
 
                 if ($count == 0) {
-                    $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString, true);
+                    $image_properties = self::buildImageHTML($row, $sourcePath, true);
                 }
                 else
                 {
-                    $image_properties = self::buildImageHTML($row, $sourcePath, $ezRefString);
+                    $image_properties = self::buildImageHTML($row, $sourcePath, false);
                 }
 
                 if ($count % 3 == 0 || $count == 0) {

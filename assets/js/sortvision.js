@@ -52,7 +52,7 @@
         var cleanupCtrl = this;
         this.bibs = [];
         this.chunkedData = [];
-        this.ezRefString = $('input[name=ezRefString]').val();
+        this.fileId = $('input[name=fileId]').val();
         this.selectedIndex = 0;
         this.selectedLabelIndex = 0;
         this.savingIndex = 0;
@@ -64,8 +64,8 @@
 
         $http({
             method: 'POST',
-            url: '/index.php/cleanup/bibs',
-            params: {ezRefString: this.ezRefString}}
+            url: '/bibcommander/index.php/cleanup/bibs',
+            params: {fileid: this.fileId}}
         ).success(function(data) {
 
             cleanupCtrl.bibs = data;
@@ -75,8 +75,8 @@
 
         $http({
             method: 'POST',
-            url: '/index.php/cleanup/getTotalCleanupImageCount',
-            params: {ezRefString: this.ezRefString, batch: 100}}
+            url: '/bibcommander/index.php/cleanup/getTotalCleanupImageCount',
+            params: {fileid: this.fileId, batch: 100}}
         ).success(function(data) {
 
             cleanupCtrl.imageCount = data['COUNT'];
@@ -131,7 +131,7 @@
 
             $http({
                 method: 'POST',
-                url: '/index.php/cleanup/update',
+                url: '/bibcommander/index.php/cleanup/update',
                 data: {bibsArray: bibsArray, cleaned: status}}
             ).success(function(data) {
 

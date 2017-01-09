@@ -9,14 +9,14 @@ class Results_Client_model extends CI_Model {
         $this->load->model ( 'system_model' );
     }
 
-    public function get_count_by_ezRefString($ezRefString, $cleanUp = '', $numberOfRecords = 0)
+    public function get_count_by_fileId($fileId, $cleanUp = '', $numberOfRecords = 0)
     {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
             "INNER JOIN SPARK_JOBS j " .
             "ON f.IDFILE = j.IDFILE " .
-            "WHERE f.EZ_REF_STRING = '" . $ezRefString . "' ";
+            "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
         $sql = $this->AddWhereClause($sql, $cleanUp, $numberOfRecords);
@@ -86,11 +86,13 @@ class Results_Client_model extends CI_Model {
 
                 $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
 
-                $imagePath = '<a href="' . $sourcePath . $row["IMAGE_FLATTENED"] . '" data-toggle="lightbox" data-gallery="image-gallery" class="col-sm-4">';
-                $imagePath .= $row['IMAGE_FLATTENED'];
-                $imagePath .= '</a>';
+                $imagePath = $sourcePath . $row["IMAGE_FLATTENED"];
+                $imagePathLightBox = '<a href="' . $imagePath . '" data-toggle="lightbox" data-gallery="image-gallery" class="col-sm-4">';
+                $imagePathLightBox .= $row['IMAGE_FLATTENED'];
+                $imagePathLightBox .= '</a>';
 
                 $row['IMAGE_PATH'] = $imagePath;
+                $row['IMAGE_PATH_LIGHTBOX'] = $imagePathLightBox;
                 $row['INDEX'] = $index;
                 $index++;
             }

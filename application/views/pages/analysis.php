@@ -54,7 +54,7 @@
 						<br/>
 
 						<input type="submit" class="btn btn-primary" style="margin-top: 5px;" name="action" value="Save"/>
-						<input type="button" class="btn btn-primary" style="margin-top: 5px;" value="Go to Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup/index/<?php echo $fileId; ?>'"/>
+						<input type="button" class="btn btn-primary" style="margin-top: 5px;" value="Go to Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup?fileid=<?php echo $fileId; ?>'"/>
 						<span style="margin-left: 10px;" id="action-help-save" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>
 
 						<input type="hidden" name="last-action" value="<?php echo $lastAction; ?>"/>
@@ -117,7 +117,7 @@
 							echo "<td>" . $rowNum . "</td>";
 							echo "<td>" . $row["ID"] . "</td>";
 							echo "<td>" . $row["IDFILE"] . "</td>";
-							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH_LIGHTBOX"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 							echo "<td>" . $row["CLEANUP"] . "</td>";
@@ -163,7 +163,7 @@
 							echo "<td>" . $rowNum . "</td>";
 							echo "<td>" . $row["ID"] . "</td>";
 							echo "<td>" . $row["IDFILE"] . "</td>";
-							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH_LIGHTBOX"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 							echo "<td>" . $row["CLEANUP"] . "</td>";
@@ -208,7 +208,7 @@
 							echo "<td>" . $rowNum . "</td>";
 							echo "<td>" . $row["ID"] . "</td>";
 							echo "<td>" . $row["IDFILE"] . "</td>";
-							echo "<td>" . $row["IMAGE_PATH"] . "</td>";
+							echo "<td>" . $row["IMAGE_PATH_LIGHTBOX"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING"] . "</td>";
 							echo "<td>" . $row["LABELS_STRING_REMOVED"] . "</td>";
 							echo "<td>" . $row["CLEANUP"] . "</td>";

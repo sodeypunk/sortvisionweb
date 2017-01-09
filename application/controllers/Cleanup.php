@@ -20,24 +20,33 @@ class Cleanup extends CI_Controller {
 	}
 
 	
-	public function index($ezRefString = '') {
-		$resultCleanupImages = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 100);
-		$imageCount = $this->Results_Client_model->get_count_by_ezRefString($ezRefString, 'true');
-		$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/", $ezRefString, 'true');
-		$data['ezRefString'] = $ezRefString;
-		$data['imageCount'] = $imageCount;
+	public function index() {
+		if (!empty ($_GET)) {
 
-		$this->load->view ( 'templates/header' );
-		$this->load->view ( 'pages/cleanup', $data);
-		$this->load->view ( 'templates/footer' );
+			$fileId = $_GET['fileid'];
+
+			$resultCleanupImages = $this->Results_Client_model->get_by_fileId($fileId, 'true', 100);
+			$imageCount = $this->Results_Client_model->get_count_by_fileId($fileId, 'true');
+			$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/");
+			$data['fileId'] = $fileId;
+			$data['imageCount'] = $imageCount;
+
+			$this->load->view('templates/header');
+			$this->load->view('pages/cleanup', $data);
+			$this->load->view('templates/footer');
+		}
+		else
+		{
+			redirect('home');
+		}
 	}
 
 	public function bibs() {
-		$ezRefString = $_GET['ezRefString'];
+		$fileId = $_GET['fileid'];
 		$objectString = "";
-		if (!empty ( $ezRefString )) {
+		if (!empty ( $fileId )) {
 
-			$objectString = $this->Results_Client_model->get_by_ezRefString($ezRefString, 'true', 100);
+			$objectString = $this->Results_Client_model->get_by_fileId($fileId, 'true', 100);
 		}
 
 		header('Content-Type: application/json');
@@ -47,9 +56,9 @@ class Cleanup extends CI_Controller {
 	public function getTotalCleanupImageCount() {
 		$countArray = array();
 		$pagesArray = array();
-		$ezRefString = $_GET['ezRefString'];
+		$fileId = $_GET['fileid'];
 		$batchSize = (int)$_GET['batch'];
-		$imageCount = $this->Results_Client_model->get_count_by_ezRefString($ezRefString, 'true');
+		$imageCount = $this->Results_Client_model->get_count_by_fileId($fileId, 'true');
 
 		$pages = ceil($imageCount / $batchSize);
 
