@@ -35,6 +35,24 @@ body {
 	border-style: solid;
 }
 
+.checkbox:hover {
+	border-width: 1px;
+	border: gray;
+	border-style: dotted;
+}
+
+.bib-label {
+	float: left;
+}
+
+.bib-label-row {
+	margin: 5px;
+}
+
+.bib-label-button {
+	margin-left: 5px;
+}
+
 #result-status {
 	font-weight: bold;
 }

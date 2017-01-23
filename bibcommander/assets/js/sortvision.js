@@ -90,6 +90,62 @@
             }
         });
 
+        $scope.addNewLabel = function(index) {
+            var newLabel = prompt("Please enter new label");
+            if (newLabel) {
+                var bib = this.$parent.cleanup.bibs[index];
+                var labelsArray = bib.LABELS_ARRAY;
+
+                labelsArray.push({
+                    INDEX: labelsArray.length,
+                    ID: -1,
+                    IDFILE: bib.IDFILE,
+                    IMAGE: bib.IMAGE,
+                    LABEL: newLabel,
+                    REMOVED: "0",
+                    COORDINATE: "[0,0,0,0]",
+                    CHECKED: false
+                });
+            }
+        }
+
+        $scope.deleteLabel = function(index) {
+            var bib = this.$parent.cleanup.bibs[index];
+            var labelsArray = bib.LABELS_ARRAY;
+
+            var labelsText = '';
+            for (var i=0; i<labelsArray.length; i++)
+            {
+                if (labelsArray[i].CHECKED == true)
+                {
+                    labelsText = labelsText + labelsArray[i].LABEL + ", ";
+                }
+            }
+
+            if (labelsText != '') {
+                var result = confirm("Are you sure you want to delete labels: \n " + labelsText);
+                if (result) {
+                    var bib = this.$parent.cleanup.bibs[index];
+                    var labelsArray = bib.LABELS_ARRAY;
+
+                    labelsArray.push({
+                        INDEX: labelsArray.length,
+                        ID: -1,
+                        IDFILE: bib.IDFILE,
+                        IMAGE: bib.IMAGE,
+                        LABEL: newLabel,
+                        REMOVED: "0",
+                        COORDINATE: "[0,0,0,0]",
+                        CHECKED: false
+                    });
+                }
+            }
+            else
+            {
+                alert("No labels were selected for delete.");
+            }
+        }
+
         this.scrollToElement = function()
         {
             var newHash = this.bibs[this.selectedIndex].IMAGE_FLATTENED;
@@ -101,14 +157,6 @@
             {
                 $anchorScroll();
             }
-        }
-
-        this.addNewLabel = function(newLabel)
-        {
-            var bib = this.bibs[this.selectedIndex];
-            var labelsArray = this.bibs[this.selectedIndex].LABELS_ARRAY;
-
-            labelsArray.push({INDEX: labelsArray.length, ID: -1, IDFILE: bib.IDFILE, IMAGE: bib.IMAGE, LABEL: newLabel, REMOVED: "0", COORDINATE: "[0,0,0,0]", CHECKED: true });
         }
 
         this.markImageCompleted = function(status)

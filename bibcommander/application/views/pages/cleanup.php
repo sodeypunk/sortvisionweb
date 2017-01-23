@@ -10,6 +10,8 @@
 
                 </select>
                 <br><br>
+
+                <br>
             </div>
         </div>
         <div id="bibs">
@@ -19,10 +21,30 @@
                         <!--<div ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" style="background-image:url(<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}});">-->
                         <img ng-if="bib.CLEANUP_STATUS != null" class="checkmark" src="<?php echo base_url(); ?>assets/img/checkmark_small.png">
                         <img ng-if="cleanup.saving === true" class="loading" src="<?php echo base_url(); ?>assets/img/loading_sm.gif">
-                        <img ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" ng-src="{{bib.IMAGE_PATH}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}">
-                            <label ng-class="{'checkbox-border' : cleanup.selectedIndex == bib.INDEX && cleanup.selectedLabelIndex == label.INDEX}" class="checkbox" for="{{label.LABEL}}" ng-repeat="label in bib.LABELS_ARRAY">
-                                <input type="checkbox" name="{{bib.IMAGE_FLATTENED}}" id="{{label.LABEL}}" ng-model="label.CHECKED"> {{label.LABEL}} </input>
-                            </label>
+                        <img ng-src="{{bib.IMAGE_PATH}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                ID: {{bib.ID}}
+
+                                <button ng-click="addNewLabel(bib.INDEX)" class="btn btn-primary btn-xs">New Bib Label</button>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    <h5>Keep</h5>
+                                <div class="bib-label-row" ng-if="label.REMOVED === '0'" ng-repeat="label in bib.LABELS_ARRAY">
+                                    <label class="bib-label">{{label.LABEL}}</label>
+                                    <button ng-click="removeLabel(label.ID)" class="btn btn-danger btn-xs bib-label-button"">-</button>
+                                </div>
+                                    <hr style="border-bottom:1px solid;">
+                                    <h5>Removed</h5>
+                                    <div class="bib-label-row" ng-if="label.REMOVED === '1'" ng-repeat="label in bib.LABELS_ARRAY">
+                                        <label class="bib-label">{{label.LABEL}}</label>
+                                        <button ng-click="keepLabel(label.ID)" class="btn btn-success btn-xs bib-label-button">+</button>
+                                    </div>
+
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -30,3 +52,7 @@
         </div>
     </div>
 </div>
+
+<script>
+
+</script>
