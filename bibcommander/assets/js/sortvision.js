@@ -60,6 +60,7 @@
         this.imageCount = 0;
         this.pages = [];
         this.currentPage = 1;
+        this.batch = 0;
         $anchorScroll.yOffset = 100;
 
         $http({
@@ -78,7 +79,7 @@
             url: '/bibcommander/index.php/cleanup/getTotalCleanupImageCount',
             params: {fileid: this.fileId, batch: 100}}
         ).success(function(data) {
-
+            cleanupCtrl.batch = 100;
             cleanupCtrl.imageCount = data['COUNT'];
             cleanupCtrl.pages = data['PAGES'];
 
@@ -104,8 +105,44 @@
                     LABEL: newLabel,
                     REMOVED: "0",
                     COORDINATE: "[0,0,0,0]",
-                    CHECKED: false
+                    STATE: "NEW"
                 });
+            }
+        }
+
+        $scope.keepLabel = function(index, labelID) {
+            var bib = this.$parent.cleanup.bibs[index];
+            var labelsArray = bib.LABELS_ARRAY;
+
+            for (var i=0; i<labelsArray.length; i++)
+            {
+                if (labelsArray[i].ID === labelID)
+                {
+                    labelsArray[i].REMOVED = "0";
+                    labelsArray[i].STATE = "KEEP";
+                    break;
+                }
+            }
+        }
+
+        $scope.removeLabel = function(index, labelID) {
+            var bib = this.$parent.cleanup.bibs[index];
+            var labelsArray = bib.LABELS_ARRAY;
+
+            for (var i=0; i<labelsArray.length; i++)
+            {
+                if (labelsArray[i].ID === labelID)
+                {
+                    if (labelsArray[i].STATE === "NEW")
+                    {
+                        labelsArray.splice(i, 1);
+                    }
+                    else {
+                        labelsArray[i].REMOVED = "1";
+                        labelsArray[i].STATE = "REMOVED";
+                    }
+                    break;
+                }
             }
         }
 
