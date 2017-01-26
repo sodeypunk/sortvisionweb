@@ -25,7 +25,7 @@ class Results_Client_model extends CI_Model {
 
         return (int)$countResults[0]['COUNT'];
     }
-    public function get_by_fileId($fileId, $cleanUp = '', $numberOfRecords = 0) {
+    public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
@@ -35,7 +35,7 @@ class Results_Client_model extends CI_Model {
                 "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
-        $imageSql = $this->AddWhereClause($imageSql, $cleanUp, $numberOfRecords);
+        $imageSql = $this->AddWhereClause($imageSql, $cleanUp, $batch, $page);
 
         $imageQuery = $this->db->query($imageSql);
         $imageResults = $imageQuery->result_array();
@@ -106,7 +106,7 @@ class Results_Client_model extends CI_Model {
 
     }
 
-    private function AddWhereClause($sql, $cleanUp, $numberOfRecords)
+    private function AddWhereClause($sql, $cleanUp, $batch = 0, $page = 1)
     {
         if ($cleanUp == 'true') {
             $sql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial')";
@@ -123,9 +123,10 @@ class Results_Client_model extends CI_Model {
 
         $sql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
 
-        if ($numberOfRecords > 0)
+        $offset = ($page * $batch) - $batch;
+        if ($batch > 0)
         {
-            $sql .= "LIMIT " . $numberOfRecords . " ";
+            $sql .= "LIMIT " . $batch . " OFFSET " . $offset . " ";
         }
 
         return $sql;
@@ -139,13 +140,10 @@ class Results_Client_model extends CI_Model {
 
         foreach ($rows as $row)
         {
+            $hash = $row['HASH'];
             $clientData = array(
                 'ID' => $row['ID'],
-                'IDFILE' => $row['IDFILE'],
-                'IMAGE' => $row['IMAGE'],
-                'IMAGE_SIZE' => $row['IMAGE_SIZE'],
-                'CLEANUP' => $row['CLEANUP'],
-                'CLEANUP_STATUS' => $row['CLEANUP_STATUS'],
+                'CLEANUP_STATUS' => 'REVIEWED',
                 'UPDT' => util::CurrentDateTime()
             );
 
@@ -155,10 +153,12 @@ class Results_Client_model extends CI_Model {
                     $labelsData = array(
                         'ID' => $label['ID'],
                         'IDFILE' => $label['IDFILE'],
+                        'IMAGE' => $label['IMAGE'],
                         'LABEL' => $label['LABEL'],
                         'COORDINATE' => $label['COORDINATE'],
-                        'REMOVED' => $label['REMOVED'],
-                        'UPDT' => util::CurrentDateTime()
+                        'REMOVED' => intval($label['REMOVED']),
+                        'UPDT' => util::CurrentDateTime(),
+                        'HASH' => $hash
                     );
 
                     if ((int)$labelsData['ID'] > 0)
@@ -167,6 +167,7 @@ class Results_Client_model extends CI_Model {
                     }
                     else
                     {
+                        $labelsData['ID'] = null;
                         array_push($insertLabelsArray, $labelsData);
                     }
 
@@ -186,7 +187,7 @@ class Results_Client_model extends CI_Model {
             $this->db->update_batch('RESULTS_LABELS', $saveLabelsArray, 'ID');
         }
         if (count($insertLabelsArray)> 0) {
-            $this->db->insert('RESULTS_LABELS', $insertLabelsArray);
+            $this->db->insert_batch('RESULTS_LABELS', $insertLabelsArray);
         }
 
         if ($rowsAffected > 0)

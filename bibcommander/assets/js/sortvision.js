@@ -59,14 +59,14 @@
         this.saving = false;
         this.imageCount = 0;
         this.pages = [];
-        this.currentPage = 1;
-        this.batch = 0;
+        this.page = parseInt($('input[name=page]').val());
+        this.batch = $('input[name=batch]').val();
         $anchorScroll.yOffset = 100;
 
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/bibs',
-            params: {fileid: this.fileId}}
+            params: {fileid: this.fileId, batch: this.batch, page: this.page}}
         ).success(function(data) {
 
             cleanupCtrl.bibs = data;
@@ -77,17 +77,17 @@
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/getTotalCleanupImageCount',
-            params: {fileid: this.fileId, batch: 100}}
+            params: {fileid: this.fileId, batch: this.batch}}
         ).success(function(data) {
-            cleanupCtrl.batch = 100;
             cleanupCtrl.imageCount = data['COUNT'];
             cleanupCtrl.pages = data['PAGES'];
 
         });
 
-        $scope.$watch('cleanup.currentPage', function(newValue, oldValue){
+        $scope.$watch('cleanup.page', function(newValue, oldValue){
             if (newValue !== oldValue) {
-                alert("Property has changed to " + newValue + " from " + oldValue);
+                cleanupCtrl.page = newValue;
+                window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileId + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
             }
         });
 
@@ -183,6 +183,33 @@
             }
         }
 
+        $scope.saveBibs = function() {
+            var bibs = this.$parent.cleanup.bibs;
+
+            if (confirm("Are you sure you want to save " + bibs.length + " bibs?")) {
+
+                if (bibs.length > 0) {
+                    $http({
+                            method: 'POST',
+                            url: '/bibcommander/index.php/cleanup/update',
+                            data: {bibsArray: bibs}
+                        }
+                    ).success(function (data) {
+
+                        if (data.success === true) {
+                            alert("Saved successfully!");
+                            window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileId + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
+                        }
+
+                    }).error(function (data) {
+                        $scope.cleanup.saving = false;
+                        alert("Saving failed");
+                    });
+                }
+            }
+
+        }
+
         this.scrollToElement = function()
         {
             var newHash = this.bibs[this.selectedIndex].IMAGE_FLATTENED;
@@ -206,29 +233,6 @@
             {
                 this.ajaxSave(false);
             }
-        }
-
-        this.ajaxSave = function(status)
-        {
-            var bibsArray = this.bibs[this.selectedIndex];
-            this.savingIndex = this.selectedIndex;
-            this.saving = true;
-
-            $http({
-                method: 'POST',
-                url: '/bibcommander/index.php/cleanup/update',
-                data: {bibsArray: bibsArray, cleaned: status}}
-            ).success(function(data) {
-
-                if (data.success === true) {
-                    $scope.cleanup.bibs[$scope.cleanup.savingIndex].CLEANUP_STATUS = data.bib.CLEANUP_STATUS;
-                    $scope.cleanup.saving = false;
-                }
-
-            }).error(function(data) {
-                $scope.cleanup.saving = false;
-                alert("Saving failed");
-            });
         }
 
         function chunk(myArray, size) {
@@ -315,7 +319,7 @@
                });
            }
        }
-    });
+     });
 
 })();
 

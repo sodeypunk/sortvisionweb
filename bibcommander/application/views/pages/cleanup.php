@@ -3,22 +3,24 @@
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-sm-12">
-                <h2>Cleanup - {{cleanup.imageCount}} images</h2>
+                <h2>Cleanup - {{cleanup.imageCount}} total images</h2>
+                Showing {{cleanup.page * cleanup.batch - cleanup.batch + 1}} - {{cleanup.page * cleanup.batch}}
                 <input type="hidden" name="fileId" value="<?php echo $fileId; ?>">
+                <input type="hidden" name="batch" value="<?php echo $batch; ?>">
+                <input type="hidden" name="page" value="<?php echo $page; ?>">
             </div>
         </div>
+        <br/>
         <div class="row">
             <div class="col-sm-12">
                 <input type="button" class="btn btn-primary" value="Back to Analysis" onclick="location.href='<?php echo base_url(); ?>index.php/analysis?fileid=<?php echo $fileId; ?>'"/>
-                <input type="button" class="btn btn-primary" value="Save" ng-click="saveCurrentPage()"/>
+                <input type="button" class="btn btn-primary" value="Save" ng-click="saveBibs()"/>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12 text-right">
-                Page <select ng-model="cleanup.currentPage" ng-options="item for item in cleanup.pages">
+                Page <select ng-model="cleanup.page" ng-options="value.id as value.name for (key, value) in cleanup.pages">
                 </select>
-                <br/>
-                Showing {{cleanup.currentPage * cleanup.batch - cleanup.batch + 1}} - {{cleanup.currentPage * cleanup.batch}}
             </div>
         </div>
         <br><br>
@@ -47,7 +49,7 @@
                                     <hr style="border-bottom:1px solid;">
                                     <h5>Removed</h5>
                                     <div class="bib-label-row" ng-if="label.REMOVED === '1'" ng-repeat="label in bib.LABELS_ARRAY">
-                                        <label class="bib-label">{{label.LABEL}}</label>
+                                        <label class="bib-label strikethrough">{{label.LABEL}}</label>
                                         <button ng-click="keepLabel(bib.INDEX, label.ID)" class="btn btn-success btn-xs bib-label-button">Keep</button>
                                         <span ng-if="label.STATE === 'REMOVED'" class="label label-default bib-label-button"">REMOVED</span>
                                     </div>

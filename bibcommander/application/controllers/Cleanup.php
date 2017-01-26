@@ -21,14 +21,29 @@ class Cleanup extends CI_Controller {
 
 	
 	public function index() {
+
+		$fileId = 0;
+		$batch = 100;
+		$page = 1;
+
 		if (!empty ($_GET)) {
 
-			$fileId = $_GET['fileid'];
+			if (!empty ($_GET['fileid'])) {
+				$fileId = $_GET['fileid'];
+			}
+			if (!empty ($_GET['batch'])) {
+				$batch = $_GET['batch'];
+			}
+			if (!empty ($_GET['page'])) {
+				$page = $_GET['page'];
+			}
 
 			$resultCleanupImages = $this->Results_Client_model->get_by_fileId($fileId, 'true', 100);
 			$imageCount = $this->Results_Client_model->get_count_by_fileId($fileId, 'true');
 			$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/");
 			$data['fileId'] = $fileId;
+			$data['batch'] = $batch;
+			$data['page'] = $page;
 			$data['imageCount'] = $imageCount;
 
 			$this->load->view('templates/header');
@@ -42,11 +57,23 @@ class Cleanup extends CI_Controller {
 	}
 
 	public function bibs() {
-		$fileId = $_GET['fileid'];
+		$fileId = -1;
+		$page = 1;
+		$batch = 100;
 		$objectString = "";
-		if (!empty ( $fileId )) {
 
-			$objectString = $this->Results_Client_model->get_by_fileId($fileId, 'true', 100);
+		if (!empty($_GET['batch']))
+		{
+			$batch = $_GET['batch'];
+		}
+		if (!empty($_GET['page']))
+		{
+			$page = $_GET['page'];
+		}
+		if (!empty ($_GET['fileid']))
+		{
+			$fileId = $_GET['fileid'];
+			$objectString = $this->Results_Client_model->get_by_fileId($fileId, 'true', $batch, $page);
 		}
 
 		header('Content-Type: application/json');
@@ -64,7 +91,10 @@ class Cleanup extends CI_Controller {
 
 		for ($x=1; $x<=$pages; $x++)
 		{
-			array_push($pagesArray, $x);
+			$newArray = array();
+			$newArray['id'] = $x;
+			$newArray['name'] = $x;
+			array_push($pagesArray, $newArray);
 		}
 
 		$countArray['COUNT'] = $imageCount;
@@ -78,22 +108,10 @@ class Cleanup extends CI_Controller {
 		$resultArray = array();
 		$resultArray['success'] = false;
 		$bibsArray = $_POST['bibsArray'];
-		$cleaned = $_POST['cleaned'];
-		$saveArray = array();
-		if ($cleaned == "true")
-		{
-			$bibsArray['CLEANUP_STATUS'] = 'CLEANED';
-		}
-		else
-		{
-			$bibsArray['CLEANUP_STATUS'] = null;
-		}
-		array_push($saveArray, $bibsArray);
 
 		if (!is_null($bibsArray)) {
-			if ($this->Results_Client_model->UpdateResultsClient($saveArray)) {
+			if ($this->Results_Client_model->UpdateResultsClient($bibsArray)) {
 				$resultArray['success'] = true;
-				$resultArray['bib'] = $bibsArray;
 			}
 		}
 
