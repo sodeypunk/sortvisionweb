@@ -25,6 +25,25 @@ class Results_Client_model extends CI_Model {
 
         return (int)$countResults[0]['COUNT'];
     }
+
+    public function get_cleanup_status_count($fileId, $cleanUp = '', $status)
+    {
+        $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "WHERE f.IDFILE = '" . $fileId . "' " .
+            "AND CLEANUP_STATUS = '" . $status . "' ";
+
+
+        $sql = $this->AddWhereClause($sql, $cleanUp);
+        $countQuery = $this->db->query($sql);
+        $countResults = $countQuery->result_array();
+
+        return (int)$countResults[0]['COUNT'];
+    }
+
     public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
@@ -143,7 +162,8 @@ class Results_Client_model extends CI_Model {
             $hash = $row['HASH'];
             $clientData = array(
                 'ID' => $row['ID'],
-                'CLEANUP_STATUS' => 'REVIEWED',
+                'CLEANUP_STATUS' => $row['REVIEWED'],
+                'REVIEWER_ID' => $row['REVIEWER_ID'],
                 'UPDT' => util::CurrentDateTime()
             );
 
@@ -196,6 +216,56 @@ class Results_Client_model extends CI_Model {
         }
 
         return false;
+    }
+
+    public function get_review_count_for_user($fileId, $userid)
+    {
+        $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "WHERE f.IDFILE = '" . $fileId . "' " .
+            "AND REVIEWER_ID = '" . $userid . "' ";
+
+
+        $sql = $this->AddWhereClause($sql, 'true');
+        $countQuery = $this->db->query($sql);
+        $countResults = $countQuery->result_array();
+
+        return (int)$countResults[0]['COUNT'];
+    }
+
+    public function get_review_count_for_all_users($fileId)
+    {
+        $sql = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "LEFT JOIN USERS u " .
+            "ON c.REVIEWER_ID = u.IDUSERS " .
+            "WHERE f.IDFILE = '" . $fileId . "' " .
+            "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial') " .
+            "GROUP BY IDFILE, REVIEWER_ID, EMAIL " .
+            "ORDER BY c.CLEANUP, c.IMAGE ASC ";
+
+
+        $countQuery = $this->db->query($sql);
+        $countResults = $countQuery->result_array();
+        $totalImageCount = $this->get_count_by_fileId($fileId, $cleanUp = 'true');
+
+        foreach ($countResults as &$row) {
+            if (empty($row['REVIEWER_ID']))
+            {
+                $row['EMAIL'] = 'Unassigned';
+            }
+
+            $count = $row['COUNT'];
+            $percent = CEIL(($count / $totalImageCount) * 100);
+            $row['PERCENT'] = $percent;
+        }
+        return $countResults;
     }
 
 }

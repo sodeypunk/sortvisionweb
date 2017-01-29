@@ -3,17 +3,13 @@
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-sm-12">
-                <h2>Cleanup - {{cleanup.imageCount}} total images</h2>
+                <h2>Cleanup - <?php echo $imageCount; ?> total images</h2>
                 Showing {{cleanup.page * cleanup.batch - cleanup.batch + 1}} - {{cleanup.page * cleanup.batch}}
-                <input type="hidden" name="fileId" value="<?php echo $fileId; ?>">
-                <input type="hidden" name="batch" value="<?php echo $batch; ?>">
-                <input type="hidden" name="page" value="<?php echo $page; ?>">
             </div>
         </div>
         <br/>
         <div class="row">
             <div class="col-sm-12">
-                <input type="button" class="btn btn-primary" value="Back to Analysis" onclick="location.href='<?php echo base_url(); ?>index.php/analysis?fileid=<?php echo $fileId; ?>'"/>
                 <input type="button" class="btn btn-primary" value="Save" ng-click="saveBibs()"/>
             </div>
         </div>
@@ -23,7 +19,70 @@
                 </select>
             </div>
         </div>
-        <br><br>
+        <div class="row">
+            <div class="col-sm-12">
+                <form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/reviewer">
+                    <input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
+                    <input type="hidden" name="batch" value="<?php echo $batch; ?>">
+                    <input type="hidden" name="page" value="<?php echo $page; ?>">
+                    Add Reviewer: <select name="userid">
+                        <?php
+                            foreach ($users as $user)
+                            {
+                                echo "<option value=\"" . $user['IDUSERS'] . "\">" . $user['EMAIL'] . "</option>";
+                            }
+                        ?>
+                    </select>
+                    <input type="text" name="user-percent" placeholder="Percent" size="6">
+                    <input type="submit" class="btn btn-primary" name="action" value="Add">
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Reviewers</div>
+                    <div class="panel-body">
+                        <p>
+                            <?php
+                                if (count($reviewingUsersCount) == 0)
+                                {
+                                    echo "No reviewers currently assigned";
+                                }
+                                else
+                                {
+                                    foreach ($reviewingUsersCount as $reviewer)
+                                    {
+                                        echo $reviewer['EMAIL'] . " - " . $reviewer['PERCENT'] . "% with " . $reviewer['COUNT'] . " images <br>";
+                                    }
+                                }
+                            ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                Total Completion
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
+                        <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                By Reviewers
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
+                        <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
         <div id="bibs">
             <div class="row image-row" ng-repeat="rows in cleanup.chunkedData">
                 <div class="col-md-4" ng-repeat="bib in rows">

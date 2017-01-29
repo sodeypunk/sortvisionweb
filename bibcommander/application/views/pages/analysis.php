@@ -35,7 +35,7 @@
 				<div class="panel-heading">Filter options</div>
 				<div class="panel-body">
 					<div id="filters">
-						<input type="hidden" name="fileId" value="<?php echo $fileId; ?>">
+						<input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
 						<input type="checkbox" name="filter-atleast-one" <?php if ($filterAtLeastOne) echo "checked"; ?>> Image must have at least one bib
 						<span style="margin-left: 10px;" id="filter-help-atleast-one" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>
 						<br><br>
@@ -54,7 +54,7 @@
 						<br/>
 
 						<input type="submit" class="btn btn-primary" style="margin-top: 5px;" name="action" value="Save"/>
-						<input type="button" class="btn btn-primary" style="margin-top: 5px;" value="Go to Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup?fileid=<?php echo $fileId; ?>'"/>
+						<input type="button" class="btn btn-primary" style="margin-top: 5px;" value="Go to Cleanup" onclick="location.href='<?php echo base_url(); ?>index.php/cleanup?fileid=<?php echo $fileid; ?>'"/>
 						<span style="margin-left: 10px;" id="action-help-save" class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="popover"></span>
 
 						<input type="hidden" name="last-action" value="<?php echo $lastAction; ?>"/>

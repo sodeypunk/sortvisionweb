@@ -52,7 +52,7 @@
         var cleanupCtrl = this;
         this.bibs = [];
         this.chunkedData = [];
-        this.fileId = $('input[name=fileId]').val();
+        this.fileid = $('input[name=fileid]').val();
         this.selectedIndex = 0;
         this.selectedLabelIndex = 0;
         this.savingIndex = 0;
@@ -66,7 +66,7 @@
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/bibs',
-            params: {fileid: this.fileId, batch: this.batch, page: this.page}}
+            params: {fileid: this.fileid, batch: this.batch, page: this.page}}
         ).success(function(data) {
 
             cleanupCtrl.bibs = data;
@@ -77,7 +77,7 @@
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/getTotalCleanupImageCount',
-            params: {fileid: this.fileId, batch: this.batch}}
+            params: {fileid: this.fileid, batch: this.batch}}
         ).success(function(data) {
             cleanupCtrl.imageCount = data['COUNT'];
             cleanupCtrl.pages = data['PAGES'];
@@ -87,7 +87,7 @@
         $scope.$watch('cleanup.page', function(newValue, oldValue){
             if (newValue !== oldValue) {
                 cleanupCtrl.page = newValue;
-                window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileId + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
+                window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
             }
         });
 
@@ -189,6 +189,12 @@
             if (confirm("Are you sure you want to save " + bibs.length + " bibs?")) {
 
                 if (bibs.length > 0) {
+
+                    for (var i=0; i<bibs.length; i++)
+                    {
+                        bibs[i].CLEANUP_STATUS = 'REVIEWED';
+                    }
+
                     $http({
                             method: 'POST',
                             url: '/bibcommander/index.php/cleanup/update',
@@ -198,7 +204,7 @@
 
                         if (data.success === true) {
                             alert("Saved successfully!");
-                            window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileId + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
+                            window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
                         }
 
                     }).error(function (data) {

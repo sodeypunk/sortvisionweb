@@ -29,16 +29,16 @@ class Analysis extends CI_Controller {
 		$data['filterLabelContainsValue'] = $DEFAULT_LABEL_CONTAINS_VALUE;
 	}
 	
-	public function index($fileId = 0) {
-		if (!empty ($_GET) || $fileId > 0) {
+	public function index($fileid = 0) {
+		if (!empty ($_GET) || $fileid > 0) {
 
 			if (!empty ($_GET)){
-				$fileId = $_GET['fileid'];
+				$fileid = $_GET['fileid'];
 			}
 
-			$resultsClientGood = $this->Results_Client_model->get_by_fileId($fileId, 'false');
-			$resultsClientPartial = $this->Results_Client_model->get_by_fileId($fileId, 'partial');
-			$resultsClientCleanup = $this->Results_Client_model->get_by_fileId($fileId, 'cleanup');
+			$resultsClientGood = $this->Results_Client_model->get_by_fileId($fileid, 'false');
+			$resultsClientPartial = $this->Results_Client_model->get_by_fileId($fileid, 'partial');
+			$resultsClientCleanup = $this->Results_Client_model->get_by_fileId($fileid, 'cleanup');
 			$sumOfTotal = count($resultsClientGood) + count($resultsClientCleanup) + count($resultsClientPartial);
 			if ($sumOfTotal == 0) $sumOfTotal = 1;
 
@@ -48,7 +48,7 @@ class Analysis extends CI_Controller {
 			$data['goodPercent'] = round((count($resultsClientGood) / $sumOfTotal) * 100);
 			$data['partialPercent'] = round((count($resultsClientPartial) / $sumOfTotal) * 100);
 			$data['cleanupPercent'] = round((count($resultsClientCleanup) / $sumOfTotal) * 100);
-			$data['fileId'] = $fileId;
+			$data['fileid'] = $fileid;
 			$data['numGoodImages'] = count($resultsClientGood);
 			$data['numPartialImages'] = count($resultsClientPartial);
 			$data['numCleanupImages'] = count($resultsClientCleanup);
@@ -56,7 +56,7 @@ class Analysis extends CI_Controller {
 			$this->setDefaultFilterValues($data);
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
-				'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileId . '">Status</a></li>' .
+				'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileid . '">Status</a></li>' .
 				'<li class="active">Analysis</li>';
 
 			$this->load->view('templates/header', $data);
@@ -71,7 +71,7 @@ class Analysis extends CI_Controller {
 
 	public function analysis() {
 		$action = $_POST['action'];
-		$fileId = $_POST['fileId'];
+		$fileid = $_POST['fileid'];
 		$lastAction = $_POST['last-action'];
 
 		$atLeastOne = false;
@@ -81,7 +81,7 @@ class Analysis extends CI_Controller {
 		$labelContainsChoice = $_POST['filter-label-contains-choice'];
 		$labelContainsValue = $_POST['filter-label-contains-value'];
 
-		$resultsClientAll = $this->Results_Client_model->get_by_fileId ( $fileId, '');
+		$resultsClientAll = $this->Results_Client_model->get_by_fileId ( $fileid, '');
 
 		$atLeastOneTemp = false;
 		$labelContainsValueTemp = "";
@@ -166,14 +166,14 @@ class Analysis extends CI_Controller {
 		$data['numGoodImages'] = $numGoodImages;
 		$data['numPartialImages'] = $numPartialImages;
 		$data['numCleanupImages'] = $numCleanupImages;
-		$data['fileId'] = $fileId;
+		$data['fileid'] = $fileid;
 		$data['filterAtLeastOne'] = $atLeastOne;
 		$data['filterLabelContainsChoice'] = $labelContainsChoice;
 		$data['filterLabelContainsValue'] = $labelContainsValue;
 		$data['lastAction'] = $action;
 
 		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
-			'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileId . '">Status</a></li>' .
+			'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileid . '">Status</a></li>' .
 			'<li class="active">Analysis</li>';
 
 		$this->load->view ( 'templates/header', $data);
