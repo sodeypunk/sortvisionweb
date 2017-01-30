@@ -162,7 +162,7 @@ class Results_Client_model extends CI_Model {
             $hash = $row['HASH'];
             $clientData = array(
                 'ID' => $row['ID'],
-                'CLEANUP_STATUS' => $row['REVIEWED'],
+                'CLEANUP_STATUS' => $row['CLEANUP_STATUS'],
                 'REVIEWER_ID' => $row['REVIEWER_ID'],
                 'UPDT' => util::CurrentDateTime()
             );
@@ -262,7 +262,7 @@ class Results_Client_model extends CI_Model {
             }
 
             $count = $row['COUNT'];
-            $percent = CEIL(($count / $totalImageCount) * 100);
+            $percent = ROUND(($count / $totalImageCount) * 100);
             $row['PERCENT'] = $percent;
         }
         return $countResults;

@@ -64,7 +64,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                Total Completion
+                Total Completion - <?php echo $reviewedCount; ?> of <?php echo $imageCount; ?>
                 <div class="progress">
                     <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
                         <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>

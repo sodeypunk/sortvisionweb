@@ -49,7 +49,8 @@ class Cleanup extends CI_Controller {
 			$data['batch'] = $batch;
 			$data['page'] = $page;
 			$data['imageCount'] = $imageCount;
-			$data['reviewedPercent'] = floor(($reviewedCount / $imageCount) * 100);
+			$data['reviewedCount'] = $reviewedCount;
+			$data['reviewedPercent'] = round(($reviewedCount / $imageCount) * 100, 2);
 			$data['users'] = $users;
 			$data['reviewingUsersCount'] = $reviewingUsersCount;
 

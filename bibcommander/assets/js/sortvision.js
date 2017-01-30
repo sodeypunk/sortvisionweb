@@ -55,7 +55,6 @@
         this.fileid = $('input[name=fileid]').val();
         this.selectedIndex = 0;
         this.selectedLabelIndex = 0;
-        this.savingIndex = 0;
         this.saving = false;
         this.imageCount = 0;
         this.pages = [];
@@ -208,8 +207,8 @@
                         }
 
                     }).error(function (data) {
-                        $scope.cleanup.saving = false;
                         alert("Saving failed");
+                        window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
                     });
                 }
             }
