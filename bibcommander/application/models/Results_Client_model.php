@@ -250,9 +250,26 @@ class Results_Client_model extends CI_Model {
             "GROUP BY IDFILE, REVIEWER_ID, EMAIL " .
             "ORDER BY c.CLEANUP, c.IMAGE ASC ";
 
+        $sqlActual = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "LEFT JOIN USERS u " .
+            "ON c.REVIEWER_ID = u.IDUSERS " .
+            "WHERE f.IDFILE = '" . $fileId . "' " .
+            "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial') " .
+            "AND CLEANUP_STATUS = 'REVIEWED' " .
+            "GROUP BY IDFILE, REVIEWER_ID, EMAIL " .
+            "ORDER BY c.CLEANUP, c.IMAGE ASC ";
+
 
         $countQuery = $this->db->query($sql);
         $countResults = $countQuery->result_array();
+
+        $countActualQuery = $this->db->query($sqlActual);
+        $countActualResults = $countActualQuery->result_array();
+
         $totalImageCount = $this->get_count_by_fileId($fileId, $cleanUp = 'true');
 
         foreach ($countResults as &$row) {
@@ -262,8 +279,21 @@ class Results_Client_model extends CI_Model {
             }
 
             $count = $row['COUNT'];
-            $percent = ROUND(($count / $totalImageCount) * 100);
+            $percent = ROUND(($count / $totalImageCount) * 100, 2);
             $row['PERCENT'] = $percent;
+            $row['COMPLETED_PERCENT'] = 0;
+            $row['COMPLETED_COUNT'] = 0;
+
+            foreach ($countActualResults as $actualRow) {
+                if ($actualRow['REVIEWER_ID'] == $row['REVIEWER_ID'])
+                {
+                    $actualCount = $actualRow['COUNT'];
+                    $row['COMPLETED_PERCENT'] = ROUND(($actualCount / $count) * 100, 2);
+                    $row['COMPLETED_COUNT'] = $actualCount;
+                    break;
+                }
+            }
+
         }
         return $countResults;
     }

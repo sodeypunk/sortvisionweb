@@ -5,6 +5,8 @@ require_once(dirname(__DIR__)."/controllers/Utility.php");
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
+session_start();
+
 class Cleanup extends CI_Controller {
 
 	public function __construct() {
@@ -53,6 +55,7 @@ class Cleanup extends CI_Controller {
 			$data['reviewedPercent'] = round(($reviewedCount / $imageCount) * 100, 2);
 			$data['users'] = $users;
 			$data['reviewingUsersCount'] = $reviewingUsersCount;
+			$data['loggedInUser'] = $_SESSION['id_user'];
 
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
@@ -121,7 +124,8 @@ class Cleanup extends CI_Controller {
 	public function update() {
 		$resultArray = array();
 		$resultArray['success'] = false;
-		$bibsArray = $_POST['bibsArray'];
+		$bibsArrayString = $_POST['bibsArray'];
+		$bibsArray = json_decode($bibsArrayString, true);
 
 		if (!is_null($bibsArray)) {
 			if ($this->Results_Client_model->UpdateResultsClient($bibsArray)) {
@@ -196,6 +200,7 @@ class Cleanup extends CI_Controller {
 				}
 
 				$result = $this->Results_Client_model->UpdateResultsClient($rowsToSave);
+				$this->index();
 			}
 
 

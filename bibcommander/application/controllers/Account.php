@@ -36,6 +36,7 @@ class Account extends CI_Controller {
 				$_SESSION['email'] = $email;
 				$_SESSION['s3_bucket'] = $login[0]['S3_BUCKET'];
 				$_SESSION['logged_in'] = true;
+				$_SESSION['id_user'] = $login[0]['IDUSERS'];
 
 				redirect('bibcommander');
 

@@ -25,6 +25,7 @@
                     <input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
                     <input type="hidden" name="batch" value="<?php echo $batch; ?>">
                     <input type="hidden" name="page" value="<?php echo $page; ?>">
+                    <input type="hidden" name="logged-in-user" value="<?php echo $loggedInUser; ?>">
                     Add Reviewer: <select name="userid">
                         <?php
                             foreach ($users as $user)
@@ -44,6 +45,12 @@
                     <div class="panel-heading">Reviewers</div>
                     <div class="panel-body">
                         <p>
+                            Total Completion - <?php echo $reviewedCount; ?> of <?php echo $imageCount; ?>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
+                                    <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>
+                                </div>
+                            </div>
                             <?php
                                 if (count($reviewingUsersCount) == 0)
                                 {
@@ -51,33 +58,46 @@
                                 }
                                 else
                                 {
+
+                                    echo '<table class="table table-striped">',
+                                         '    <thead>',
+                                         '        <tr>',
+                                         '          <th>User</th>',
+                                         '          <th>Assigned Percent of Total</th>',
+                                         '          <th>Assigned Images</th>',
+                                         '          <th>Completed Percent</th>',
+                                         '          <th>Completed Images</th>',
+                                         '        </tr>',
+                                         '    </thead>',
+                                         '<tbody>';
+
                                     foreach ($reviewingUsersCount as $reviewer)
                                     {
-                                        echo $reviewer['EMAIL'] . " - " . $reviewer['PERCENT'] . "% with " . $reviewer['COUNT'] . " images <br>";
+                                        echo "<tr>";
+                                        echo "<td>" . $reviewer['EMAIL'] . "</td>";
+                                        echo "<td>";
+                                        echo '<div class="progress">';
+                                        echo '  <div class="progress-bar progress-bar-success" role="progressbar" style="width:' . $reviewer['PERCENT'] . '%; min-width: 2em;">';
+                                        echo '        <span id="good-percent">' . $reviewer['PERCENT'] .  '%</span>';
+                                        echo '  </div>';
+                                        echo '</div>';
+                                        echo "</td>";
+                                        echo "<td>" . $reviewer['COUNT'] . "</td>";
+                                        echo "<td>";
+                                        echo '<div class="progress">';
+                                        echo '  <div class="progress-bar progress-bar-success" role="progressbar" style="width:' . $reviewer['COMPLETED_PERCENT'] . '%; min-width: 2em;">';
+                                        echo '        <span id="good-percent">' . $reviewer['COMPLETED_PERCENT'] .  '%</span>';
+                                        echo '  </div>';
+                                        echo '</div>';
+                                        echo "</td>";
+                                        echo "<td>" . $reviewer['COMPLETED_COUNT'] . "</td>";
+                                        echo "</tr>";
                                     }
+
+                                    echo "</table>";
                                 }
                             ?>
                         </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                Total Completion - <?php echo $reviewedCount; ?> of <?php echo $imageCount; ?>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
-                        <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                By Reviewers
-                <div class="progress">
-                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:<?php echo $reviewedPercent; ?>%; min-width: 2em;">
-                        <span id="good-percent"><?php echo $reviewedPercent; ?>%</span>
                     </div>
                 </div>
             </div>

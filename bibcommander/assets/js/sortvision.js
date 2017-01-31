@@ -187,17 +187,21 @@
 
             if (confirm("Are you sure you want to save " + bibs.length + " bibs?")) {
 
+                var userId = $('[name="logged-in-user"]').val();
                 if (bibs.length > 0) {
 
                     for (var i=0; i<bibs.length; i++)
                     {
                         bibs[i].CLEANUP_STATUS = 'REVIEWED';
+                        bibs[i].REVIEWER_ID = userId;
                     }
+
+                    var jsonString = JSON.stringify(bibs);
 
                     $http({
                             method: 'POST',
                             url: '/bibcommander/index.php/cleanup/update',
-                            data: {bibsArray: bibs}
+                            data: {bibsArray: jsonString}
                         }
                     ).success(function (data) {
 
