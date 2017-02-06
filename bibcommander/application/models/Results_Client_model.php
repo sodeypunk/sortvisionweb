@@ -9,7 +9,7 @@ class Results_Client_model extends CI_Model {
         $this->load->model ( 'system_model' );
     }
 
-    public function get_count_by_fileId($fileId, $cleanUp = '', $numberOfRecords = 0)
+    public function get_count_by_fileId($fileId, $cleanUp = '', $numberOfRecords = 0, $userIdList = null)
     {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
@@ -19,7 +19,7 @@ class Results_Client_model extends CI_Model {
             "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
-        $sql = $this->AddWhereClause($sql, $cleanUp, $numberOfRecords);
+        $sql = $this->AddWhereClause($sql, $cleanUp, $numberOfRecords, 1, $userIdList);
         $countQuery = $this->db->query($sql);
         $countResults = $countQuery->result_array();
 
@@ -44,7 +44,7 @@ class Results_Client_model extends CI_Model {
         return (int)$countResults[0]['COUNT'];
     }
 
-    public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1) {
+    public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1, $userIdList = null) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
@@ -54,7 +54,7 @@ class Results_Client_model extends CI_Model {
                 "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
-        $imageSql = $this->AddWhereClause($imageSql, $cleanUp, $batch, $page);
+        $imageSql = $this->AddWhereClause($imageSql, $cleanUp, $batch, $page, $userIdList);
 
         $imageQuery = $this->db->query($imageSql);
         $imageResults = $imageQuery->result_array();
@@ -125,10 +125,10 @@ class Results_Client_model extends CI_Model {
 
     }
 
-    private function AddWhereClause($sql, $cleanUp, $batch = 0, $page = 1)
+    private function AddWhereClause($sql, $cleanUp, $batch = 0, $page = 1, $userIdList = null)
     {
         if ($cleanUp == 'true') {
-            $sql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial')";
+            $sql .= "AND (c.CLEANUP = 'Cleanup' || c.CLEANUP = 'Partial') ";
         }
         elseif ($cleanUp == 'false') {
             $sql .= "AND (c.CLEANUP = '' || c.CLEANUP IS NULL) ";
@@ -138,6 +138,13 @@ class Results_Client_model extends CI_Model {
         }
         elseif ($cleanUp == 'partial') {
             $sql .= "AND c.CLEANUP = 'Partial' ";
+        }
+
+        if ($userIdList != null && count($userIdList) > 0)
+        {
+            $usersList = implode(",", $userIdList);
+
+            $sql .= "AND REVIEWER_ID IN ('" . $usersList . "') ";
         }
 
         $sql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
@@ -236,7 +243,7 @@ class Results_Client_model extends CI_Model {
         return (int)$countResults[0]['COUNT'];
     }
 
-    public function get_review_count_for_all_users($fileId)
+    public function get_reviewers($fileId)
     {
         $sql = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
@@ -276,6 +283,7 @@ class Results_Client_model extends CI_Model {
             if (empty($row['REVIEWER_ID']))
             {
                 $row['EMAIL'] = 'Unassigned';
+                $row['REVIEWER_ID'] = 0;
             }
 
             $count = $row['COUNT'];
@@ -283,6 +291,15 @@ class Results_Client_model extends CI_Model {
             $row['PERCENT'] = $percent;
             $row['COMPLETED_PERCENT'] = 0;
             $row['COMPLETED_COUNT'] = 0;
+
+            if ($row['EMAIL'] == $_SESSION['email'])
+            {
+                $row['SHOW_IMAGES'] = true;
+            }
+            else
+            {
+                $row['SHOW_IMAGES'] = false;
+            }
 
             foreach ($countActualResults as $actualRow) {
                 if ($actualRow['REVIEWER_ID'] == $row['REVIEWER_ID'])

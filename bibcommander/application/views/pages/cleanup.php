@@ -3,8 +3,8 @@
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-sm-12">
-                <h2>Cleanup - <?php echo $imageCount; ?> total images</h2>
-                Showing {{cleanup.page * cleanup.batch - cleanup.batch + 1}} - {{cleanup.page * cleanup.batch}}
+                <h2>Cleanup - <?php echo $imageCount; ?> total cleanup images</h2>
+                Showing {{cleanup.page * cleanup.batch - cleanup.batch + 1}} - {{cleanup.page * cleanup.batch}} of {{cleanup.pages.length * cleanup.batch}} assigned to me
             </div>
         </div>
         <br/>
@@ -19,31 +19,30 @@
                 </select>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/reviewer">
-                    <input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
-                    <input type="hidden" name="batch" value="<?php echo $batch; ?>">
-                    <input type="hidden" name="page" value="<?php echo $page; ?>">
-                    <input type="hidden" name="logged-in-user" value="<?php echo $loggedInUser; ?>">
-                    Add Reviewer: <select name="userid">
-                        <?php
-                            foreach ($users as $user)
-                            {
-                                echo "<option value=\"" . $user['IDUSERS'] . "\">" . $user['EMAIL'] . "</option>";
-                            }
-                        ?>
-                    </select>
-                    <input type="text" name="user-percent" placeholder="Percent" size="6">
-                    <input type="submit" class="btn btn-primary" name="action" value="Add">
-                </form>
-            </div>
-        </div>
+        <br>
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">Reviewers</div>
                     <div class="panel-body">
+                        <p>
+                            <form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/addreviewer">
+                                <input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
+                                <input type="hidden" name="batch" value="<?php echo $batch; ?>">
+                                <input type="hidden" name="page" value="<?php echo $page; ?>">
+                                <input type="hidden" name="logged-in-user" value="<?php echo $loggedInUser; ?>">
+                                Add Reviewer: <select name="userid">
+                                    <?php
+                                    foreach ($users as $user)
+                                    {
+                                        echo "<option value=\"" . $user['IDUSERS'] . "\">" . $user['EMAIL'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <input type="text" name="user-percent" placeholder="Percent" size="6">
+                                <input type="submit" class="btn btn-primary" name="action" value="Add">
+                            </form>
+                        </p>
                         <p>
                             Total Completion - <?php echo $reviewedCount; ?> of <?php echo $imageCount; ?>
                             <div class="progress">
@@ -52,13 +51,13 @@
                                 </div>
                             </div>
                             <?php
-                                if (count($reviewingUsersCount) == 0)
+                                if (count($reviewingUsers) == 0)
                                 {
                                     echo "No reviewers currently assigned";
                                 }
                                 else
                                 {
-
+                                    echo '<form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/reviewertableupdate">';
                                     echo '<table class="table table-striped">',
                                          '    <thead>',
                                          '        <tr>',
@@ -67,15 +66,20 @@
                                          '          <th>Assigned Images</th>',
                                          '          <th>Completed Percent</th>',
                                          '          <th>Completed Images</th>',
+                                         '          <th>Show Images</th>',
                                          '        </tr>',
                                          '    </thead>',
                                          '<tbody>';
 
-                                    foreach ($reviewingUsersCount as $reviewer)
+                                    foreach ($reviewingUsers as $reviewer)
                                     {
                                         echo "<tr>";
-                                        echo "<td>" . $reviewer['EMAIL'] . "</td>";
-                                        echo "<td>";
+                                        echo "<td>" . $reviewer['EMAIL'];
+                                        if ($reviewer['EMAIL'] == $loggedInUserEmail)
+                                        {
+                                            echo " <span style=\"color: red; \">[me]</span>";
+                                        }
+                                        echo "</td><td>";
                                         echo '<div class="progress">';
                                         echo '  <div class="progress-bar progress-bar-success" role="progressbar" style="width:' . $reviewer['PERCENT'] . '%; min-width: 2em;">';
                                         echo '        <span id="good-percent">' . $reviewer['PERCENT'] .  '%</span>';
@@ -91,10 +95,19 @@
                                         echo '</div>';
                                         echo "</td>";
                                         echo "<td>" . $reviewer['COMPLETED_COUNT'] . "</td>";
+                                        if ($reviewer['SHOW_IMAGES'] == true)
+                                        {
+                                            echo "<td><input type=\"checkbox\" name=\"show-" . $reviewer['REVIEWER_ID'] . "\" checked></td>";
+                                        }
+                                        else {
+                                            echo "<td><input type=\"checkbox\" name=\"show-" . $reviewer['REVIEWER_ID'] . "\"></td>";
+                                        }
                                         echo "</tr>";
                                     }
 
                                     echo "</table>";
+                                    echo "<input type=\"submit\" class=\"btn btn-primary\" name=\"action\" value=\"Update\">";
+                                    echo "</form>";
                                 }
                             ?>
                         </p>

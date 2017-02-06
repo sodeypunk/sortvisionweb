@@ -23,13 +23,9 @@ class Cleanup extends CI_Controller {
 	}
 
 	
-	public function index() {
+	public function index($fileid = 0, $batch = 100, $page = 1) {
 
-		$fileid = 0;
-		$batch = 100;
-		$page = 1;
-
-		if (!empty ($_GET)) {
+		if (!empty ($_GET) || $fileid > 0) {
 
 			if (!empty ($_GET['fileid'])) {
 				$fileid = $_GET['fileid'];
@@ -45,7 +41,7 @@ class Cleanup extends CI_Controller {
 			$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true');
 			$reviewedCount = $this->Results_Client_model->get_cleanup_status_count($fileid, 'true', 'REVIEWED');
 			$users = $this->Users_model->get_all_users();
-			$reviewingUsersCount = $this->Results_Client_model->get_review_count_for_all_users($fileid);
+			$reviewingUsers = $this->Results_Client_model->get_reviewers($fileid);
 			$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/");
 			$data['fileid'] = $fileid;
 			$data['batch'] = $batch;
@@ -54,8 +50,9 @@ class Cleanup extends CI_Controller {
 			$data['reviewedCount'] = $reviewedCount;
 			$data['reviewedPercent'] = round(($reviewedCount / $imageCount) * 100, 2);
 			$data['users'] = $users;
-			$data['reviewingUsersCount'] = $reviewingUsersCount;
+			$data['reviewingUsers'] = $reviewingUsers;
 			$data['loggedInUser'] = $_SESSION['id_user'];
+			$data['loggedInUserEmail'] = $_SESSION['email'];
 
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
@@ -78,6 +75,8 @@ class Cleanup extends CI_Controller {
 		$page = 1;
 		$batch = 100;
 		$objectString = "";
+		$showOnlyAssigned = true;
+		$reviewerIdList = array();
 
 		if (!empty($_GET['batch']))
 		{
@@ -87,10 +86,20 @@ class Cleanup extends CI_Controller {
 		{
 			$page = $_GET['page'];
 		}
+		if (!empty($_GET['assignedonly']))
+		{
+			$showOnlyAssigned = $_GET['assignedonly'];
+		}
 		if (!empty ($_GET['fileid']))
 		{
 			$fileid = $_GET['fileid'];
-			$objectString = $this->Results_Client_model->get_by_fileId($fileid, 'true', $batch, $page);
+
+			if ($showOnlyAssigned)
+			{
+				array_push($reviewerIdList, $_SESSION['id_user']);
+			}
+
+			$objectString = $this->Results_Client_model->get_by_fileId($fileid, 'true', $batch, $page, $reviewerIdList);
 		}
 
 		header('Content-Type: application/json');
@@ -102,7 +111,19 @@ class Cleanup extends CI_Controller {
 		$pagesArray = array();
 		$fileid = $_GET['fileid'];
 		$batchSize = (int)$_GET['batch'];
-		$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true');
+		$showOnlyAssigned = true;
+		$reviewerIdList = array();
+
+		if (!empty($_GET['assignedonly']))
+		{
+			$showOnlyAssigned = $_GET['assignedonly'];
+		}
+
+		if ($showOnlyAssigned)
+		{
+			array_push($reviewerIdList, $_SESSION['id_user']);
+		}
+		$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true', 0, $reviewerIdList);
 
 		$pages = ceil($imageCount / $batchSize);
 
@@ -137,11 +158,13 @@ class Cleanup extends CI_Controller {
 		echo json_encode($resultArray);
 	}
 
-	public function reviewer() {
+	public function addreviewer() {
 		$action = '';
 		$fileid = 0;
 		$userPercent = 0;
 		$userid = 0;
+		$batch = 100;
+		$page = 1;
 
 		if (!empty($_POST['fileid']))
 		{
@@ -159,6 +182,14 @@ class Cleanup extends CI_Controller {
 		{
 			$userid = $_POST['userid'];
 		}
+		if (!empty($_POST['batch']))
+		{
+			$batch = $_POST['batch'];
+		}
+		if (!empty($_POST['page']))
+		{
+			$page = $_POST['page'];
+		}
 
 		if ($fileid > 0 && $userid > 0 && $userPercent > 0)
 		{
@@ -175,7 +206,6 @@ class Cleanup extends CI_Controller {
 			{
 				$percentToAssign = $userPercent - $currentUserReviewPercent;
 				$imagesToAssign = ceil($imageCount * $percentToAssign);
-				$imagesToAssign = $imagesToAssign - $currentUserReviewCount;
 
 				if ($imagesToAssign > 0)
 				{
@@ -200,7 +230,7 @@ class Cleanup extends CI_Controller {
 				}
 
 				$result = $this->Results_Client_model->UpdateResultsClient($rowsToSave);
-				$this->index();
+				redirect('cleanup?fileid=244');
 			}
 
 
