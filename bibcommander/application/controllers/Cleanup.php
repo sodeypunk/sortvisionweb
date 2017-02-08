@@ -23,26 +23,42 @@ class Cleanup extends CI_Controller {
 	}
 
 	
-	public function index($fileid = 0, $batch = 100, $page = 1) {
+	public function index() {
 
-		if (!empty ($_GET) || $fileid > 0) {
+		$fileid = 0;
+		$batch = 100;
+		$page = 1;
+		$showUserIds='';
+		$reviewerIdList = array();
 
-			if (!empty ($_GET['fileid'])) {
+		if (isset ($_GET) || $fileid > 0) {
+
+			if (isset ($_GET['fileid'])) {
 				$fileid = $_GET['fileid'];
 			}
-			if (!empty ($_GET['batch'])) {
+			if (isset ($_GET['batch'])) {
 				$batch = $_GET['batch'];
 			}
-			if (!empty ($_GET['page'])) {
+			if (isset ($_GET['page'])) {
 				$page = $_GET['page'];
 			}
+			if (isset ($_GET['showUserIds']) && $_GET['showUserIds'] != "") {
+				$showUserIds = $_GET['showUserIds'];
+				$reviewerIdList = explode(",", $showUserIds);
+			}
+			else
+			{
+				array_push($reviewerIdList, $_SESSION['id_user']);
+			}
 
-			$resultCleanupImages = $this->Results_Client_model->get_by_fileId($fileid, 'true', 100);
+			$resultCleanupImages = $this->Results_Client_model->get_by_fileId($fileid, 'true', $batch, $page, $reviewerIdList);
 			$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true');
+			$imageShownTotalCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true', 0, $reviewerIdList);
 			$reviewedCount = $this->Results_Client_model->get_cleanup_status_count($fileid, 'true', 'REVIEWED');
 			$users = $this->Users_model->get_all_users();
-			$reviewingUsers = $this->Results_Client_model->get_reviewers($fileid);
+			$reviewingUsers = $this->Results_Client_model->get_reviewers($fileid, $reviewerIdList);
 			$data['tiledCleanupResultImages'] = util::getImagesTiledFromDBForCleanup($resultCleanupImages, "assets/result_images/");
+			$data['totalImagesShownCount'] = $imageShownTotalCount;
 			$data['fileid'] = $fileid;
 			$data['batch'] = $batch;
 			$data['page'] = $page;
@@ -53,6 +69,7 @@ class Cleanup extends CI_Controller {
 			$data['reviewingUsers'] = $reviewingUsers;
 			$data['loggedInUser'] = $_SESSION['id_user'];
 			$data['loggedInUserEmail'] = $_SESSION['email'];
+			$data['showUserIds'] = $showUserIds;
 
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
@@ -78,26 +95,26 @@ class Cleanup extends CI_Controller {
 		$showOnlyAssigned = true;
 		$reviewerIdList = array();
 
-		if (!empty($_GET['batch']))
+		if (isset($_GET['batch']))
 		{
 			$batch = $_GET['batch'];
 		}
-		if (!empty($_GET['page']))
+		if (isset($_GET['page']))
 		{
 			$page = $_GET['page'];
 		}
-		if (!empty($_GET['assignedonly']))
-		{
-			$showOnlyAssigned = $_GET['assignedonly'];
+		if (isset ($_GET['showUserIds']) && $_GET['showUserIds'] != "") {
+			$showUserIds = $_GET['showUserIds'];
+			$reviewerIdList = explode(",", $showUserIds);
 		}
-		if (!empty ($_GET['fileid']))
+		else
+		{
+			array_push($reviewerIdList, $_SESSION['id_user']);
+		}
+
+		if (isset ($_GET['fileid']))
 		{
 			$fileid = $_GET['fileid'];
-
-			if ($showOnlyAssigned)
-			{
-				array_push($reviewerIdList, $_SESSION['id_user']);
-			}
 
 			$objectString = $this->Results_Client_model->get_by_fileId($fileid, 'true', $batch, $page, $reviewerIdList);
 		}
@@ -111,18 +128,17 @@ class Cleanup extends CI_Controller {
 		$pagesArray = array();
 		$fileid = $_GET['fileid'];
 		$batchSize = (int)$_GET['batch'];
-		$showOnlyAssigned = true;
 		$reviewerIdList = array();
 
-		if (!empty($_GET['assignedonly']))
-		{
-			$showOnlyAssigned = $_GET['assignedonly'];
+		if (isset ($_GET['showUserIds']) && $_GET['showUserIds'] != "") {
+			$showUserIds = $_GET['showUserIds'];
+			$reviewerIdList = explode(",", $showUserIds);
 		}
-
-		if ($showOnlyAssigned)
+		else
 		{
 			array_push($reviewerIdList, $_SESSION['id_user']);
 		}
+
 		$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true', 0, $reviewerIdList);
 
 		$pages = ceil($imageCount / $batchSize);
@@ -158,85 +174,89 @@ class Cleanup extends CI_Controller {
 		echo json_encode($resultArray);
 	}
 
-	public function addreviewer() {
+	public function reviewer() {
+		$showImagesIdArray = array();
 		$action = '';
 		$fileid = 0;
 		$userPercent = 0;
 		$userid = 0;
 		$batch = 100;
 		$page = 1;
+		$idArrayString = "";
 
-		if (!empty($_POST['fileid']))
+		if (isset($_POST['fileid']))
 		{
 			$fileid = $_POST['fileid'];
 		}
-		if (!empty($_POST['action']))
+		if (isset($_POST['action']))
 		{
 			$action = $_POST['action'];
 		}
-		if (!empty($_POST['user-percent']))
+		if (isset($_POST['user-percent']))
 		{
 			$userPercent = $_POST['user-percent'] / 100;
 		}
-		if (!empty($_POST['userid']))
+		if (isset($_POST['userid']))
 		{
 			$userid = $_POST['userid'];
 		}
-		if (!empty($_POST['batch']))
+		if (isset($_POST['batch']))
 		{
 			$batch = $_POST['batch'];
 		}
-		if (!empty($_POST['page']))
+		if (isset($_POST['page']))
 		{
 			$page = $_POST['page'];
 		}
-
-		if ($fileid > 0 && $userid > 0 && $userPercent > 0)
+		if (isset($_POST['show-images-id']))
 		{
-			$currentUserReviewCount = $this->Results_Client_model->get_review_count_for_user($fileid, $userid);
-			$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true');
+			$showImagesIdArray = $_POST['show-images-id'];
+			$idArrayString = implode(",", $showImagesIdArray);
+		}
 
-			$currentUserReviewPercent = $currentUserReviewCount / $imageCount;
+		if ($action == "Add")
+		{
+			if ($fileid > 0 && $userid > 0 && $userPercent > 0) {
+				$currentUserReviewCount = $this->Results_Client_model->get_review_count_for_user($fileid, $userid);
+				$imageCount = $this->Results_Client_model->get_count_by_fileId($fileid, 'true');
 
-			if ($currentUserReviewPercent > $userPercent)
-			{
-				$data['errorMsg'] = "User currently has percent higher than assigned. Remove the user's percent before assigning again.";
-			}
-			else
-			{
-				$percentToAssign = $userPercent - $currentUserReviewPercent;
-				$imagesToAssign = ceil($imageCount * $percentToAssign);
+				$currentUserReviewPercent = $currentUserReviewCount / $imageCount;
 
-				if ($imagesToAssign > 0)
-				{
-					$rowsToSave = array();
-					$resultsClientCleanup = $this->Results_Client_model->get_by_fileId($fileid, 'true');
+				if ($currentUserReviewPercent > $userPercent) {
+					$data['errorMsg'] = "User currently has percent higher than assigned. Remove the user's percent before assigning again.";
+				} else {
+					$percentToAssign = $userPercent - $currentUserReviewPercent;
+					$imagesToAssign = ceil($imageCount * $percentToAssign);
 
-					foreach ($resultsClientCleanup as $row)
-					{
-						if ($imagesToAssign > 0) {
-							if (empty($row['REVIEWER_ID'])) {
-								$row['REVIEWER_ID'] = $userid;
-								$imagesToAssign -= 1;
+					if ($imagesToAssign > 0) {
+						$rowsToSave = array();
+						$resultsClientCleanup = $this->Results_Client_model->get_by_fileId($fileid, 'true');
 
-								array_push($rowsToSave, $row);
+						foreach ($resultsClientCleanup as $row) {
+							if ($imagesToAssign > 0) {
+								if (empty($row['REVIEWER_ID'])) {
+									$row['REVIEWER_ID'] = $userid;
+									$imagesToAssign -= 1;
+
+									array_push($rowsToSave, $row);
+								}
+							} else {
+								break;
 							}
 						}
-						else
-						{
-							break;
-						}
 					}
+
+					$result = $this->Results_Client_model->UpdateResultsClient($rowsToSave);
+
 				}
-
-				$result = $this->Results_Client_model->UpdateResultsClient($rowsToSave);
-				redirect('cleanup?fileid=244');
 			}
-
+		}
+		else if ($action == "Refresh")
+		{
 
 		}
 
+		$redirectURL = 'cleanup?fileid=' . $fileid . '&showUserIds=' . $idArrayString;
+		redirect($redirectURL);
 	}
-
-
 }

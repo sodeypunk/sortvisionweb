@@ -143,8 +143,14 @@ class Results_Client_model extends CI_Model {
         if ($userIdList != null && count($userIdList) > 0)
         {
             $usersList = implode(",", $userIdList);
-
-            $sql .= "AND REVIEWER_ID IN ('" . $usersList . "') ";
+            if (in_array("0", $userIdList))
+            {
+                $sql .= "AND (REVIEWER_ID IN (" . $usersList . ") OR REVIEWER_ID IS NULL) ";
+            }
+            else
+            {
+                $sql .= "AND REVIEWER_ID IN (" . $usersList . ") ";
+            }
         }
 
         $sql .= "ORDER BY c.CLEANUP, c.IMAGE ASC ";
@@ -243,7 +249,7 @@ class Results_Client_model extends CI_Model {
         return (int)$countResults[0]['COUNT'];
     }
 
-    public function get_reviewers($fileId)
+    public function get_reviewers($fileId, $userIdList = null)
     {
         $sql = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
@@ -292,7 +298,7 @@ class Results_Client_model extends CI_Model {
             $row['COMPLETED_PERCENT'] = 0;
             $row['COMPLETED_COUNT'] = 0;
 
-            if ($row['EMAIL'] == $_SESSION['email'])
+            if ($userIdList != null && in_array($row['REVIEWER_ID'], $userIdList))
             {
                 $row['SHOW_IMAGES'] = true;
             }

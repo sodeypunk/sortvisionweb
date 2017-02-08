@@ -60,23 +60,33 @@
         this.pages = [];
         this.page = parseInt($('input[name=page]').val());
         this.batch = $('input[name=batch]').val();
+        this.showUserIds = $('input[name=showUserIds]').val();
+        this.lastPageCount = 0;
+        this.firstPageCount = 0;
         $anchorScroll.yOffset = 100;
 
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/bibs',
-            params: {fileid: this.fileid, batch: this.batch, page: this.page}}
+            params: {fileid: this.fileid, batch: this.batch, page: this.page, showUserIds: this.showUserIds}}
         ).success(function(data) {
 
             cleanupCtrl.bibs = data;
             cleanupCtrl.chunkedData = chunk(data, 3);
+
+            cleanupCtrl.firstPageCount = cleanupCtrl.page * cleanupCtrl.batch - cleanupCtrl.batch + 1;
+            cleanupCtrl.lastPageCount = cleanupCtrl.page * cleanupCtrl.batch;
+            if (cleanupCtrl.bibs.length < cleanupCtrl.batch)
+            {
+                cleanupCtrl.lastPageCount = ((cleanupCtrl.page - 1) * cleanupCtrl.batch) + cleanupCtrl.bibs.length;
+            }
 
         });
 
         $http({
             method: 'POST',
             url: '/bibcommander/index.php/cleanup/getTotalCleanupImageCount',
-            params: {fileid: this.fileid, batch: this.batch}}
+            params: {fileid: this.fileid, batch: this.batch, showUserIds: this.showUserIds }}
         ).success(function(data) {
             cleanupCtrl.imageCount = data['COUNT'];
             cleanupCtrl.pages = data['PAGES'];
@@ -86,7 +96,7 @@
         $scope.$watch('cleanup.page', function(newValue, oldValue){
             if (newValue !== oldValue) {
                 cleanupCtrl.page = newValue;
-                window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
+                window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page + "&showUserIds=" + cleanupCtrl.showUserIds;
             }
         });
 

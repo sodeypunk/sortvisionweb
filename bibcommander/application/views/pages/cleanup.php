@@ -4,33 +4,22 @@
         <div class="row">
             <div class="col-sm-12">
                 <h2>Cleanup - <?php echo $imageCount; ?> total cleanup images</h2>
-                Showing {{cleanup.page * cleanup.batch - cleanup.batch + 1}} - {{cleanup.page * cleanup.batch}} of {{cleanup.pages.length * cleanup.batch}} assigned to me
+                Showing {{cleanup.firstPageCount}} - {{cleanup.lastPageCount}} of <?php echo $totalImagesShownCount; ?> available to show
             </div>
         </div>
         <br/>
-        <div class="row">
-            <div class="col-sm-12">
-                <input type="button" class="btn btn-primary" value="Save" ng-click="saveBibs()"/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 text-right">
-                Page <select ng-model="cleanup.page" ng-options="value.id as value.name for (key, value) in cleanup.pages">
-                </select>
-            </div>
-        </div>
-        <br>
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">Reviewers</div>
                     <div class="panel-body">
                         <p>
-                            <form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/addreviewer">
+                            <form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/reviewer">
                                 <input type="hidden" name="fileid" value="<?php echo $fileid; ?>">
                                 <input type="hidden" name="batch" value="<?php echo $batch; ?>">
                                 <input type="hidden" name="page" value="<?php echo $page; ?>">
                                 <input type="hidden" name="logged-in-user" value="<?php echo $loggedInUser; ?>">
+                                <input type="hidden" name="showUserIds" value="<?php echo $showUserIds; ?>">
                                 Add Reviewer: <select name="userid">
                                     <?php
                                     foreach ($users as $user)
@@ -41,7 +30,6 @@
                                 </select>
                                 <input type="text" name="user-percent" placeholder="Percent" size="6">
                                 <input type="submit" class="btn btn-primary" name="action" value="Add">
-                            </form>
                         </p>
                         <p>
                             Total Completion - <?php echo $reviewedCount; ?> of <?php echo $imageCount; ?>
@@ -57,7 +45,6 @@
                                 }
                                 else
                                 {
-                                    echo '<form method="POST" action="<?php echo base_url(); ?>index.php/cleanup/reviewertableupdate">';
                                     echo '<table class="table table-striped">',
                                          '    <thead>',
                                          '        <tr>',
@@ -97,22 +84,34 @@
                                         echo "<td>" . $reviewer['COMPLETED_COUNT'] . "</td>";
                                         if ($reviewer['SHOW_IMAGES'] == true)
                                         {
-                                            echo "<td><input type=\"checkbox\" name=\"show-" . $reviewer['REVIEWER_ID'] . "\" checked></td>";
+                                            echo "<td><input type=\"checkbox\" name=\"show-images-id[]\" value=\"" . $reviewer['REVIEWER_ID'] . "\" checked></td>";
                                         }
                                         else {
-                                            echo "<td><input type=\"checkbox\" name=\"show-" . $reviewer['REVIEWER_ID'] . "\"></td>";
+                                            echo "<td><input type=\"checkbox\" name=\"show-images-id[]\" value=\"" . $reviewer['REVIEWER_ID'] . "\"></td>";
                                         }
                                         echo "</tr>";
                                     }
 
                                     echo "</table>";
-                                    echo "<input type=\"submit\" class=\"btn btn-primary\" name=\"action\" value=\"Update\">";
+                                    echo "<input type=\"submit\" class=\"btn btn-primary\" name=\"action\" value=\"Refresh\">";
                                     echo "</form>";
                                 }
                             ?>
                         </p>
                     </div>
                 </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                Page <select ng-model="cleanup.page" ng-options="value.id as value.name for (key, value) in cleanup.pages">
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="button" class="btn btn-primary" value="Save" ng-click="saveBibs()"/>
             </div>
         </div>
         <br>
@@ -152,8 +151,13 @@
                     </div>
                 </div>
             </div>
-
         </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="button" class="btn btn-primary" value="Save" ng-click="saveBibs()"/>
+            </div>
+        </div>
+        <br>
     </div>
 </div>
 
