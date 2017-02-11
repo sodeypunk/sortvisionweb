@@ -216,7 +216,7 @@
                     ).success(function (data) {
 
                         if (data.success === true) {
-                            alert("Saved successfully!");
+                            alert("Saved successfully! Reloading page...");
                             window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
                         }
 

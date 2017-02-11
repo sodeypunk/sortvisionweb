@@ -31,7 +31,7 @@ class Cleanup extends CI_Controller {
 		$showUserIds='';
 		$reviewerIdList = array();
 
-		if (isset ($_GET) || $fileid > 0) {
+		if (!empty($_SESSION) && (!empty ($_GET) || $fileid > 0)) {
 
 			if (isset ($_GET['fileid'])) {
 				$fileid = $_GET['fileid'];

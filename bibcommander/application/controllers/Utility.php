@@ -297,7 +297,7 @@ class util
 
     public static function GetResultImagePath($s3Bucket, $fileId, $jobId, $fileNameWithoutExt)
     {
-        $resultImagePath = sprintf("http://www.sortvision.com/bibcommander/assets/result_images/%s/%s/%s/%s/recognition_images/", $s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
+        $resultImagePath = sprintf("http://162.214.5.146/~sharevin/sortvision/bibcommander/assets/result_images/%s/%s/%s/%s/recognition_images/", $s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
         return $resultImagePath;
     }
 

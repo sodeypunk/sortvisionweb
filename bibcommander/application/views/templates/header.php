@@ -25,7 +25,7 @@
 	    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <script src="<?php echo base_url("assets/js/ie10-viewport-bug-workaround.js"); ?>"></script>
 	    <script src="<?php echo base_url("assets/js/dropzone.js"); ?>"></script>
-		<script src="<?php echo base_url("assets/js/ekko-lightbox.min.js"); ?>"></script>
+		<script src="<?php echo base_url("assets/js/ekko-lightbox-sortvision.js"); ?>"></script>
 		<script src="<?php echo base_url("assets/js/jquery.dataTables.min.js"); ?>"></script>
 		<script src="<?php echo base_url("assets/js/dataTables.bootstrap.min.js"); ?>"></script>
 	    <script type="text/javascript" src="<?php echo base_url("assets/js/ie-emulation-modes-warning.js"); ?>"></script>
