@@ -110,7 +110,7 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
           } else if (this.options.type === 'video') {
             return this.showVideoIframe(this.options.remote);
           } else if (this.options.type === 'sortvision-cleanup') {
-            return this.showSortvisionCleanup(this.options.remote, true);
+            return this.showSortvisionCleanup(this.options.remote, this.options.id);
           } else {
             return this.error("Could not detect remote target type. Force the type using data-type=\"image|youtube|vimeo|instagram|url|video\"");
           }
@@ -290,13 +290,59 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
       }
       return this;
     },
-    showSortvisionCleanup: function(src) {
-      var img = new Image();
-      img.src = src;
+    showSortvisionCleanup: function(img, imgid) {
 
-      var imageString = '<div class="cleanup"><img id="image1" class="img-responsive" src="' + src + '"><img id="image2" class="img-responsive" src="' + src + '"><img id="image3" class="img-responsive" src="' + src + '"></div>';
+      var beforeImages = [];
+      var afterImages = [];
+      var fileid = $('[name="fileid"]').val();
+      var imageString = '';
+
+      $.ajax({
+        method: 'GET',
+        url: '/bibcommander/index.php/cleanup/cleanupPreviewImages',
+        data: {fileid: fileid, imgid: imgid},
+        async: false
+      }).success(function(data) {
+        beforeImages = data['beforeImages'];
+        afterImages = data['afterImages'];
+      });
+
+      //var img = new Image();
+      //img.src = src;
+      this.resize(1000);
+
+      // Before Images
+      imageString += '<div class="row">';
+      for (var i=0; i<beforeImages.length; i++)
+      {
+        imageString +=
+            '<div class="col-sm-4 col-md-4">' +
+            '<img id="preview' + beforeImages[i]['ID']  + '" class="img-responsive" src="' + beforeImages[i]['IMAGE_PATH'] + '">' +
+            '</div>';
+      }
+      imageString += '</div>';
+
+      // Middle Images
+      imageString += '<div class="row">';
+      imageString +=
+          '<div class="col-md-12 text-center">' +
+          '<img id="previewMain" class="img-responsive" src="' + img + '">' +
+          '</div>';
+      imageString += '</div>';
+
+      // After Images
+      imageString += '<div class="row">';
+      for (var i=0; i<afterImages.length; i++)
+      {
+        imageString +=
+            '<div class="col-sm-4 col-md-4">' +
+            '<img id="preview' + afterImages[i]['ID']  + '" class="img-responsive" src="' + afterImages[i]['IMAGE_PATH'] + '">' +
+            '</div>';
+      }
+      imageString += '</div>';
 
       this.lightbox_body.html(imageString);
+
       return this;
     },
     loadRemoteContent: function(url) {
@@ -422,6 +468,7 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
       $this = $(this);
       options = $.extend({
         remote: $this.attr('data-remote') || $this.attr('href'),
+        id: $this.attr('data-id'),
         gallery_parent_selector: $this.attr('data-parent'),
         type: $this.attr('data-type')
       }, options, $this.data());

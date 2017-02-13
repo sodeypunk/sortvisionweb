@@ -44,6 +44,51 @@ class Results_Client_model extends CI_Model {
         return (int)$countResults[0]['COUNT'];
     }
 
+    public function getBeforeOrAfterImages($fileId, $imgid, $isBefore)
+    {
+        if ($isBefore) {
+            $sql = "SELECT * from RESULTS_CLIENT c " .
+                "INNER JOIN FILES f " .
+                "ON f.IDFILE = c.IDFILE " .
+                "INNER JOIN SPARK_JOBS j " .
+                "ON f.IDFILE = j.IDFILE " .
+                "WHERE f.IDFILE = '" . $fileId . "' " .
+                "    AND IMAGE < (SELECT IMAGE FROM RESULTS_CLIENT WHERE IDFILE = " . $fileId . " and ID = " . $imgid . ") " .
+                "ORDER BY IMAGE DESC " .
+                "LIMIT 3";
+
+        }
+        else
+        {
+            $sql = "SELECT * from RESULTS_CLIENT c " .
+                "INNER JOIN FILES f " .
+                "ON f.IDFILE = c.IDFILE " .
+                "INNER JOIN SPARK_JOBS j " .
+                "ON f.IDFILE = j.IDFILE " .
+                "WHERE f.IDFILE = '" . $fileId . "' " .
+                "    AND IMAGE > (SELECT IMAGE FROM RESULTS_CLIENT WHERE IDFILE = " . $fileId . " and ID = " . $imgid . ") " .
+                "ORDER BY IMAGE ASC " .
+                "LIMIT 3";
+        }
+
+        $query = $this->db->query($sql);
+        $results = $query->result_array();
+
+        // Construct the image path
+        if (count($results) > 0) {
+            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $results[0]['FILE_NAME']);
+            $sourcePath = Util::GetResultImagePath($results[0]['S3_BUCKET'], $results[0]['IDFILE'], $results[0]['IDJOB'], $fileNameWithoutExt);
+            foreach ($results as &$row) {
+
+                $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
+                $imagePath = $sourcePath . $row["IMAGE_FLATTENED"];
+                $row['IMAGE_PATH'] = $imagePath;
+            }
+        }
+
+        return $results;
+    }
+
     public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1, $userIdList = null) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .

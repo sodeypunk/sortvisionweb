@@ -122,7 +122,7 @@
                         <!--<div ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" style="background-image:url(<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}});">-->
                         <img ng-if="bib.CLEANUP_STATUS != null" class="checkmark" src="<?php echo base_url(); ?>assets/img/checkmark_small.png">
                         <img ng-if="cleanup.saving === true" class="loading" src="<?php echo base_url(); ?>assets/img/loading_sm.gif">
-                        <a href="{{bib.IMAGE_PATH}}" data-toggle="lightbox" data-gallery="image-gallery" data-type="sortvision-cleanup"><img ng-src="{{bib.IMAGE_PATH}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}"></a>
+                        <a href="{{bib.IMAGE_PATH}}" data-toggle="lightbox" data-gallery="image-gallery" data-type="sortvision-cleanup" data-id="{{bib.ID}}"><img ng-src="{{bib.IMAGE_PATH}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}"></a>
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 ID: {{bib.ID}}

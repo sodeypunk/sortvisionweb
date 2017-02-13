@@ -259,4 +259,25 @@ class Cleanup extends CI_Controller {
 		$redirectURL = 'cleanup?fileid=' . $fileid . '&showUserIds=' . $idArrayString;
 		redirect($redirectURL);
 	}
+
+	public function cleanupPreviewImages() {
+
+		if (isset ($_GET['fileid']) && isset ($_GET['imgid'])) {
+
+			$resultArray = array();
+
+			$fileid = $_GET['fileid'];
+			$imgid = $_GET['imgid'];
+
+			$beforeImages = $this->Results_Client_model->getBeforeOrAfterImages($fileid, $imgid, true);
+			$afterImages = $this->Results_Client_model->getBeforeOrAfterImages($fileid, $imgid, false);
+
+
+			$resultArray['beforeImages'] = $beforeImages;
+			$resultArray['afterImages'] = $afterImages;
+
+			header('Content-Type: application/json');
+			echo json_encode($resultArray);
+		}
+	}
 }
