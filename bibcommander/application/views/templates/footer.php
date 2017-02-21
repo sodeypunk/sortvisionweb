@@ -1,5 +1,5 @@
         <footer class="footer">
-            <p>&copy; 2015-2016 SortVISION, Inc.</p>
+            <p>&copy; 2016-2017 SortVISION, Inc.</p>
         </footer>
     </body>
 </html>

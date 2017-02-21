@@ -120,7 +120,7 @@
                 <div class="col-md-4" ng-repeat="bib in rows">
                     <div id="{{bib.IMAGE_FLATTENED}}">
                         <!--<div ng-class="{'glowing-border-selected' : cleanup.selectedIndex == bib.INDEX}" style="background-image:url(<?php echo base_url(); ?>assets/result_images/<?php echo $ezRefString; ?>/{{bib.IMAGE_FLATTENED}});">-->
-                        <img ng-if="bib.CLEANUP_STATUS != null" class="checkmark" src="<?php echo base_url(); ?>assets/img/checkmark_small.png">
+                        <img ng-if="bib.CLEANUP_STATUS != null && bib.IS_DIRTY != true" class="checkmark" src="<?php echo base_url(); ?>assets/img/checkmark_small.png">
                         <img ng-if="cleanup.saving === true" class="loading" src="<?php echo base_url(); ?>assets/img/loading_sm.gif">
                         <a href="{{bib.IMAGE_PATH}}" data-toggle="lightbox" data-gallery="image-gallery" data-type="sortvision-cleanup" data-id="{{bib.ID}}"><img ng-src="{{bib.IMAGE_PATH}}" alt="{{bib.IMAGE_FLATTENED}}" class="img-responsive" title="{{bib.IMAGE_FLATTENED}}"></a>
                         <div class="panel panel-default">
@@ -166,5 +166,21 @@
         event.preventDefault();
         $(this).ekkoLightbox();
     });
+
+    var isDirty = false;
+
+    window.onload = function() {
+        window.addEventListener("beforeunload", function (e) {
+            if (isDirty == false) {
+                return undefined;
+            }
+
+            var confirmationMessage = 'It looks like you have not saved your changes for this page. '
+                + 'If you leave before saving, your changes will be lost.';
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        });
+    };
 
 </script>

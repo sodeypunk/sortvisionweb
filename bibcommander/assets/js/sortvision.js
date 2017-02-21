@@ -101,11 +101,12 @@
         });
 
         $scope.addNewLabel = function(index) {
+            isDirty = true;
             var newLabel = prompt("Please enter new label");
             if (newLabel) {
                 var bib = this.$parent.cleanup.bibs[index];
                 var labelsArray = bib.LABELS_ARRAY;
-
+                bib.IS_DIRTY = true;
                 labelsArray.push({
                     INDEX: labelsArray.length,
                     ID: -1,
@@ -120,6 +121,7 @@
         }
 
         $scope.keepLabel = function(index, labelID) {
+            isDirty = true;
             var bib = this.$parent.cleanup.bibs[index];
             var labelsArray = bib.LABELS_ARRAY;
 
@@ -127,6 +129,7 @@
             {
                 if (labelsArray[i].ID === labelID)
                 {
+                    bib.IS_DIRTY = true;
                     labelsArray[i].REMOVED = "0";
                     labelsArray[i].STATE = "KEEP";
                     break;
@@ -135,6 +138,7 @@
         }
 
         $scope.removeLabel = function(index, labelID) {
+            isDirty = true;
             var bib = this.$parent.cleanup.bibs[index];
             var labelsArray = bib.LABELS_ARRAY;
 
@@ -142,6 +146,7 @@
             {
                 if (labelsArray[i].ID === labelID)
                 {
+                    bib.IS_DIRTY = true;
                     if (labelsArray[i].STATE === "NEW")
                     {
                         labelsArray.splice(i, 1);
@@ -155,48 +160,48 @@
             }
         }
 
-        $scope.deleteLabel = function(index) {
-            var bib = this.$parent.cleanup.bibs[index];
-            var labelsArray = bib.LABELS_ARRAY;
-
-            var labelsText = '';
-            for (var i=0; i<labelsArray.length; i++)
-            {
-                if (labelsArray[i].CHECKED == true)
-                {
-                    labelsText = labelsText + labelsArray[i].LABEL + ", ";
-                }
-            }
-
-            if (labelsText != '') {
-                var result = confirm("Are you sure you want to delete labels: \n " + labelsText);
-                if (result) {
-                    var bib = this.$parent.cleanup.bibs[index];
-                    var labelsArray = bib.LABELS_ARRAY;
-
-                    labelsArray.push({
-                        INDEX: labelsArray.length,
-                        ID: -1,
-                        IDFILE: bib.IDFILE,
-                        IMAGE: bib.IMAGE,
-                        LABEL: newLabel,
-                        REMOVED: "0",
-                        COORDINATE: "[0,0,0,0]",
-                        CHECKED: false
-                    });
-                }
-            }
-            else
-            {
-                alert("No labels were selected for delete.");
-            }
-        }
+        //$scope.deleteLabel = function(index) {
+        //    isDirty = true;
+        //    var bib = this.$parent.cleanup.bibs[index];
+        //    var labelsArray = bib.LABELS_ARRAY;
+        //
+        //    var labelsText = '';
+        //    for (var i=0; i<labelsArray.length; i++)
+        //    {
+        //        if (labelsArray[i].CHECKED == true)
+        //        {
+        //            labelsText = labelsText + labelsArray[i].LABEL + ", ";
+        //        }
+        //    }
+        //
+        //    if (labelsText != '') {
+        //        var result = confirm("Are you sure you want to delete labels: \n " + labelsText);
+        //        if (result) {
+        //            var bib = this.$parent.cleanup.bibs[index];
+        //            var labelsArray = bib.LABELS_ARRAY;
+        //
+        //            labelsArray.push({
+        //                INDEX: labelsArray.length,
+        //                ID: -1,
+        //                IDFILE: bib.IDFILE,
+        //                IMAGE: bib.IMAGE,
+        //                LABEL: newLabel,
+        //                REMOVED: "0",
+        //                COORDINATE: "[0,0,0,0]",
+        //                CHECKED: false
+        //            });
+        //        }
+        //    }
+        //    else
+        //    {
+        //        alert("No labels were selected for delete.");
+        //    }
+        //}
 
         $scope.saveBibs = function() {
             var bibs = this.$parent.cleanup.bibs;
 
             if (confirm("Are you sure you want to save " + bibs.length + " bibs?")) {
-
                 var userId = $('[name="logged-in-user"]').val();
                 if (bibs.length > 0) {
 
@@ -216,6 +221,7 @@
                     ).success(function (data) {
 
                         if (data.success === true) {
+                            isDirty = false;
                             alert("Saved successfully! Reloading page...");
                             window.location.href="/bibcommander/index.php/cleanup?fileid=" + cleanupCtrl.fileid + "&batch=" + cleanupCtrl.batch + "&page=" + cleanupCtrl.page;
                         }
