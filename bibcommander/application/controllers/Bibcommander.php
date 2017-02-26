@@ -18,6 +18,7 @@ class Bibcommander extends CI_Controller {
         $this->load->model ( 'files_model' );
         $this->load->model ( 'system_model' );
         $this->load->model ( 'Monitor_Status_model' );
+        $this->load->model ( 'Results_Client_model' );
     }
 
     public function index() {
@@ -54,6 +55,21 @@ class Bibcommander extends CI_Controller {
             redirect('home');
         }
 
+    }
+
+    public function clientResults() {
+        $clientResult = array();
+
+        if (!empty ($_GET)) {
+            $fileid = $_GET['fileid'];
+            $resultsClientAll = $this->Results_Client_model->get_client_result_by_fileId($fileid);
+
+            $clientResult['images'] = count($resultsClientAll);
+            $clientResult['result'] = $resultsClientAll;
+
+            header('Content-Type: application/json');
+            echo json_encode($clientResult);
+        }
     }
 
 }

@@ -89,6 +89,79 @@ class Results_Client_model extends CI_Model {
         return $results;
     }
 
+    public function get_client_result_by_fileId($fileId)
+    {
+        $imageSql = "SELECT f.S3_BUCKET, f.FILE_NAME, j.IDJOB, c.ID, c.IMAGE, c.HASH FROM RESULTS_CLIENT c " .
+            "INNER JOIN FILES f " .
+            "ON f.IDFILE = c.IDFILE " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "WHERE f.IDFILE = '" . $fileId . "' " .
+            "ORDER BY c.IMAGE";
+
+
+        $imageQuery = $this->db->query($imageSql);
+        $imageResults = $imageQuery->result_array();
+
+        if($imageQuery->num_rows() > 0)
+        {
+            $hashArray = array();
+            foreach ($imageResults as $row) {
+                array_push($hashArray, "'" . $row['HASH'] . "'");
+            }
+            $hashList = implode(",", $hashArray);
+
+            $labelSql = "SELECT l.LABEL, l.HASH, l.REMOVED FROM RESULTS_LABELS l " .
+                "INNER JOIN FILES f " .
+                "ON f.IDFILE = l.IDFILE " .
+                "WHERE f.IDFILE = '" . $fileId . "' " .
+                "AND l.HASH IN (" . $hashList . ") " .
+                "AND l.REMOVED = 0 " .
+                "ORDER BY LABEL";
+
+
+            $LabelsQuery = $this->db->query($labelSql);
+            $labelsResults = $LabelsQuery->result_array();
+
+            $labelHashDict = array();
+            foreach ($labelsResults as $row) {
+                $hash = $row['HASH'];
+                if (array_key_exists($hash, $labelHashDict))
+                {
+                    array_push($labelHashDict[$hash], $row);
+                }
+                else
+                {
+                    $labelHashDict[$hash] = array();
+                    array_push($labelHashDict[$hash], $row);
+                }
+            }
+
+            $index = 0;
+
+            // Construct the image path
+            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageResults[0]['FILE_NAME']);
+            $sourcePath = Util::GetResultImagePath($imageResults[0]['S3_BUCKET'], $fileId, $imageResults[0]['IDJOB'], $fileNameWithoutExt);
+            foreach ($imageResults as &$row) {
+
+                $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);
+                $row['LABELS_STRING'] = util::bibArrayToString($labelHashDict, $row['HASH'], false);
+
+                $imageFlattened = util::flatten($row['IMAGE']);
+
+                $imagePath = $sourcePath . $imageFlattened;
+                $row['IMAGE_PATH'] = $imagePath;
+                $index++;
+            }
+
+            return $imageResults;
+        }
+        else
+        {
+            return array();
+        }
+    }
+
     public function get_by_fileId($fileId, $cleanUp = '', $batch = 0, $page = 1, $userIdList = null) {
 
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
