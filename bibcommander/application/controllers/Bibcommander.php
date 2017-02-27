@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__DIR__)."/controllers/Utility.php");
+
 if (! defined ( 'BASEPATH' ))
     exit ( 'No direct script access allowed' );
 
@@ -28,7 +30,8 @@ class Bibcommander extends CI_Controller {
 
             $s3Bucket = $_SESSION['s3_bucket'];
 
-            $data['files'] = $this->files_model->get_files_by_s3bucket($s3Bucket, 100);
+            $files = $this->files_model->get_files_by_s3bucket($s3Bucket, 100);
+            $data['files'] = util::AddLinks($files);
 
             $demoMonitor = $this->Monitor_Status_model->get_demo_status();
 
@@ -55,21 +58,6 @@ class Bibcommander extends CI_Controller {
             redirect('home');
         }
 
-    }
-
-    public function clientResults() {
-        $clientResult = array();
-
-        if (!empty ($_GET)) {
-            $fileid = $_GET['fileid'];
-            $resultsClientAll = $this->Results_Client_model->get_client_result_by_fileId($fileid);
-
-            $clientResult['images'] = count($resultsClientAll);
-            $clientResult['result'] = $resultsClientAll;
-
-            header('Content-Type: application/json');
-            echo json_encode($clientResult);
-        }
     }
 
 }

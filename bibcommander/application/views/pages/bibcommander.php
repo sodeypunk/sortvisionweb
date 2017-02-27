@@ -29,6 +29,7 @@
                     <th>STATUS</th>
                     <th>S3 BUCKET</th>
                     <th>TIMESTAMP</th>
+                    <th>LINKS</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,11 +40,12 @@
                         $count++;
                         echo "<tr>";
                         echo "<td>" . $count . "</td>";
-                        echo "<td><a href=\"" . base_url("index.php/files/status") . "?fileid=" . $row["IDFILE"] . "\">" . $row["IDFILE"] . "</a></td>";
+                        echo "<td>" . $row["IDFILE"] . "</td>";
                         echo "<td>" . $row["FILE_NAME"] . "</td>";
                         echo "<td>" . $row["STATUS"] . "</td>";
                         echo "<td>" . $row["S3_BUCKET"] . "</td>";
                         echo "<td>" . $row["UPDT"] . "</td>";
+                        echo "<td>" . $row["LINKS"] . "</td>";
                         echo "</tr>";
                     }
                 ?>

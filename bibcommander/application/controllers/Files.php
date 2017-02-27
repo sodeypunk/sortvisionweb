@@ -44,9 +44,6 @@ class Files extends CI_Controller {
 				$result = $this->files_model->get_by_fileId($fileId);
 
 				if ($result != false) {
-					$s3Bucket = $result[0]['S3_BUCKET'];
-					$jobId = $result[0]['IDJOB'];
-					$fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $result[0]['FILE_NAME']);
 
 					$data ['fileNm'] = $result[0]['FILE_NAME'];
 					$data ['status'] = $result[0]['STATUS'];
@@ -57,10 +54,8 @@ class Files extends CI_Controller {
 					$data ['fileName'] = $result[0]['FILE_NAME'];
 					$data ['s3Path'] = $result[0]['S3_BUCKET'] . "/" . $result[0]['FILE_NAME'];
 
-					$resultImages = $this->Results_Client_model->get_by_fileId($fileId, 'false', 100);
-
-					$resultImagePath = Util::GetResultImagePath($s3Bucket, $fileId, $jobId, $fileNameWithoutExt);
-					$data ['tiledResultImages'] = util::getImagesTiledFromDB($resultImages, $resultImagePath, $fileId);
+					$resultImages = $this->Results_Client_model->get_client_result_by_fileId($fileId);
+					$data ['resultImages'] = $resultImages;
 				}
 			}
 
@@ -171,5 +166,24 @@ class Files extends CI_Controller {
         return $files;
     }
 
+	public function clientResultsJSON() {
+		$clientResult = array();
+
+		if (!empty ($_GET)) {
+			$fileid = $_GET['fileid'];
+			$resultsClientAll = $this->Results_Client_model->get_client_result_by_fileId($fileid);
+			$jobInfo = $this->Results_Client_model->get_job_information($fileid);
+
+			if (!empty($jobInfo)) {
+				$clientResult['FILE'] = $jobInfo[0]['FILE_NAME'];
+				$clientResult['STATUS'] = $jobInfo[0]['STATUS'];
+				$clientResult['IMAGE_COUNT'] = count($resultsClientAll);
+				$clientResult['RESULT'] = $resultsClientAll;
+			}
+
+			header('Content-Type: application/json');
+			echo json_encode($clientResult);
+		}
+	}
 
 }

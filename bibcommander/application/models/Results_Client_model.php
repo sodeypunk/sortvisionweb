@@ -89,9 +89,26 @@ class Results_Client_model extends CI_Model {
         return $results;
     }
 
+    public function get_job_information($fileId)
+    {
+        $imageSql = "SELECT f.IDFILE, f.S3_BUCKET, f.STATUS, f.FILE_NAME, j.IDJOB FROM FILES f " .
+            "INNER JOIN SPARK_JOBS j " .
+            "ON f.IDFILE = j.IDFILE " .
+            "WHERE f.IDFILE = '" . $fileId . "' ";
+
+
+        $imageInfoQuery = $this->db->query($imageSql);
+        $imageInfoResults = $imageInfoQuery->result_array();
+
+        return $imageInfoResults;
+    }
+
     public function get_client_result_by_fileId($fileId)
     {
-        $imageSql = "SELECT f.S3_BUCKET, f.FILE_NAME, j.IDJOB, c.ID, c.IMAGE, c.HASH FROM RESULTS_CLIENT c " .
+
+        $imageInfoResults = $this->get_job_information($fileId);
+
+        $imageSql = "SELECT c.ID, c.IMAGE, c.HASH FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
             "INNER JOIN SPARK_JOBS j " .
@@ -140,8 +157,8 @@ class Results_Client_model extends CI_Model {
             $index = 0;
 
             // Construct the image path
-            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageResults[0]['FILE_NAME']);
-            $sourcePath = Util::GetResultImagePath($imageResults[0]['S3_BUCKET'], $fileId, $imageResults[0]['IDJOB'], $fileNameWithoutExt);
+            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageInfoResults[0]['FILE_NAME']);
+            $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['S3_BUCKET'], $imageInfoResults[0]['IDFILE'], $imageInfoResults[0]['IDJOB'], $fileNameWithoutExt);
             foreach ($imageResults as &$row) {
 
                 $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);

@@ -56,7 +56,6 @@ class Analysis extends CI_Controller {
 			$this->setDefaultFilterValues($data);
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
-				'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileid . '">Status</a></li>' .
 				'<li class="active">Analysis</li>';
 
 			$this->load->view('templates/header', $data);
@@ -173,7 +172,6 @@ class Analysis extends CI_Controller {
 		$data['lastAction'] = $action;
 
 		$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
-			'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileid . '">Status</a></li>' .
 			'<li class="active">Analysis</li>';
 
 		$this->load->view ( 'templates/header', $data);

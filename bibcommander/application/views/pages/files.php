@@ -2,7 +2,7 @@
 	<!-- Example row of columns -->
 	<div class="row">
 		<div class="col-sm-6">
-			<?php echo '<h2>File Status | <a href="' . base_url("index.php/analysis/index") . '?fileid=' . $fileId . '">Analysis</a></h2>'; ?>
+			<?php echo '<h2>File Status</h2>'; ?>
 			<h5>Note: Please refresh this page for updates on your image</h5>
 			<?php 
 			if ($status != null && $status != "") 
@@ -59,12 +59,33 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div id="result-image">
-				<?php
-				if ($status == "COMPLETED")
-				{
-                    echo $tiledResultImages;
-				}
-				?>
+				<table id="results-table" class="table table-striped">
+					<thead>
+					<tr>
+						<th>#</th>
+						<th>ID</th>
+						<th width="30%">IMAGE</th>
+						<th>LABELS</th>
+						<th>FILE</th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php
+
+					$rowNum = 0;
+					foreach ($resultImages as $row)
+					{
+						$rowNum++;
+						echo "<tr>";
+						echo "<td>" . $rowNum . "</td>";
+						echo "<td>" . $row["ID"] . "</td>";
+						echo "<td><a href=\"" . $row["IMAGE_PATH"] . "\" data-toggle=\"lightbox\" data-gallery=\"image-gallery\" data-id=\"" . $row["ID"] . "\"><img ng-src=\"" . $row["IMAGE_PATH"] . "\" alt=\"" . $row["IMAGE"] . "\" class=\"img-responsive\" title=\"" . $row["IMAGE"] . "\"></a></td>";
+						echo "<td>" . $row["LABELS_STRING"] . "</td>";
+						echo "<td>" . $row["IMAGE"] . "</td>";
+						echo "</tr>";
+					}
+					?>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -113,6 +134,11 @@ $(document).ready(function() {
 			
 		});
 	}
+
+	$("#results-table").DataTable( {
+		"lengthMenu": [[25, 50, 100, 200, 500, -1], [25, 50, 100, 200, 500, "All"]],
+		destroy: true
+	} );
 	
 });
 

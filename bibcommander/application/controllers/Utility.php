@@ -301,4 +301,20 @@ class util
         return $resultImagePath;
     }
 
+    public static function AddLinks($rows)
+    {
+        foreach ($rows as &$row)
+        {
+            $fileid = $row['IDFILE'];
+            $resultLink = sprintf('<a href="%s?fileid=%s">Result</a>', base_url("index.php/files/status"), $fileid);
+            $jsonLink = sprintf('<a href="%sindex.php/files/clientResultsJSON?fileid=%s">JSON</a>', base_url(), $fileid);
+            $analysisLink = sprintf('<a href="%s?fileid=%s">Analysis</a>', base_url("index.php/analysis/index"), $fileid);
+            $cleanupLink = sprintf('<a href="%s?fileid=%s">Cleanup</a>', base_url("index.php/cleanup"), $fileid);
+
+            $row['LINKS'] = sprintf('%s | %s | %s | %s', $analysisLink, $cleanupLink, $jsonLink, $resultLink);
+        }
+
+        return $rows;
+    }
+
 }

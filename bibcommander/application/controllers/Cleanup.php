@@ -73,8 +73,6 @@ class Cleanup extends CI_Controller {
 
 
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
-				'<li><a href="' . base_url("index.php/files/status") . '?fileid=' . $fileid . '">Status</a></li>' .
-				'<li><a href="' . base_url("index.php/analysis/index") . '?fileid=' . $fileid . '">Analysis</a></li>' .
 				'<li class="active">Cleanup</li>';
 
 			$this->load->view('templates/header', $data);
