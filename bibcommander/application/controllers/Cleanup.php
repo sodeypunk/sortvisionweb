@@ -64,7 +64,7 @@ class Cleanup extends CI_Controller {
 			$data['page'] = $page;
 			$data['imageCount'] = $imageCount;
 			$data['reviewedCount'] = $reviewedCount;
-			$data['reviewedPercent'] = round(($reviewedCount / $imageCount) * 100, 2);
+			$data['reviewedPercent'] = $imageCount == 0 ? 0 : round(($reviewedCount / $imageCount) * 100, 2);
 			$data['users'] = $users;
 			$data['reviewingUsers'] = $reviewingUsers;
 			$data['loggedInUser'] = $_SESSION['id_user'];

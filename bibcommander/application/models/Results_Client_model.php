@@ -310,6 +310,7 @@ class Results_Client_model extends CI_Model {
             $hash = $row['HASH'];
             $clientData = array(
                 'ID' => $row['ID'],
+                'CLEANUP' => $row['CLEANUP'],
                 'CLEANUP_STATUS' => $row['CLEANUP_STATUS'],
                 'REVIEWER_ID' => $row['REVIEWER_ID'],
                 'UPDT' => util::CurrentDateTime()
