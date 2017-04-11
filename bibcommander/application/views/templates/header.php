@@ -10,7 +10,7 @@
     
 		<title>SortVISION</title>
 
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <link href="<?php echo base_url("assets/css/ie10-viewport-bug-workaround.css"); ?>" rel="stylesheet">
 	    <link href="<?php echo base_url("assets/css/dropzone.css"); ?>" rel="stylesheet">
@@ -21,7 +21,7 @@
 
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	    <script>window.jQuery || document.write('<script src="<?php echo base_url("assets/js/jquery-1.11.3.min.js"); ?>"><\/script>')</script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	    <script src="<?php echo base_url("assets/js/ie10-viewport-bug-workaround.js"); ?>"></script>
 	    <script src="<?php echo base_url("assets/js/dropzone.js"); ?>"></script>
@@ -44,7 +44,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="http://sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
+          <a class="navbar-brand" href="https://sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
 			<div class="breadcrumb-container">
 				<ul class="breadcrumb">
 					<?php if(isset($breadcrumb))
