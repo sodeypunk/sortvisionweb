@@ -162,7 +162,7 @@ class Upload extends CI_Controller {
 
     private function correctImageOrientation($filename) {
         if (function_exists('exif_read_data')) {
-            $exif = exif_read_data($filename);
+            $exif = @exif_read_data($filename); // Supress warnings from here with the @
             if($exif && isset($exif['Orientation'])) {
                 $orientation = $exif['Orientation'];
                 if($orientation != 1){

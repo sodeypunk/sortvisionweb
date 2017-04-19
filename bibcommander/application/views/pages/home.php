@@ -12,10 +12,7 @@
                 <div class="col-sm-6">
                     <p>Drag and drop an image into the box.</p>
                     <h5>Accepted files: *.jpg, *.png</h5>
-                    <div id="status"></div>
-                    <div id="json-result">
-                        <pre>Results will be displayed here</pre>
-                    </div>
+                    <div id="json-result"></div>
                 </div>
                 <div class="col-sm-6">
                     <div id="dropzone" class="dropzone"></div>
@@ -25,10 +22,11 @@
     </div>
 
     <div class="panel panel-info">
-        <div class="panel-heading">Bibsmart API</div>
+        <div class="panel-heading">For Developers - Bibsmart API</div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
+                    Coming soon!
                 </div>
             </div>
         </div>
@@ -43,9 +41,6 @@
             url: "<?php echo site_url('/upload/dropzone'); ?>",
             acceptedFiles: ".jpg, .JPG, .png, .PNG, .zip, .ZIP, .jpeg, .JPEG",
             init: function() {
-//                this.on("processing", function(){
-//                    $("#status").html('Processing file...');
-//                });
                 this.on("success", function(file, response) {
                     var jsonResponse = JSON.parse(response);
                     //var itemsCount = Object.keys(jsonResponse).length;
