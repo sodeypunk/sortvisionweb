@@ -73,13 +73,11 @@ class Upload extends CI_Controller {
             if (!empty($_FILES)) {
 
                 $tempFile = $_FILES['file']['tmp_name'];
+                $fileType = $_FILES['file']['type'];
                 $fileName = str_replace(" ", "_", $_FILES['file']['name']);
                 $fileExt = strtolower(pathinfo($fileName)['extension']);
-                $userSystem = $_POST['UserSystem'];
-                $unzipAfterUpload = $_POST['UnzipAfterUpload'];
 
-                $ezRefString = $this->readableRandomString(6);
-                $targetPath = getcwd() . '/assets/uploads/' . $ezRefString . '/';
+                $targetPath = getcwd() . '/assets/uploads/';
                 if (!file_exists($targetPath))
                 {
                     mkdir($targetPath, 0777);
@@ -90,12 +88,10 @@ class Upload extends CI_Controller {
 
                 if ($fileExt == "zip")
                 {
-                    if ($unzipAfterUpload != "false") {
-                        $zip = new ZipArchive();
-                        if ($zip->open($targetFile) == TRUE) {
-                            $zip->extractTo($targetPath);
-                            $zip->close();
-                        }
+                    $zip = new ZipArchive();
+                    if ($zip->open($targetFile) == TRUE) {
+                        $zip->extractTo($targetPath);
+                        $zip->close();
                     }
                 }
                 else
@@ -103,8 +99,20 @@ class Upload extends CI_Controller {
                     $this->correctImageOrientation($targetFile);
                 }
 
-                $result = $this->files_model->insert($fileName, $ezRefString, $userSystem);
-                $statusURL = site_url('/files/status') . "/" . $ezRefString;
+                // Call API here
+                $url = 'https://api-demo.sortvision.com/bibsmart';
+                $apiDemoKey = 'RxzrwroMd5a4dPfT7pz3M69PChQTjKh01WZwelPU';
+                $contentType = $fileType;
+
+                $header = array('Content-Type: ' . $contentType,
+                    'x-api-key: ' . $apiDemoKey);
+
+                $data = file_get_contents($targetFile);
+
+                $endPoint = $url . "?file=" . $fileName;
+
+
+                $result = $this->CallAPI("POST", $endPoint, $header, $data);
 
 
                 if ($result == true)
@@ -112,7 +120,7 @@ class Upload extends CI_Controller {
                     $status = "SUCCESS";
                 }
 
-                $jsonResult[$fileName] = (object)array('STATUS' => $status, 'EZ_REF_STRING' => $ezRefString, 'STATUS_URL' => $statusURL, 'SYSTEM' => $userSystem);
+                $jsonResult[$fileName] = (object)array('STATUS' => $status, 'JSON_RESULT' => $result);
             }
             else
             {
@@ -179,5 +187,40 @@ class Upload extends CI_Controller {
                 } // if there is some rotation necessary
             } // if have the exif orientation info
         } // if function exists
+    }
+
+    private function CallAPI($method, $url, $header, $data)
+    {
+        $curl = curl_init();
+
+        switch ($method)
+        {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+
+                if ($data)
+                    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_PUT, 1);
+                break;
+            default:
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+        }
+
+        // Optional Authentication:
+        //curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        //curl_setopt($curl, CURLOPT_USERPWD, "username:password");
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $result;
     }
 }

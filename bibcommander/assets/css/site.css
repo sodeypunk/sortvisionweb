@@ -141,3 +141,9 @@ body {
 #navbar {
 	color: #fff;
 }
+
+.alert.alert-navbar {
+	margin: 5px 5px auto;
+	float: left;
+	padding: 2px;
+}

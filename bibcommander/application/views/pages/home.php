@@ -1,33 +1,78 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
-	<div class="container">
-		<h1>BibSmart</h1>
-		<p>Auto bib detection and number recognition software.</p>
-	</div>
-    <div class="container center-div">
-        <div class="row">
-            <div class="col-xs-12 col-s-4 col-md-4 col-lg-4">
-                <form class="form-signin" method="POST" action="<?php echo base_url(); ?>index.php/account/signin">
-                    <h2 class="form-signin-heading">Sign In</h2>
-                    <?php if (!empty($errorMsg))
-                    {
-                        echo '<div class="alert alert-danger">';
-                        echo $errorMsg;
-                        echo '</div>';
-                    }
-                    ?>
-                    <label for="email" class="sr-only">Email address</label>
-                    <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
-                    <label for="password" class="sr-only">Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
-        <!--            <div class="checkbox">-->
-        <!--                <label>-->
-        <!--                    <input type="checkbox" value="remember-me"> Remember me-->
-        <!--                </label>-->
-        <!--            </div>-->
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-                </form>
+
+<div class="container">
+    <h1>BibSmart</h1>
+    <p>Auto bib detection and number recognition software.</p>
+
+    <br/>
+    <div class="panel panel-primary">
+        <div class="panel-heading">Try Bibsmart demo application</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <p>Drag and drop an image into the box.</p>
+                    <h5>Accepted files: *.jpg, *.png</h5>
+                    <div id="status"></div>
+                    <div id="json-result">
+                        <pre>Results will be displayed here</pre>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="dropzone" class="dropzone"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Bibsmart API</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function() {
+        Dropzone.autoDiscover = false;
+        $("#dropzone").dropzone({
+            url: "<?php echo site_url('/upload/dropzone'); ?>",
+            acceptedFiles: ".jpg, .JPG, .png, .PNG, .zip, .ZIP, .jpeg, .JPEG",
+            init: function() {
+//                this.on("processing", function(){
+//                    $("#status").html('Processing file...');
+//                });
+                this.on("success", function(file, response) {
+                    var jsonResponse = JSON.parse(response);
+                    //var itemsCount = Object.keys(jsonResponse).length;
+                    //$("#processing-total").text(itemsCount);
+                    var $resultText = "";
+                    for (var key in jsonResponse)
+                    {
+                        if (jsonResponse.hasOwnProperty(key))
+                        {
+                            if (jsonResponse[key]['STATUS'] == "SUCCESS")
+                            {
+                                var jsonObj = JSON.parse(jsonResponse[key]['JSON_RESULT']);
+                                var jsonPretty = JSON.stringify(jsonObj, null, '\t');
+                                $resultText = jsonPretty;
+                            }
+                            else
+                            {
+                                $resultText = "Your image " + key + " has failed when uploading.";
+                            }
+                        }
+                    }
+
+                    $("#json-result").prepend('<pre>' + $resultText + '</pre>');
+                });
+            }
+        });
+        $(".dz-default.dz-message").html("Drop files here or click to upload.")
+    });
+
+</script>

@@ -65,7 +65,28 @@
 						echo 		$_SESSION['email'] . ' | ' . '<a href= "' . site_url('account/signout') . '"> Sign Out </a>';
 						echo 	'</div>';
 					}
-				  ?>
+				  	else {
+						echo 	'<form id = "signin" class="navbar-form navbar-right" role = "form" method="POST" action="' . base_url() . 'index.php/account/signin">';
+						  if (!empty($errorMsg))
+						  {
+							  echo '<div class="alert alert-danger alert-navbar" role="alert">';
+							  echo $errorMsg;
+							  echo '</div>';
+						  }
+						echo 	'<div class="input-group" >';
+						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-user" ></i ></span >';
+						echo 	'<input id = "email" type = "email" class="form-control" name = "email" value = "" placeholder = "Email Address" >';
+						echo 	'</div >&nbsp;';
+
+						echo 	'<div class="input-group" >';
+						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-lock" ></i ></span >';
+						echo 	'<input id = "password" type = "password" class="form-control" name = "password" value = "" placeholder = "Password" >';
+						echo 	'</div >&nbsp;';
+
+						echo 	'<button type = "submit" class="btn btn-primary" >Login</button >';
+						echo 	'</form >';
+				  	}
+				?>
 			  </div>
 		  </div>
       </div>
