@@ -29,8 +29,16 @@
 		<script src="<?php echo base_url("assets/js/jquery.dataTables.min.js"); ?>"></script>
 		<script src="<?php echo base_url("assets/js/dataTables.bootstrap.min.js"); ?>"></script>
 	    <script type="text/javascript" src="<?php echo base_url("assets/js/ie-emulation-modes-warning.js"); ?>"></script>
+
+		<!--angular-->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
         <script src="<?php echo base_url("assets/js/sortvision.js"); ?>"></script>
+		<script src="<?php echo base_url("assets/js/sortvision.account.js"); ?>"></script>
+
+		<!--aws-->
+		<script src="<?php echo base_url("assets/js/aws-cognito-sdk.min.js"); ?>"></script>
+		<script src="<?php echo base_url("assets/js/amazon-cognito-identity.min.js"); ?>"></script>
+		<script src="<?php echo base_url("assets/js/aws-sdk.min.js"); ?>"></script>
 
 	</head>
 	<body>
@@ -67,23 +75,24 @@
 					}
 				  	else {
 						echo 	'<form id = "signin" class="navbar-form navbar-right" role = "form" method="POST" action="' . base_url() . 'index.php/account/signin">';
-						  if (!empty($errorMsg))
-						  {
-							  echo '<div class="alert alert-danger alert-navbar" role="alert">';
-							  echo $errorMsg;
-							  echo '</div>';
-						  }
-						echo 	'<div class="input-group" >';
-						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-user" ></i ></span >';
-						echo 	'<input id = "email" type = "email" class="form-control" name = "email" value = "" placeholder = "Email Address" >';
-						echo 	'</div >&nbsp;';
+//						  if (!empty($errorMsg))
+//						  {
+//							  echo '<div class="alert alert-danger alert-navbar" role="alert">';
+//							  echo $errorMsg;
+//							  echo '</div>';
+//						  }
+//						echo 	'<div class="input-group" >';
+//						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-user" ></i ></span >';
+//						echo 	'<input id = "email" type = "email" class="form-control" name = "email" value = "" placeholder = "Email Address" >';
+//						echo 	'</div >&nbsp;';
+//
+//						echo 	'<div class="input-group" >';
+//						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-lock" ></i ></span >';
+//						echo 	'<input id = "password" type = "password" class="form-control" name = "password" value = "" placeholder = "Password" >';
+//						echo 	'</div >&nbsp;';
 
-						echo 	'<div class="input-group" >';
-						echo 	'<span class="input-group-addon" ><i class="glyphicon glyphicon-lock" ></i ></span >';
-						echo 	'<input id = "password" type = "password" class="form-control" name = "password" value = "" placeholder = "Password" >';
-						echo 	'</div >&nbsp;';
-
-						echo 	'<button type = "submit" class="btn btn-primary" >Login</button >';
+						echo 	'<a href="' . base_url() . 'index.php/account/login" style="margin-left: 5px;" class="btn btn-primary">Login</a>';
+						echo 	'<a href="' . base_url() . 'index.php/account/register" style="margin-left: 5px;" class="btn btn-success">Sign up</a>';
 						echo 	'</form >';
 				  	}
 				?>

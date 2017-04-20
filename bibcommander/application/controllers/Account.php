@@ -20,8 +20,24 @@ class Account extends CI_Controller {
 		$this->load->model ( 'Users_model' );
 	}
 
+	public function register() {
+		$this->load->view ( 'templates/header');
+		$this->load->view ( 'pages/register');
+		$this->load->view ( 'templates/footer' );
+	}
+
+	public function verify($code) {
+		$data['code'] = $code;
+
+		$this->load->view ( 'templates/header');
+		$this->load->view ( 'pages/verify', $data);
+		$this->load->view ( 'templates/footer' );
+	}
+
 	
-	public function signin() {
+	public function login() {
+		$data = null;
+
 		if (!empty($_POST['email']) && !empty($_POST['password']))
 		{
 			$db = get_instance()->db->conn_id;
@@ -46,10 +62,12 @@ class Account extends CI_Controller {
 				$data['errorMsg'] = "Login incorrect";
 			}
 		}
+		else {
 
-		$this->load->view ( 'templates/header', $data );
-		$this->load->view ( 'pages/home', $data );
-		$this->load->view ( 'templates/footer' );
+			$this->load->view('templates/header', $data);
+			$this->load->view('pages/login', $data);
+			$this->load->view('templates/footer');
+		}
 	}
 
 	public function signout() {
