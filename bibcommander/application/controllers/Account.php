@@ -26,7 +26,8 @@ class Account extends CI_Controller {
 		$this->load->view ( 'templates/footer' );
 	}
 
-	public function verify($code) {
+	public function verify($username, $code) {
+		$data['username'] = $username;
 		$data['code'] = $code;
 
 		$this->load->view ( 'templates/header');
