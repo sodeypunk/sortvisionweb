@@ -1,22 +1,21 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 
-<div class="container">
-    <h1>BibSmart</h1>
-    <p>Auto bib detection and number recognition software.</p>
-
-    <br/>
-
-    <div id = "loginbox" class="panel panel-info" >
+<div class="container sortvision-container">
+    <div id = "loginbox" class="panel panel-primary" >
         <div class="panel-heading" > Sign in </div>
         <div class="panel-body" >
             <div class="row" >
                 <div class="col-md-12" >
-                    <form id = "loginform" class="form-horizontal" role = "form" >
+                    <form id = "loginform" class="form-horizontal" role = "form" method="post" action="<?php echo base_url(); ?>index.php/account/login">
 
-                        <div id="loginalert" style="display:none" class="alert alert-danger">
-                            <p>Error:</p>
-                            <span></span>
-                        </div>
+                        <?php
+                        if (!empty($errorMsg)) {
+                            echo '<div id = "loginalert" class="alert alert-danger">';
+                            echo '<p> Error:</p>';
+                            echo '<span>' . $errorMsg . '</span>';
+                            echo '</div>';
+                        }
+                        ?>
 
                         <div style = "margin-bottom: 25px" class="input-group" >
                             <span class="input-group-addon" ><i class="glyphicon glyphicon-user" ></i></span>
@@ -25,13 +24,16 @@
 
                         <div style = "margin-bottom: 25px" class="input-group" >
                             <span class="input-group-addon" ><i class="glyphicon glyphicon-lock" ></i></span>
-                            <input id = "login-password" type = "password" class="form-control" name = "passwd" placeholder = "password" >
+                            <input id = "login-password" type = "password" class="form-control" name = "password" placeholder = "password" >
                         </div>
+
+                        <input type="hidden" name="token">
 
                         <div style = "margin-top:10px" class="form-group" >
                             <!--Button -->
                             <div class="col-sm-12 controls" >
                                 <a id = "btn-login" href = "#" class="btn btn-success" onClick = "LoginUser();" > Login  </a>
+<!--                                <button class="btn btn-primary" type="submit">Login</button>-->
                             </div>
                         </div>
 
@@ -113,13 +115,15 @@
         $("#loginalert").hide();
 
         var email = $("#loginbox").find('input[name=email]').val();
-        var password = $("#loginbox").find('input[name=passwd]').val();
+        var password = $("#loginbox").find('input[name=password]').val();
 
         var result = AccountController.LoginUser(email, password, function(result){
 
             if (result.error === false)
             {
-                alert("User token is: " + result.token)
+                $("#loginbox").find('input[name=token]').val(result.token);
+                $("#loginform").submit();
+
             }
             else if (result.error === true && result.newPassword === true)
             {

@@ -1,11 +1,12 @@
 <?php
 
 require_once(dirname(__DIR__)."/controllers/Utility.php");
+require_once(dirname(__DIR__)."/controllers/AWSCognitoWrapper.php");
 
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
-session_start();
+//session_start();
 
 class Account extends CI_Controller {
 
@@ -18,6 +19,28 @@ class Account extends CI_Controller {
 				'form' 
 		) );
 		$this->load->model ( 'Users_model' );
+	}
+
+	public function index() {
+//		$wrapper = new AWSCognitoWrapper();
+//		$wrapper->initialize();
+//		if(!$wrapper->isAuthenticated()) {
+//			redirect('account/login');
+//			exit;
+//		}
+
+		if (!isset($_SESSION['logged_in']))
+		{
+			redirect('account/login');
+			exit;
+		}
+
+		$data['id_user'] = $_SESSION['id_user'];
+		$data['token'] = $_SESSION['token'];
+
+		$this->load->view ( 'templates/header');
+		$this->load->view ( 'pages/account', $data);
+		$this->load->view ( 'templates/footer' );
 	}
 
 	public function register() {
@@ -39,36 +62,37 @@ class Account extends CI_Controller {
 	public function login() {
 		$data = null;
 
-		if (!empty($_POST['email']) && !empty($_POST['password']))
+		/*
+		 * The security logic used here is a huge security risk where anyone who has anything in the token can get access to the account
+		 * Will need to rethink this logic when there is more time. Either with a node.js backend or get the php SRP_A calculation to work.
+		 * */
+		if (!empty($_POST['email']) && !empty($_POST['password'] && !empty($_POST['token'])))
 		{
-			$db = get_instance()->db->conn_id;
-			$email = mysqli_real_escape_string($db, $_POST['email']);
-			$password = mysqli_real_escape_string($db, $_POST['password']);
+			$email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+			$token = $_POST['token'];
 
-			$login = $this->Users_model->check_user($email, $password);
+//			$wrapper = new AWSCognitoWrapper();
+//			$wrapper->initialize();
+//			if(!$wrapper->isAuthenticated()) {
+//				$resultMessage = $wrapper->authenticate($email, $password);
+//			}
 
-			if ($login != false)
-			{
+			$_SESSION['email'] = $email;
+			//$_SESSION['s3_bucket'] = $login[0]['S3_BUCKET'];
+			$_SESSION['s3_bucket'] = 'bibsmart-demo';
+			$_SESSION['logged_in'] = true;
+			$_SESSION['id_user'] = $email;
+			$_SESSION['token'] = $token;
 
-				$_SESSION['email'] = $email;
-				$_SESSION['s3_bucket'] = $login[0]['S3_BUCKET'];
-				$_SESSION['logged_in'] = true;
-				$_SESSION['id_user'] = $login[0]['IDUSERS'];
 
-				redirect('bibcommander');
+			redirect('account');
 
-			}
-			else
-			{
-				$data['errorMsg'] = "Login incorrect";
-			}
 		}
-		else {
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('pages/login', $data);
-			$this->load->view('templates/footer');
-		}
+		$this->load->view('templates/header', $data);
+		$this->load->view('pages/login', $data);
+		$this->load->view('templates/footer');
+
 	}
 
 	public function signout() {

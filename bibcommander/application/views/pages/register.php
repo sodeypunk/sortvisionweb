@@ -1,10 +1,6 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 
 <div class="container">
-    <h1>BibSmart</h1>
-    <p>Auto bib detection and number recognition software.</p>
-
-    <br/>
     <div id="registerbox" class="panel panel-info">
         <div class="panel-heading">Sign up</div>
         <div class="panel-body">

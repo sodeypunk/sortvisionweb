@@ -1,5 +1,9 @@
 <?php
 
+class TestClass2
+{
+
+}
 class util
 {
     public static function  getImagesTiled($sourcePath, $filePaths)
