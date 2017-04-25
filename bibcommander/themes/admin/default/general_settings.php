@@ -74,7 +74,7 @@ $this->load->view(get_theme_directory().'header');
     </div>
     <div class="row settings_fields">
       <div class="col-md-6">
-        <label>Show capatcha on registration: </label>
+        <label>Show captcha on registration: </label>
         <br />
         <label class="radio-inline radio-info">
           <input type="radio" name="captcha_registration" class="styled" <?php if($gsettings->captcha_registration==1) { echo 'checked="checked"'; } ?> value="1">
@@ -98,7 +98,7 @@ $this->load->view(get_theme_directory().'header');
     </div>
     <div class="row settings_fields">
       <div class="col-md-6">
-        <label>Show capatcha on retrieve username: </label>
+        <label>Show captcha on retrieve username: </label>
         <br />
         <label class="radio-inline radio-info">
           <input type="radio" name="captcha_retrieveusername" class="styled" <?php if($gsettings->captcha_retrieveusername==1) { echo 'checked="checked"'; } ?> value="1">

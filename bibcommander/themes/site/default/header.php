@@ -34,7 +34,7 @@ $uri_segment_2 = $this->uri->segment(2);
 <!-- Navbar -->
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
-  <?php if (!$this->ci_auth->is_logged_in()) { ?>
+  <?php if (!$this->ci_auth->is_logged_in() && !$this->ci_auth->is_logged_in(FALSE)) { ?>
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-icons"> <span class="sr-only">Toggle navbar</span> <i class="icon-grid3"></i> </button>
     <a class="navbar-brand" href="<?php echo base_url();?>"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>

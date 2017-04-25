@@ -565,7 +565,11 @@ class Ci_auth
 				return NULL;
 			} else {
 			$data['new_email_key'] = md5(rand().microtime());
+			$data['email'] = $email;
 			$user_id = $user->id;
+			$username = $user->username;
+			$data['user_id'] = $user_id;
+			$data['username'] = $username;
 			$this->ci->users->set_new_email($user_id, $email, $data['new_email_key'], FALSE);
 			return $data;
 			}

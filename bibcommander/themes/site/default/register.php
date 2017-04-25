@@ -66,7 +66,7 @@ $this->load->view(get_template_directory().'header');
     </div>
     <?php echo form_close(); ?> </div>
   <div id="oauth_container" class="col-lg-8 center-box clearfix">
-    <p>Or Register with the following</p>
+<!--    <p>Or Register with the following</p>-->
     <ul class="list-inline oauth_ul text-center">
       <?php if($this->config->item('enable_facebook')==1) { ?>
       <li><a class="ci_facebook" href="<?php echo site_url('auth/oauth2/facebook');?>"></a></li>
