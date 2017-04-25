@@ -30,7 +30,7 @@ class Profile extends CI_Controller
 		} else { /* logged in */
 			if($this->ci_auth->canDo('login_to_frontend')) {
 				$user_id = $this->ci_auth->get_user_id();
-				
+				$data['use_username'] = $this->config->item('use_username');
 				$data['errors'] = $this->session->flashdata('errors');
 				$data['message'] = $this->session->flashdata('message');
 				$data['success'] = $this->session->flashdata('success');
@@ -250,6 +250,7 @@ class Profile extends CI_Controller
 					'type' => 'Submit',
 					'content' => '<i class="icon-menu2"></i> Update profile'
 				);
+				$data['use_username'] = $this->config->item('use_username');
 				$this->load->view(get_template_directory().'editprofile', $data);
 			} else {
 				redirect(site_url('/admin/login'));

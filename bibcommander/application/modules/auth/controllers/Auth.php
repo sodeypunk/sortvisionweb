@@ -321,6 +321,7 @@ class Auth extends CI_Controller
 
 			$settings = $this->settings_model->get_all();
 			$data['show_captcha'] = $settings->captcha_registration==1;
+			$data['use_username'] = $this->config->item('use_username');
 			if ($data['use_recaptcha']) {
 			} else {
 				$data['captcha_html'] = $this->_create_captcha();

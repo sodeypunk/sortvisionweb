@@ -89,7 +89,7 @@ $this->load->view(get_theme_directory().'header');
             <a title="" class="btn btn-info btn-icon btn-xs tip" href="<?php echo site_url('admin/user/edituser/'.$user->uid);?>" data-original-title="Print"><i class="icon-pencil"></i></a> 
             <?php } }  ?>
             <?php if($this->ci_auth->canDo('delete_users')) { if($user->can_delete==1) { ?>
-            <a title="" class="btn btn-danger btn-icon btn-xs tip" href="<?php echo site_url('admin/user/deleteuser/'.$user->uid);?>" data-original-title="delete"><i class="icon-remove2"></i></a>
+            <a title="" class="btn btn-danger btn-icon btn-xs tip" href="<?php echo site_url('admin/user/deleteuser/'.$user->uid);?>" onclick="return confirm('Confirm user delete?')" data-original-title="delete"><i class="icon-remove2"></i></a>
             <?php } } ?>
             <?php } else { ?> -- <?php  } } else { ?>
             <a title="" class="btn btn-info btn-icon btn-xs tip" href="#" data-original-title="Print"><i class="icon-pencil"></i></a> 

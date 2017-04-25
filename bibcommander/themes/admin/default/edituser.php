@@ -63,9 +63,11 @@ $this->load->view(get_theme_directory().'header');
     </div>
     <div class="form-group">
       <div class="row">
+        <?php if ($use_username){ ?>
         <div class="col-md-6">
           <label>Username: <span class="mandatory">*</span></label>
           <?php echo form_input($username); ?> </div>
+        <?php } ?>
         <div class="col-md-6">
           <label>Email address: <span class="mandatory">*</span></label>
           <?php echo form_input($email_address); ?> </div>
@@ -91,6 +93,10 @@ $this->load->view(get_theme_directory().'header');
 			echo form_dropdown('user_role', $user_roles, $c_user_role ,$user_role_atts); 
 			?>
         </div>
+        <div class="col-md-6">
+          <label>API Key: </label>
+          <?php echo form_input($api_key); ?>
+        </div>
       </div>
     </div>
     <div class="form-group">
@@ -112,18 +118,19 @@ $this->load->view(get_theme_directory().'header');
     </div>
     <div class="form-group">
       <div class="row">
-        <div class="col-md-6">
-          <label>Country: </label>
-          <?php 
-			$country_atts='data-placeholder="Choose a Country" tabindex="2"';
-			$selected_country=$this->form_validation->set_value('country');
-			if(!isset($selected_country) || $selected_country=='') { $selected_country=''; }
-			echo country_dropdown('country', 'country', 'select-full', $selected_country, array(), '', $selection=NULL, $show_all=TRUE, $country_atts);
-			?>
-        </div>
+<!--        <div class="col-md-6">-->
+<!--          <label>Country: </label>-->
+<!--          --><?php //
+//			$country_atts='data-placeholder="Choose a Country" tabindex="2"';
+//			$selected_country=$this->form_validation->set_value('country');
+//			if(!isset($selected_country) || $selected_country=='') { $selected_country=''; }
+//			echo country_dropdown('country', 'country', 'select-full', $selected_country, array(), '', $selection=NULL, $show_all=TRUE, $country_atts);
+//			?>
+<!--        </div>-->
         <div class="col-md-6">
           <label>Website: </label>
-          <?php echo form_input($website); ?> </div>
+          <?php echo form_input($website); ?>
+        </div>
       </div>
     </div>
     <div class="form-group">

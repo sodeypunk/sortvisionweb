@@ -33,9 +33,13 @@ $this->load->view(get_template_directory().'header');
     <div class="form-group has-feedback">
       <label>Last name: <span class="mandatory">*</span></label>
       <?php echo form_input($last_name); ?></div>
+    <?php if ($use_username){ ?>
     <div class="form-group has-feedback">
       <label>Username: <span class="mandatory">*</span></label>
-      <?php echo form_input($username); ?></div>
+      <?php
+          echo form_input($username);
+      ?></div>
+    <?php }?>
     <div class="form-group has-feedback">
       <label>Email address: <span class="mandatory">*</span></label>
       <?php echo form_input($email); ?></div>

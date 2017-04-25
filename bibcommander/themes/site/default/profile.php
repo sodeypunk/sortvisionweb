@@ -27,8 +27,6 @@ $this->load->view(get_template_directory().'header');
             <img src="<?php echo $grav_url; ?>" alt="<?php echo $profile->username;?>" />
             <?php } ?>
           </div>
-          <p class="username"><?php echo $profile->first_name.' '.$profile->last_name;?></p>
-          <p class="emailaddress"><?php echo $profile->email;?></p>
         </div>
         <div class="main_content pull-right col-md-10">
           <h3 class="profiletitle"><span class="profile_title"><?php echo $profile->first_name.' '.$profile->last_name;?></span></h3>
@@ -42,18 +40,23 @@ $this->load->view(get_template_directory().'header');
             <div class="profile_fields">
               <label>Email address:</label>
               <span><?php echo $profile->email?$profile->email:'--';?></span></div>
+            <?php if ($use_username){ ?>
             <div class="profile_fields">
               <label>Username:</label>
               <span><?php echo $profile->username?$profile->username:'--';?></span></div>
+            <?php } ?>
+            <div class="profile_fields">
+              <label>API Key:</label>
+              <span><?php echo $profile->api_key?$profile->api_key:'--';?></span></div>
             <div class="profile_fields">
               <label>Phone:</label>
               <span><?php echo $profile->phone?$profile->phone:'--';?></span></div>
             <div class="profile_fields">
               <label>Company:</label>
               <span><?php echo $profile->company?$profile->company:'--';?></span></div>
-            <div class="profile_fields">
-              <label>Country:</label>
-              <span><?php echo $profile->country?$profile->country:'--';?></span></div>
+<!--            <div class="profile_fields">-->
+<!--              <label>Country:</label>-->
+<!--              <span>--><?php //echo $profile->country?$profile->country:'--';?><!--</span></div>-->
             <div class="profile_fields">
               <label>Website:</label>
               <span><?php echo $profile->website?$profile->website:'--';?></span></div>

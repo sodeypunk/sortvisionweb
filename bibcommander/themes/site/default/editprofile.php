@@ -29,8 +29,6 @@ $this->load->view(get_template_directory().'header');
             <img src="<?php echo $grav_url; ?>" alt="<?php echo $profile->username;?>" />
             <?php } ?>
           </div>
-          <p class="username"><?php echo $profile->first_name.' '.$profile->last_name;?></p>
-          <p class="emailaddress"><?php echo $profile->email;?></p>
         </div>
         <div class="main_content pull-right col-md-10">
           <h3 class="profiletitle"><span class="profile_title"><?php echo $profile->first_name.' '.$profile->last_name;?></span></h3>
@@ -71,11 +69,13 @@ $this->load->view(get_template_directory().'header');
                 <label>Email address:</label>
                 <?php echo form_input($email); ?></div>
             </div>
+            <?php if ($use_username){ ?>
             <div class="edit_profile_fields">
               <div class="col-md-6">
                 <label>Username:</label>
                 <?php echo form_input($username); ?></div>
             </div>
+            <?php }?>
             <div class="edit_profile_fields">
               <div class="col-md-6">
                 <label>Password:</label>
@@ -101,17 +101,17 @@ $this->load->view(get_template_directory().'header');
                 <label>Company:</label>
                 <?php echo form_input($company); ?></div>
             </div>
-            <div class="edit_profile_fields">
-              <div class="col-md-6">
-                <label>Country:</label>
-                <?php 
-				$country_atts='data-placeholder="Choose a Country" tabindex="2"';
-				$selected_country=$profile->country;
-				if(!isset($selected_country) || $selected_country=='') { $selected_country=''; }
-				echo country_dropdown('country', 'country', 'select-full', $selected_country, array(), '', $selection=NULL, $show_all=TRUE, $country_atts);
-                ?>
-              </div>
-            </div>
+<!--            <div class="edit_profile_fields">-->
+<!--              <div class="col-md-6">-->
+<!--                <label>Country:</label>-->
+<!--                --><?php //
+//				$country_atts='data-placeholder="Choose a Country" tabindex="2"';
+//				$selected_country=$profile->country;
+//				if(!isset($selected_country) || $selected_country=='') { $selected_country=''; }
+//				echo country_dropdown('country', 'country', 'select-full', $selected_country, array(), '', $selection=NULL, $show_all=TRUE, $country_atts);
+//                ?>
+<!--              </div>-->
+<!--            </div>-->
             <div class="edit_profile_fields">
               <div class="col-md-6">
                 <label>Website:</label>

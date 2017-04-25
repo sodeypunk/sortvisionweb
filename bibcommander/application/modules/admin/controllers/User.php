@@ -384,10 +384,12 @@ class User extends CI_Controller
 		$this->form_validation->set_rules('country', 'Country', 'trim|xss_clean|min_length[2]|max_length[20]');
 		$this->form_validation->set_rules('company', 'Company', 'trim|xss_clean|min_length[3]|max_length[20]');
 		$this->form_validation->set_rules('website', 'Website', 'trim|xss_clean|min_length[3]|max_length[50]');
+		$this->form_validation->set_rules('api_key', 'API Key', 'trim|xss_clean|min_length[3]|max_length[100]');
 		$this->form_validation->set_rules('address', 'Address', 'trim|xss_clean|min_length[3]|max_length[100]');
 
-		$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean|min_length[5]|max_length[12]|edit_unique[users.username.'.$user_id.']');
-
+		if ($this->config->item('use_username')){
+			$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean|min_length[5]|max_length[12]|edit_unique[users.username.' . $user_id . ']');
+		}
 		$this->form_validation->set_rules('email_address', 'Email', 'trim|required|valid_email|edit_unique[users.email.'.$user_id.']');
 		
 		$password_post=$this->input->post('password');
@@ -447,6 +449,7 @@ class User extends CI_Controller
 			$user_profile_data=array(
 				'first_name'=>$this->input->post('first_name'),
 				'last_name'=>$this->input->post('last_name'),
+				'api_key'=>$this->input->post('api_key'),
 				'phone'=>$this->input->post('phone'),
 				'company'=>$this->input->post('company'),
 				'country'=>$this->input->post('country'),
@@ -573,6 +576,13 @@ class User extends CI_Controller
 			'id'    => 'deleteprofileimage',
 			'value' => 1,
 			'class' => 'hiddenpimage styled'
+		);
+		$data['api_key'] = array(
+			'name'	=> 'api_key',
+			'id'	=> 'api_key',
+			'class' => 'form-control',
+			'placeholder'	=> 'API Key',
+			'value' =>  $user_data->api_key,
 		);
 		$data['phone'] = array(
 			'name'	=> 'phone',
