@@ -18,20 +18,12 @@
                     <div id="dropzone" class="dropzone"></div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="loginbox" class="panel panel-info">
-        <div class="panel-heading">For Developers - Bibsmart API</div>
-        <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
-                    Sign up for an account to test the Bibsmart API!
+<!--                    <span class="text-center"><h5 style="margin-top: 50px;">Developers, sign up for an account to get access to the Bibsmart API.</h5></span>-->
                 </div>
             </div>
         </div>
-    </div>
-
     </div>
 </div>
 
