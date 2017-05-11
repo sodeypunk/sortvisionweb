@@ -54,7 +54,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo base_url();?>"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
+          <a class="navbar-brand" href="https://www.sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
 			<div class="breadcrumb-container">
 				<ul class="breadcrumb">
 					<?php if(isset($breadcrumb))

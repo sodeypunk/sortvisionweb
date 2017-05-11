@@ -73,12 +73,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'local';
 $query_builder = TRUE;
 
-$db['default'] = array(
+$db['production'] = array(
 	'dsn'	=> '',
-	'hostname' => 'www.sharevine.com',
+	'hostname' => 'localhost',
 	'username' => 'sharevin_root',
 	'password' => 'makingitrain2017!',
-	'database' => 'sharevin_sortvision_dev',
+	'database' => 'sharevin_sortvision',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

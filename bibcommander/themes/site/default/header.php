@@ -37,7 +37,7 @@ $uri_segment_2 = $this->uri->segment(2);
   <?php if (!$this->ci_auth->is_logged_in() && !$this->ci_auth->is_logged_in(FALSE)) { ?>
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-icons"> <span class="sr-only">Toggle navbar</span> <i class="icon-grid3"></i> </button>
-    <a class="navbar-brand" href="<?php echo base_url();?>"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
+    <a class="navbar-brand" href="https://www.sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
   </div>
   <ul class="nav navbar-nav navbar-right collapse" id="navbar-icons">
     <li class="user <?php if(strtolower($uri_segment_2)=='login') { echo 'open'; } ?>"> <a href="<?php echo site_url('auth/login');?>"><span>Login</span></a></li>
@@ -53,7 +53,7 @@ $uri_segment_2 = $this->uri->segment(2);
   <?php } else { ?>
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-icons"> <span class="sr-only">Toggle navbar</span> <i class="icon-grid3"></i> </button>
-    <a class="navbar-brand" href="<?php echo base_url();?>"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
+    <a class="navbar-brand" href="https://www.sortvision.com"><img src="<?php echo base_url("assets/img/SORTVISION_100x43.png") ; ?>"></a>
   </div>
   <ul class="nav navbar-nav navbar-right collapse" id="navbar-icons">
     <li class="user dropdown"> <a class="dropdown-toggle" data-toggle="dropdown"><span>Hi <?php echo $this->ci_auth->username(); ?></span> <i class="caret"></i> </a>
