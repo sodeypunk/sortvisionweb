@@ -18,11 +18,11 @@ $this->load->view(get_template_directory().'header');
           <div class="profileImage">
             <?php if(isset($profile->profile_image) && $profile->profile_image!='') {  ?>
             <img src="<?php echo site_url().'uploads/images/profiles/'.$profile->profile_image; ?>" alt="<?php echo $profile->username;?>" />
-            <?php } else {  
-			  $size = 170; 
-			  $default = site_url().'uploads/images/profiles/profile.jpg'; 
+            <?php } else {
+			  $size = 170;
+			  $default = site_url().'uploads/images/profiles/profile.jpg';
 			  $default = '';
-			  $grav_url = "http://www.gravatar.com/avatar/" . md5( strtolower( trim( $profile->email ) ) ) . "?d=" . urlencode( $default ) . "&s=" . $size; 
+			  $grav_url = "http://www.gravatar.com/avatar/" . md5( strtolower( trim( $profile->email ) ) ) . "?d=" . urlencode( $default ) . "&s=" . $size;
 			  ?>
             <img src="<?php echo $grav_url; ?>" alt="<?php echo $profile->username;?>" />
             <?php } ?>

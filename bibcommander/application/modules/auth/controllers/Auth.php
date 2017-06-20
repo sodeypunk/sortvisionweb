@@ -43,6 +43,32 @@ class Auth extends CI_Controller
 	 * @return void
 	 */
 
+	function bibsmart()
+	{
+		if ($this->ci_auth->is_logged_in()) { /* logged in*/
+
+			if($this->ci_auth->canDo('login_to_frontend')) {
+				redirect(site_url('/auth/bibsmart'));
+			} else {
+				redirect(site_url('/admin/login'));
+			}
+
+		} elseif ($this->ci_auth->is_logged_in(FALSE)) { /* logged in, not activated */
+
+			redirect('/auth/sendactivation/');
+
+		} else {
+			redirect(site_url('/admin/login'));
+		}
+
+	}
+
+	/**
+	 * Login user on the site
+	 *
+	 * @return void
+	 */
+
 	function login()
 	{
 		if ($this->ci_auth->is_logged_in()) { /* logged in*/
