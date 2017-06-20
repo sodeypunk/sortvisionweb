@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = 'local';
+$active_group = 'dev';
 $query_builder = TRUE;
 
 $db['production'] = array(
@@ -101,6 +101,28 @@ $db['test'] = array(
 	'username' => 'sharevin_root',
 	'password' => 'makingitrain2017!',
 	'database' => 'sharevin_sortvision_tst',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['dev'] = array(
+	'dsn'	=> '',
+	'hostname' => 'www.sharevine.com',
+	'username' => 'sharevin_root',
+	'password' => 'makingitrain2017!',
+	'database' => 'sharevin_sortvision_dev',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
