@@ -110,7 +110,7 @@ class Files_model extends CI_Model {
 		$this->db->from('FILES f');
 		$this->db->join('SPARK_JOBS s', 'f.IDFILE = s.IDFILE', 'left');
 		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');
-		$where = "(f.API_KEY='$apiKey' AND (f.FILE_STATUS = 'COMPLETED' OR f.FILE_STATUS = 'ERROR'))";
+		$where = "(f.API_KEY='$apiKey' AND (f.FILE_STATUS = 'COMPLETED' OR f.FILE_STATUS = 'ERROR' or f.FILE_STATUS = 'REMOVED'))";
 		$this->db->where($where);
 		$this->db->group_by(array('EC2_INSTANCE_ID', 'EC2_STATE', 'FILE_PATH', 'FILE_STATUS', 'UPDT', 'IMG_COUNT'));
 		$this->db->order_by('f.IDFILE', 'desc');
@@ -169,6 +169,26 @@ class Files_model extends CI_Model {
 		if($query->num_rows() != 0)
 		{
 			return $query->result_array();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function delete_file($fileid)
+	{
+		$fileData = array(
+			'FILE_STATUS' => 'REMOVED',
+			'UPDT' => util::CurrentDateTime()
+		);
+
+		$this->db->where('IDFILE', $fileid);
+		$rowsAffected = $this->db->update('FILES', $fileData);
+
+		if ($rowsAffected > 0)
+		{
+			return true;
 		}
 		else
 		{

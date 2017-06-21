@@ -53,6 +53,7 @@ $route['upload'] = 'upload';
 $route['files'] = 'files';
 $route['home'] = 'home';
 $route['bibcommander'] = 'bibcommander';
+$route['bibsmart'] = 'bibsmart';
 $route['analysis'] = 'analysis';
 $route['cleanup'] = 'cleanup';
 $route['account'] = 'account';

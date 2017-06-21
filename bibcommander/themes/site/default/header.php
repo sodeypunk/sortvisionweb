@@ -86,7 +86,7 @@ $uri_segment_2 = $this->uri->segment(2);
                         <i class="caret"></i> </a>
                     <ul class="dropdown-menu dropdown-menu-right icons-right">
                         <li><a href="<?php echo site_url('auth/profile'); ?>">Profile</a></li>
-                        <li><a href="<?php echo site_url('auth/bibsmart'); ?>">BibSmart</a></li>
+                        <li><a href="<?php echo site_url('bibsmart'); ?>">BibSmart</a></li>
                         <li><a href="<?php echo site_url('auth/logout'); ?>">Logout</a></li>
                     </ul>
                 </li>

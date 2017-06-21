@@ -48,7 +48,7 @@ class Auth extends CI_Controller
 		if ($this->ci_auth->is_logged_in()) { /* logged in*/
 
 			if($this->ci_auth->canDo('login_to_frontend')) {
-				redirect(site_url('/auth/bibsmart'));
+				redirect(site_url('/bibsmart'));
 			} else {
 				redirect(site_url('/admin/login'));
 			}

@@ -1,20 +1,18 @@
 <?php
 
-include 'Utility.php';
+require_once(dirname(__DIR__)."/controllers/Utility.php");
 
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
-session_start();
-
 class Files extends CI_Controller {
 	public function __construct() {
 		parent::__construct ();
-		
+
 		$this->load->helper ( array (
-				'url',
-				'html',
-				'form' 
+			'url',
+			'html',
+			'form'
 		) );
 		$this->load->model ( 'files_model' );
 		$this->load->model ( 'Results_Client_model' );
@@ -24,6 +22,17 @@ class Files extends CI_Controller {
 		$this->load->view ( 'templates/header' );
 		$this->load->view ( 'pages/home' );
 		$this->load->view ( 'templates/footer' );
+	}
+
+	function CheckLogin()
+	{
+		if (!$this->ci_auth->is_logged_in()) {
+			redirect(site_url('auth/login'));
+		} elseif ($this->ci_auth->is_logged_in(FALSE)) { // logged in, not activated
+			redirect('/auth/sendactivation/');
+		} else {
+			return true;
+		}
 	}
 	
 	public function Status() {
@@ -183,6 +192,23 @@ class Files extends CI_Controller {
 
 			header('Content-Type: application/json');
 			echo json_encode($clientResult);
+		}
+	}
+
+	public function DeleteFile()
+	{
+		if ($this->CheckLogin()) {
+			if (isset($_POST['fileid']) && isset($_POST['apikey'])) {
+				$file_id = $_POST['fileid'];
+				$api_key = $_POST['apikey'];
+				if ($this->files_model->delete_file($file_id)) {
+					$inprogress_files = $this->files_model->get_in_progress_files_by_api_key($api_key, 100);
+
+					echo json_encode($inprogress_files);
+				} else {
+					echo "failed";
+				}
+			}
 		}
 	}
 

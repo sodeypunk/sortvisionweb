@@ -16,7 +16,7 @@ $this->load->view(get_template_directory() . 'header');
             <div class="row">
                 <div class="col-md-12">
                     <label>API Key:</label>
-                    <span><?php echo $profile->api_key ? $profile->api_key : '--'; ?></span>
+                    <span><?php echo $profile->api_key ? $profile->api_key : ''; ?></span>
                     <hr>
                 </div>
             </div>
@@ -41,7 +41,8 @@ $this->load->view(get_template_directory() . 'header');
                     <?php } ?>
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <form method="POST" action="<?php echo base_url(); ?>index.php/auth/bibsmart/job">
+                            <form id="new-job">
+                                <input type="hidden" id="apikey" value="<?php echo $profile->api_key ? $profile->api_key : ''; ?>">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -215,10 +216,75 @@ $this->load->view(get_template_directory() . 'header');
             destroy: true
         });
 
-        $(".action-trash").click(function(){
-           alert("clicked on " + this.id);
+        $("#new-job").submit(function(){
+
+            var postData = $("#new-job").serialize();
+
+            $.ajax({
+                url: "<?php echo site_url('/bibsmart/job'); ?>",
+                type: "POST",
+                async: false,
+                data: postData,
+                beforeSend: function () {
+                    //$('#loadingImage').show();
+                }
+
+            })
+            .done(function (msg) {
+                if (msg == "failed") {
+                    alert('Delete failed.');
+                    return;
+                }
+                else {
+                    window.location.replace("<?php echo site_url('/bibsmart'); ?>");
+                }
+            })
+            .fail(function (error) {
+                alert("Error: " + error.statusText);
+            })
+            .complete(function () {
+                //$('#loadingImage').hide();
+            });
+
             return false;
         });
+
+        $(".action-trash").click(function(){
+
+            if (confirm("Delete Job?")) {
+                var apiKeyString = $("#apikey").val();
+
+                $.ajax({
+                        url: "<?php echo site_url('/files/deletefile'); ?>",
+                        type: "POST",
+                        async: false,
+                        data: {fileid: this.id, apikey: apiKeyString},
+                        beforeSend: function () {
+                            //$('#loadingImage').show();
+                        }
+
+                    })
+                    .done(function (msg) {
+                        if (msg == "failed") {
+                            alert('Delete failed.');
+                            return;
+                        }
+                        else {
+                            window.location.replace("<?php echo site_url('/bibsmart'); ?>");
+                        }
+                    })
+                    .fail(function (error) {
+                        alert("Error: " + error.statusText);
+                    })
+                    .complete(function () {
+                        //$('#loadingImage').hide();
+                    });
+            }
+
+            return false;
+        });
+
+
     });
 
 </script>
