@@ -60,45 +60,51 @@ class Bibsmart extends CI_Controller
 				$data['profile'] = $user_profile[0];
 				$data['seo_title'] = 'BibSmart';
 				$apiKey = $user_profile[0]->api_key?$user_profile[0]->api_key:'';
+
+				// Begin processing post data
+				if (isset($_POST['input-file'])) {
+					$file = $_POST['input-file'];
+					$speed = $_POST['input-speed'];
+					$draw_results = isset($_POST['input-draw-results']);
+					$dry_run = isset($_POST['input-dryrun']);
+					$user_id = $this->ci_auth->get_user_id();
+					$user_profile = $this->user_model->get_user($user_id);
+					$apiKey = $user_profile[0]->api_key ? $user_profile[0]->api_key : '';
+					if ($dry_run)
+						$dry_run_param = 'True';
+					else
+						$dry_run_param = 'False';
+
+					// Call API here
+					$url = 'https://api-test.sortvision.com/bibsmart';
+					$contentType = 'application/json';
+
+					$header = array('Content-Type: ' . $contentType,
+						'x-api-key: ' . $apiKey);
+
+					$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'ec2' => 't2.nano'));
+					$json_data = json_encode($body_data);
+
+					$result = Util::CallAPI("POST", $url, $header, $json_data);
+
+					if (!empty($result)) {
+						$success = json_decode($result)->result;
+
+						if ($success == "success") {
+							$data['success'] = 'Job creation ' . $success . '. File ID is: ' . json_decode($result)->fileid;
+						} elseif ($success == "failed") {
+							$message = json_decode($result)->error;
+							$data['errors'] = 'Job creation ' . $success . '. Message: ' . $message;
+						}
+					}
+				}
+
+				// Reload the files data
 				$files = $this->files_model->get_completed_files_by_api_key($apiKey, 100);
 				$data['files'] = $files;
 				$files_in_progress = $this->files_model->get_in_progress_files_by_api_key($apiKey, 100);
 				$data['files_in_progress'] = $files_in_progress;
-				// Begin processing post data
-				$file = $_POST['input-file'];
-				$speed = $_POST['input-speed'];
-				$draw_results = isset($_POST['input-draw-results']);
-				$user_id = $this->ci_auth->get_user_id();
-				$user_profile = $this->user_model->get_user($user_id);
-				$apiKey = $user_profile[0]->api_key?$user_profile[0]->api_key:'';
 
-				// Call API here
-				$url = 'https://api-test.sortvision.com/bibsmart';
-				$contentType = 'application/json';
-				$dryRun = 'True';
-
-				$header = array('Content-Type: ' . $contentType,
-					'x-api-key: ' . $apiKey);
-
-				$body_data = array('params' => array('dryrun' => $dryRun, 'file' => $file, 'ec2' => 't2.nano'));
-				$json_data = json_encode($body_data);
-
-				$result = Util::CallAPI("POST", $url, $header, $json_data);
-
-				if (!empty($result))
-				{
-					$success = json_decode($result)->result;
-
-					if ($success == "success")
-					{
-						$data['success'] = 'Job creation ' . $success . '. File ID is: ' . json_decode($result)->fileid;
-					}
-					elseif ($success == "failed")
-					{
-						$message = json_decode($result)->error;
-						$data['errors'] = 'Job creation ' . $success. '. Message: ' . $message;
-					}
-				}
 
 				$this->load->view(get_template_directory().'bibsmart', $data);
 			} else {

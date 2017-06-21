@@ -42,27 +42,69 @@ $this->load->view(get_template_directory() . 'header');
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <form method="POST" action="<?php echo base_url(); ?>index.php/auth/bibsmart/job">
-                                <div class="form-group">
-                                    <label for="input-file">Image Location</label>
-                                    <p class="help-block">Can be file or folder location</p>
-                                    <input type="text" class="form-control" name="input-file" placeholder="s3://bucket/race1">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="input-file">Image Location</label>
+                                            <p class="help-block">Can be file or folder location</p>
+                                            <input type="text" class="form-control" name="input-file" placeholder="s3://bucket/race1">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="input-ec2-type">Speed</label>
-                                    <p class="help-block">Determine how fast you want this job to process</p>
-                                    <select name="input-speed">
-                                        <option value="slow">Slow ($5/hr)</option>
-                                        <option value="fast" selected>Fast ($15/hr)</option>
-                                        <option value="fastest">Fastest ($25/hr)</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="input-ec2-type">Speed</label>
+                                            <p class="help-block">Determine how fast you want this job to process</p>
+                                            <select name="input-speed">
+                                                <option value="slow">Slow ($5/hr)</option>
+                                                <option value="fast" selected>Fast ($15/hr)</option>
+                                                <option value="fastest">Fastest ($25/hr)</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>
-                                    <input type="checkbox" name="input-draw-results"> Draw Results
-                                    </label>
-                                    <p class="help-block">Will draw the detection box for the first 100 images</p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                            <input type="checkbox" name="input-draw-results"> Draw Results
+                                            </label>
+                                            <p class="help-block">Will draw the detection box for each image. (Note: could slow performance)</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-default">Submit</button>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                    <h4 class="panel-title">
+                                                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                            Advanced
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                                    <div class="panel-body">
+                                                        <div class="form-group">
+                                                            <label>
+                                                                <input type="checkbox" name="input-dryrun"> Dry Run
+                                                            </label>
+                                                            <p class="help-block">Will not start an EC2 instance if checked.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <br/>
+                                        <button type="submit" class="btn btn-default">Submit</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -72,7 +114,7 @@ $this->load->view(get_template_directory() . 'header');
                 <div class="col-md-12">
                     <h3><span style="color: green"> In Progress</span></h3>
                     <hr>
-                    <table id="files-inprogress-table" class="table table-striped">
+                    <table id="files-inprogress-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -83,6 +125,7 @@ $this->load->view(get_template_directory() . 'header');
                             <th>IMAGES</th>
                             <th>IMAGES COMPLETED</th>
                             <th>UPDATE TIME</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -100,6 +143,7 @@ $this->load->view(get_template_directory() . 'header');
                             echo "<td>" . $row["IMG_COUNT"] . "</td>";
                             echo "<td>" . $row["IMAGES_COMPLETED"] . "</td>";
                             echo "<td>" . $row["UPDT"] . "</td>";
+                            echo "<td><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete Job'></span></a></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -111,7 +155,7 @@ $this->load->view(get_template_directory() . 'header');
                 <div class="col-md-12">
                     <h3><span style="color: darkblue">History</span></h3>
                     <hr>
-                    <table id="files-history-table" class="table table-striped">
+                    <table id="files-history-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -165,8 +209,15 @@ $this->load->view(get_template_directory() . 'header');
         });
 
         $("#files-inprogress-table").DataTable({
-            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            "paging": false,
+            "searching": false,
+            "info": false,
             destroy: true
+        });
+
+        $(".action-trash").click(function(){
+           alert("clicked on " + this.id);
+            return false;
         });
     });
 

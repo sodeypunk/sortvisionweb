@@ -127,7 +127,7 @@ class Files_model extends CI_Model {
 		}
 		else
 		{
-			return false;
+			return array();
 		}
 	}
 
@@ -154,7 +154,7 @@ class Files_model extends CI_Model {
 		}
 		else
 		{
-			return false;
+			return array();
 		}
 	}
 
