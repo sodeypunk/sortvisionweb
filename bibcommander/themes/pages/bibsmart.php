@@ -10,7 +10,7 @@ $this->load->view(get_template_directory() . 'header');
             <!-- Page header -->
             <div class="page-header">
                 <div class="page-title profile-page-title">
-                    <h2>BibSmart</h2>
+                    <h2><a href="<?php echo site_url('/bibsmart'); ?>">BibSmart</a></h2>
                 </div>
             </div>
             <div class="row">

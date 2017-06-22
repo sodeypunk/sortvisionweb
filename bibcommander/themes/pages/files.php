@@ -4,67 +4,77 @@ $this->load->view(get_template_directory() . 'header');
 ?>
 
 <div class="container">
-	<input type="hidden" id="apikey" value="<?php echo $profile->api_key ? $profile->api_key : ''; ?>">
-	<input type="hidden" id="fileid" value="<?php echo $fileId; ?>">
-	<div class="row">
-		<div class="col-sm-6">
-			<?php echo '<h2>File Status</h2>'; ?>
-			<?php 
-			if ($status != null && $status != "") 
-			{
-				echo '<p>File: ' . $filePath . '</p>';
-				echo '<p>Status: <span id="status">' . $status . '</span></p>';
-				echo '<p>Last Update: ' . $uploadedDt . '</p>';
-				echo '<div class="progress">';
-				echo '<div id="status-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">';
-				echo '0%';
-				echo '</div>';
-				echo '</div>';
-			}
-			else
-			{
-				echo "<p>No status available</p>";
-			}
-			?>
-		</div>
-	</div>
-	<br/>
-	<br/>
-	<div class="row">
-		<div class="col-sm-12">
-			<h2>Result Images</h2>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
-			<div id="result-image">
-				<table id="results-table" class="table table-striped">
-					<thead>
-					<tr>
-						<th>#</th>
-						<th>ID</th>
-						<th width="30%">IMAGE</th>
-						<th>LABELS</th>
-						<th>FILE</th>
-					</tr>
-					</thead>
-					<tbody>
+	<div class="page-content">
+		<div class="page-content-inner">
+			<!-- Page header -->
+			<div class="page-header">
+				<div class="page-title profile-page-title">
+					<h2><a href="<?php echo site_url('/bibsmart'); ?>">BibSmart</a> > File Status</h2>
+				</div>
+			</div>
+			<input type="hidden" id="apikey" value="<?php echo $profile->api_key ? $profile->api_key : ''; ?>">
+			<input type="hidden" id="fileid" value="<?php echo $fileId; ?>">
+			<div class="row">
+				<div class="col-sm-6">
+					<?php echo '<h2>File Status</h2>'; ?>
 					<?php
-
-					$rowNum = 0;
-					foreach ($resultImages as $row)
+					if ($status != null && $status != "")
 					{
-						$rowNum++;
-						echo "<tr>";
-						echo "<td>" . $rowNum . "</td>";
-						echo "<td>" . $row["ID"] . "</td>";
-						echo "<td><a href=\"" . $row["IMAGE_PATH"] . "\" data-toggle=\"lightbox\" data-gallery=\"image-gallery\" data-id=\"" . $row["ID"] . "\"><img ng-src=\"" . $row["IMAGE_PATH"] . "\" alt=\"" . $row["IMAGE"] . "\" class=\"img-responsive\" title=\"" . $row["IMAGE"] . "\"></a></td>";
-						echo "<td>" . $row["LABELS_STRING"] . "</td>";
-						echo "<td>" . $row["IMAGE"] . "</td>";
-						echo "</tr>";
+						echo '<p>File: ' . $filePath . '</p>';
+						echo '<p>Status: <span id="status">' . $status . '</span></p>';
+						echo '<p>Last Update: ' . $uploadedDt . '</p>';
+						echo '<div class="progress">';
+						echo '<div id="status-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">';
+						echo '0%';
+						echo '</div>';
+						echo '</div>';
+					}
+					else
+					{
+						echo "<p>No status available</p>";
 					}
 					?>
-				</table>
+				</div>
+			</div>
+			<br/>
+			<br/>
+			<div class="row">
+				<div class="col-sm-12">
+					<h2>Result Images</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div id="result-image">
+						<table id="results-table" class="table table-striped">
+							<thead>
+							<tr>
+								<th>#</th>
+								<th>ID</th>
+								<th>FILE</th>
+								<th>LABELS</th>
+								<th width="30%">IMAGE</th>
+							</tr>
+							</thead>
+							<tbody>
+							<?php
+
+							$rowNum = 0;
+							foreach ($resultImages as $row)
+							{
+								$rowNum++;
+								echo "<tr>";
+								echo "<td>" . $rowNum . "</td>";
+								echo "<td>" . $row["ID"] . "</td>";
+								echo "<td>" . $row["IMAGE"] . "</td>";
+								echo "<td>" . $row["LABELS_STRING"] . "</td>";
+								echo "<td><a href=\"" . $row["IMAGE_PATH"] . "\" data-toggle=\"lightbox\" data-gallery=\"image-gallery\" data-id=\"" . $row["ID"] . "\"><img ng-src=\"" . $row["IMAGE_PATH"] . "\" alt=\"" . $row["IMAGE"] . "\" class=\"img-responsive\" title=\"" . $row["IMAGE"] . "\"></a></td>";
+								echo "</tr>";
+							}
+							?>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

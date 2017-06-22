@@ -77,7 +77,7 @@ class Results_Client_model extends CI_Model {
         // Construct the image path
         if (count($results) > 0) {
             $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $results[0]['FILE_NAME']);
-            $sourcePath = Util::GetResultImagePath($results[0]['S3_BUCKET'], $results[0]['IDFILE'], $results[0]['IDJOB'], $fileNameWithoutExt);
+            $sourcePath = Util::GetResultImagePath($results[0]['IDFILE'], $results[0]['IDJOB']);
             foreach ($results as &$row) {
 
                 $row['IMAGE_FLATTENED'] = util::flatten($row['IMAGE']);
@@ -158,7 +158,7 @@ class Results_Client_model extends CI_Model {
 
             // Construct the image path
             $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageInfoResults[0]['FILE_NAME']);
-            $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['S3_BUCKET'], $imageInfoResults[0]['IDFILE'], $imageInfoResults[0]['IDJOB'], $fileNameWithoutExt);
+            $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['IDFILE'], $imageInfoResults[0]['IDJOB']);
             foreach ($imageResults as &$row) {
 
                 $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);
@@ -231,7 +231,7 @@ class Results_Client_model extends CI_Model {
 
             // Construct the image path
             $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageResults[0]['FILE_NAME']);
-            $sourcePath = Util::GetResultImagePath($imageResults[0]['S3_BUCKET'], $imageResults[0]['IDFILE'], $imageResults[0]['IDJOB'], $fileNameWithoutExt);
+            $sourcePath = Util::GetResultImagePath($imageResults[0]['IDFILE'], $imageResults[0]['IDJOB']);
             foreach ($imageResults as &$row) {
 
                 $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);

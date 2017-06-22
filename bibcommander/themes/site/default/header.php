@@ -27,6 +27,7 @@ $uri_segment_2 = $this->uri->segment(2);
     <script src="<?php echo base_url(); ?>assets/js/jquery-migrate-1.2.1.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/jquery-ui.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="<?php echo base_url("assets/js/ekko-lightbox-sortvision.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/jquery.dataTables.min.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/dataTables.bootstrap.min.js"); ?>"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
