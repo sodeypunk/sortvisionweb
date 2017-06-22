@@ -119,13 +119,13 @@ $this->load->view(get_template_directory() . 'header');
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>FILE ID</th>
-                            <th>EC2 STATUS</th>
-                            <th>FILE PATH</th>
-                            <th>FILE STATUS</th>
-                            <th>IMAGES</th>
-                            <th>IMAGES COMPLETED</th>
-                            <th>UPDATE TIME</th>
+                            <th>File ID</th>
+                            <th>EC2 Status</th>
+                            <th>File Path</th>
+                            <th>File Status</th>
+                            <th>Images</th>
+                            <th>Images Completed</th>
+                            <th>Update Time</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -135,16 +135,17 @@ $this->load->view(get_template_directory() . 'header');
                         $rowNum = 0;
                         foreach ($files_in_progress as $row) {
                             $rowNum++;
-                            echo "<tr>";
+                            echo "<tr id='" . $row["IDFILE"] . "'>";
                             echo "<td>" . $rowNum . "</td>";
                             echo "<td>" . $row["IDFILE"] . "</td>";
-                            echo "<td>" . $row["EC2_STATE"] . "</td>";
+                            echo "<td><span class='ec2-state'>" . $row["EC2_STATE"] . "</span><img class='loadingImage' src='" . base_url("assets/img/loading_sm_tr.gif") . "'/></td>";
                             echo "<td>" . $row["FILE_PATH"] . "</td>";
-                            echo "<td>" . $row["FILE_STATUS"] . "</td>";
-                            echo "<td>" . $row["IMG_COUNT"] . "</td>";
-                            echo "<td>" . $row["IMAGES_COMPLETED"] . "</td>";
-                            echo "<td>" . $row["UPDT"] . "</td>";
-                            echo "<td><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete Job'></span></a></td>";
+                            echo "<td class='file-status'>" . $row["FILE_STATUS"] . "</td>";
+                            echo "<td class='images-count'>" . $row["IMG_COUNT"] . "</td>";
+                            echo "<td class='images-completed'>" . $row["IMAGES_COMPLETED"] . "</td>";
+                            echo "<td class='updt'>" . $row["UPDT"] . "</td>";
+                            echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div>" .
+                                "<div class='col-md-6'><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete Job'></span></a></div></div></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -160,13 +161,14 @@ $this->load->view(get_template_directory() . 'header');
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>FILE ID</th>
-                            <th>EC2 STATUS</th>
-                            <th>FILE PATH</th>
-                            <th>FILE STATUS</th>
-                            <th>IMAGES</th>
-                            <th>IMAGES COMPLETED</th>
-                            <th>UPDATE TIME</th>
+                            <th>File ID</th>
+                            <th>EC2 Status</th>
+                            <th>File Path</th>
+                            <th>File Status</th>
+                            <th>Images</th>
+                            <th>Images Completed</th>
+                            <th>Update Time</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -184,6 +186,7 @@ $this->load->view(get_template_directory() . 'header');
                             echo "<td>" . $row["IMG_COUNT"] . "</td>";
                             echo "<td>" . $row["IMAGES_COMPLETED"] . "</td>";
                             echo "<td>" . $row["UPDT"] . "</td>";
+                            echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div></div></td>";
                             echo "</tr>";
                         }
                         ?>
@@ -231,8 +234,8 @@ $this->load->view(get_template_directory() . 'header');
 
             })
             .done(function (msg) {
-                if (msg == "failed") {
-                    alert('Delete failed.');
+                if (msg.indexOf("error") >= 0) {
+                    alert('Adding a new job failed. ' + msg);
                     return;
                 }
                 else {
@@ -240,7 +243,7 @@ $this->load->view(get_template_directory() . 'header');
                 }
             })
             .fail(function (error) {
-                alert("Error: " + error.statusText);
+                alert("New Job Error: " + error.statusText);
             })
             .complete(function () {
                 //$('#loadingImage').hide();
@@ -259,10 +262,6 @@ $this->load->view(get_template_directory() . 'header');
                         type: "POST",
                         async: false,
                         data: {fileid: this.id, apikey: apiKeyString},
-                        beforeSend: function () {
-                            //$('#loadingImage').show();
-                        }
-
                     })
                     .done(function (msg) {
                         if (msg == "failed") {
@@ -274,7 +273,7 @@ $this->load->view(get_template_directory() . 'header');
                         }
                     })
                     .fail(function (error) {
-                        alert("Error: " + error.statusText);
+                        alert("Trash action Error: " + error.statusText);
                     })
                     .complete(function () {
                         //$('#loadingImage').hide();
@@ -283,8 +282,58 @@ $this->load->view(get_template_directory() . 'header');
 
             return false;
         });
-
-
     });
+
+    function refreshInProgressStatus()
+    {
+        $('#files-inprogress-table > tbody  > tr').each(function() {
+
+            var fileid = $(this).attr('id');
+            var apiKeyString = $("#apikey").val();
+
+            $.ajax({
+                    url: "<?php echo site_url('/files/filestatusjson'); ?>",
+                    type: "POST",
+                    async: true,
+                    data: {fileid: this.id, apikey: apiKeyString},
+                })
+                .done(function (msg) {
+                    var json_result = JSON.parse(msg);
+                    if (json_result !== null)
+                    {
+                        var file_id = json_result[0].IDFILE;
+                        var ec2_state = json_result[0].EC2_STATE;
+                        if (ec2_state === null)
+                        {
+                            ec2_state = '';
+                        }
+                        var images_count = json_result[0].IMG_COUNT;
+                        if (images_count === null)
+                        {
+                            images_count = '';
+                        }
+                        var images_completed = json_result[0].IMAGES_COMPLETED;
+                        var file_status = json_result[0].FILE_STATUS;
+                        var updt = json_result[0].UPDT;
+
+                        var currentRow = $('#files-inprogress-table').find("#" + file_id);
+
+                        $(currentRow).find(".ec2-state").text(ec2_state);
+                        $(currentRow).find(".images-count").text(images_count);
+                        $(currentRow).find(".images-completed").text(images_completed);
+                        $(currentRow).find(".file-status").text(file_status);
+                        $(currentRow).find(".updt").text(updt);
+                    }
+                })
+                .fail(function (error) {
+                    console.log("File Progress Error: " + error.statusText);
+                })
+        });
+    }
+
+    setInterval(function(){
+        console.log("Refreshing in progress jobs");
+        refreshInProgressStatus(); // this will run after every 5 seconds
+    }, 5000);
 
 </script>

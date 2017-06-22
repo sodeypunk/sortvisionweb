@@ -91,7 +91,7 @@ class Results_Client_model extends CI_Model {
 
     public function get_job_information($fileId)
     {
-        $imageSql = "SELECT f.IDFILE, f.S3_BUCKET, f.STATUS, f.FILE_NAME, j.IDJOB FROM FILES f " .
+        $imageSql = "SELECT f.IDFILE, f.S3_BUCKET, f.FILE_STATUS, f.FILE_NAME, j.IDJOB FROM FILES f " .
             "INNER JOIN SPARK_JOBS j " .
             "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' ";

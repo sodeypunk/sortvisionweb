@@ -16,6 +16,7 @@ class Files extends CI_Controller {
 		) );
 		$this->load->model ( 'files_model' );
 		$this->load->model ( 'Results_Client_model' );
+		$this->load->model('auth/user_model');
 	}
 	
 	public function index() {
@@ -36,17 +37,22 @@ class Files extends CI_Controller {
 	}
 	
 	public function Status() {
-		if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
+		if ($this->CheckLogin()) {
+			$user_id = $this->ci_auth->get_user_id();
+			$user_profile = $this->user_model->get_user($user_id);
+
 			$data = array();
-			$data ['fileNm'] = "";
-			$data ['status'] = "";
-			$data ['uploadedDt'] = "";
-			$data ['fileId'] = "";
-			$data ['filesHistory'] = "";
-			$data ['s3Bucket'] = "";
-			$data ['fileName'] = "";
-			$data ['s3Path'] = "";
-			$data ['tiledResultImages'] = "";
+			$data['profile'] = $user_profile[0];
+			$data['fileNm'] = "";
+			$data['status'] = "";
+			$data['uploadedDt'] = "";
+			$data['fileId'] = "";
+			$data['filesHistory'] = "";
+			$data['s3Bucket'] = "";
+			$data['fileName'] = "";
+			$data['s3Path'] = "";
+			$data['tiledResultImages'] = "";
+			$data ['resultImages'] = array();
 
 			if (!empty ($_GET)) {
 				$fileId = $_GET['fileid'];
@@ -54,14 +60,10 @@ class Files extends CI_Controller {
 
 				if ($result != false) {
 
-					$data ['fileNm'] = $result[0]['FILE_NAME'];
-					$data ['status'] = $result[0]['STATUS'];
-					$data ['uploadedDt'] = $result[0]['UPDT'];
-					$data ['fileId'] = $fileId;
-					$data ['filesHistory'] = $result;
-					$data ['s3Bucket'] = $result[0]['S3_BUCKET'];
-					$data ['fileName'] = $result[0]['FILE_NAME'];
-					$data ['s3Path'] = $result[0]['S3_BUCKET'] . "/" . $result[0]['FILE_NAME'];
+					$data['status'] = $result[0]['FILE_STATUS'];
+					$data['uploadedDt'] = $result[0]['UPDT'];
+					$data['fileId'] = $fileId;
+					$data['filePath'] = $result[0]['FILE_PATH'];
 
 					$resultImages = $this->Results_Client_model->get_client_result_by_fileId($fileId);
 					$data ['resultImages'] = $resultImages;
@@ -71,65 +73,29 @@ class Files extends CI_Controller {
 			$data['breadcrumb'] = '<li><a href="' . site_url('bibcommander') . '">Dashboard</a></li>' .
 				'<li class="active">Status</li>';
 
-			$this->load->view('templates/header', $data);
 			$this->load->view('pages/files', $data);
-			$this->load->view('templates/footer');
-		}
-		else
-		{
-			redirect('home');
 		}
 	}
 	
 	public function GetUpdate() {
 
-		$ezRefString = $_POST['ezRefString'];
-		$result = $this->files_model->get_by_ezRefString($ezRefString);
+		$fileid = $_POST['fileid'];
+		$apikey = $_POST['apikey'];
+		$result = $this->files_model->get_in_progress_files_status($fileid, $apikey);
 
 		if ($result != false) {
 
-			$status = $result[0]['STATUS'];
-			$maxStatus = 0;
-			$statusHTML = "";
-			$imageHTML = "";
+			$status = $result[0]['FILE_STATUS'];
 
-			foreach ($result as $row) {
-				if ((int)$row['STATUS_CODE'] > $maxStatus) {
-					$maxStatus = (int)$row['STATUS_CODE'];
-				}
-			}
+			$images_total = $result[0]['IMG_COUNT'];
+			$images_completed = $result[0]['IMAGES_COMPLETED'];
 
-			$completedPercent = round(($maxStatus / 7) * 100);
+			$completedPercent = round(($images_completed / $images_total) * 100);
 
-			// Get the table data
-			$statusHTML .= '<tr><td>Job created</td><td></td></tr>';
-			if (!empty($result))
-			{
-				foreach ($result as $row)
-				{
-					if ($row['DESCR'] != "")
-					{
-						$statusHTML .= "<tr>";
-						$statusHTML .= "<td>" . $row['DESCR'] . "</td>";
-						$statusHTML .= "<td>" . $row['UPDT'] . "</td>";
-						$statusHTML .= "</tr>";
-					}
-				}
-			}
-
-			// Get the result image if available
-			if ($completedPercent >= 100)
-			{
-				$tiledResultImages = util::getImagesTiledFromDB("assets/result_images/", $ezRefString, 'false', 10);
-				$tiledCleanupResultImages =  util::getImagesTiledFromDB("assets/result_images/", $ezRefString, 'true', 10);
-			}
 
 			$jsonResult = (object) array (
 				'PERCENT' => $completedPercent,
-				'STATUS' => $status,
-				'STATUS_TABLE_HTML' => $statusHTML,
-				'IMAGE_HTML' => $tiledResultImages,
-				'IMAGE_HTML_CLEANUP' => $tiledCleanupResultImages
+				'STATUS' => $status
 			);
 
 			echo json_encode ( $jsonResult );
@@ -208,6 +174,20 @@ class Files extends CI_Controller {
 				} else {
 					echo "failed";
 				}
+			}
+		}
+	}
+
+	public function FileStatusJSON(){
+		if ($this->CheckLogin())
+		{
+			if (isset($_POST['fileid']) && isset($_POST['apikey'])) {
+				$file_id = $_POST['fileid'];
+				$api_key = $_POST['apikey'];
+
+				$file_status = $this->files_model->get_in_progress_files_status($file_id, $api_key);
+
+				echo json_encode ($file_status);
 			}
 		}
 	}

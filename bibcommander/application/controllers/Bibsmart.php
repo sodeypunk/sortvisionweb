@@ -90,9 +90,9 @@ class Bibsmart extends CI_Controller
 						//$data['success'] = 'Job creation ' . $success . '. File ID is: ' . json_decode($result)->fileid;
 						echo "success";
 					} elseif ($success == "failed") {
-						//$message = json_decode($result)->error;
+						$message = json_decode($result)->error;
 						//$data['errors'] = 'Job creation ' . $success . '. Message: ' . $message;
-						echo "failed";
+						echo "error: " . $message;
 					}
 				}
 			}

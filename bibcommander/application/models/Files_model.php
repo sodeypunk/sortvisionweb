@@ -23,46 +23,13 @@ class Files_model extends CI_Model {
 		return $this->db->insert ( 'FILES', $data );
 		
 	}
-	
-	public function get_by_ezRefString($ezRefString, $numberOfRecords = 0) {
-		
-		//select * from FILES f
-		//LEFT JOIN FILES_HISTORY h
-		//on f.ID = h.FILES_ID
-		//WHERE EZ_REF_STRING = 'yasedo'
-		//ORDER BY h.UPDT ASC
-				
-		$this->db->select('*');
-		$this->db->from('FILES f');
-		$this->db->join('FILES_HISTORY h', 'f.IDFILE = h.IDFILE', 'left');
-		$this->db->where('f.EZ_REF_STRING', $ezRefString);
-		$this->db->order_by('h.IDFILE_HIST', 'asc');
-        if ($numberOfRecords > 0)
-        {
-            $this->db->limit($numberOfRecords);
-        }
-
-		$query = $this->db->get();
-		
-		if($query->num_rows() != 0)
-		{
-			return $query->result_array();
-		}
-		else
-		{
-			return false;
-		}
-		
-	}
 
 	public function get_by_fileId($fileId, $numberOfRecords = 0) {
 
-		$this->db->select('f.S3_BUCKET, f.FILE_NAME, f.STATUS, f.UPDT, j.IDJOB, h.DESCR, h.UPDT as HIST_UPDT');
+		$this->db->select('f.S3_BUCKET, f.FILE_PATH, f.FILE_STATUS, f.UPDT, j.IDJOB');
 		$this->db->from('FILES f');
-		$this->db->join('SPARK_JOBS j', 'f.IDFILE = j.IDFILE', 'inner');
-		$this->db->join('FILES_HISTORY h', 'f.IDFILE = h.IDFILE', 'left');
+		$this->db->join('SPARK_JOBS j', 'f.IDFILE = j.IDFILE', 'left');
 		$this->db->where('f.IDFILE', $fileId);
-		$this->db->order_by('h.IDFILE_HIST', 'asc');
 		if ($numberOfRecords > 0)
 		{
 			$this->db->limit($numberOfRecords);
@@ -118,6 +85,29 @@ class Files_model extends CI_Model {
 		{
 			$this->db->limit($numberOfRecords);
 		}
+
+		$query = $this->db->get();
+
+		if($query->num_rows() != 0)
+		{
+			return $query->result_array();
+		}
+		else
+		{
+			return array();
+		}
+	}
+
+	public function get_in_progress_files_status($fileid, $apiKey)
+	{
+		$this->db->select('f.IDFILE, f.EC2_STATE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
+		$this->db->from('FILES f');
+		$this->db->join('SPARK_JOBS s', 'f.IDFILE = s.IDFILE', 'left');
+		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');
+		$this->db->where('f.IDFILE', $fileid);
+		$this->db->where('f.API_KEY', $apiKey);
+		$this->db->group_by(array('EC2_INSTANCE_ID', 'EC2_STATE', 'FILE_PATH', 'FILE_STATUS', 'UPDT', 'IMG_COUNT'));
+		$this->db->order_by('f.IDFILE', 'desc');
 
 		$query = $this->db->get();
 
