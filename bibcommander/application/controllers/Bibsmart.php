@@ -62,6 +62,7 @@ class Bibsmart extends CI_Controller
 				$file = $_POST['input-file'];
 				$speed = $_POST['input-speed'];
 				$draw_results = isset($_POST['input-draw-results']);
+				$terminate_timeout = $_POST['input-terminate-timeout'];
 				$dry_run = isset($_POST['input-dryrun']);
 				$user_id = $this->ci_auth->get_user_id();
 				$user_profile = $this->user_model->get_user($user_id);
@@ -71,6 +72,15 @@ class Bibsmart extends CI_Controller
 				else
 					$dry_run_param = 'False';
 
+				if ($draw_results)
+				{
+					$draw_images_param = 1;
+				}
+				else
+				{
+					$draw_images_param = 0;
+				}
+
 				// Call API here
 				$url = 'https://api-test.sortvision.com/bibsmart';
 				$contentType = 'application/json';
@@ -78,7 +88,7 @@ class Bibsmart extends CI_Controller
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'ec2' => 't2.nano'));
+				$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param, 'terminatetimeout' => $terminate_timeout));
 				$json_data = json_encode($body_data);
 
 				$result = Util::CallAPI("POST", $url, $header, $json_data);

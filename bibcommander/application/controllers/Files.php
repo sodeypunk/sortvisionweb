@@ -52,6 +52,7 @@ class Files extends CI_Controller {
 			$data['fileName'] = "";
 			$data['s3Path'] = "";
 			$data['tiledResultImages'] = "";
+			$data['drawimages'] = 'False';
 			$data ['resultImages'] = array();
 
 			if (!empty ($_GET)) {
@@ -62,7 +63,10 @@ class Files extends CI_Controller {
 
 					$data['status'] = $result[0]['FILE_STATUS'];
 					$data['uploadedDt'] = $result[0]['UPDT'];
-					$data['fileId'] = $fileId;
+					if ($result[0]['DRAW_IMAGES'] == '1')
+					{
+						$data['drawimages'] = 'True';
+					}
 					$data['filePath'] = $result[0]['FILE_PATH'];
 
 					$resultImages = $this->Results_Client_model->get_client_result_by_fileId($fileId);

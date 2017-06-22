@@ -22,6 +22,7 @@ $this->load->view(get_template_directory() . 'header');
 					{
 						echo '<p>File: ' . $filePath . '</p>';
 						echo '<p>Status: <span id="status">' . $status . '</span></p>';
+						echo '<p>Draw Images: ' . $drawimages . '</p>';
 						echo '<p>Last Update: ' . $uploadedDt . '</p>';
 						echo '<div class="progress">';
 						echo '<div id="status-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">';
@@ -68,7 +69,14 @@ $this->load->view(get_template_directory() . 'header');
 								echo "<td>" . $row["ID"] . "</td>";
 								echo "<td>" . $row["IMAGE"] . "</td>";
 								echo "<td>" . $row["LABELS_STRING"] . "</td>";
-								echo "<td><a href=\"" . $row["IMAGE_PATH"] . "\" data-toggle=\"lightbox\" data-gallery=\"image-gallery\" data-id=\"" . $row["ID"] . "\"><img ng-src=\"" . $row["IMAGE_PATH"] . "\" alt=\"" . $row["IMAGE"] . "\" class=\"img-responsive\" title=\"" . $row["IMAGE"] . "\"></a></td>";
+								if ($drawimages == 'True')
+								{
+									echo "<td><a href=\"" . $row["IMAGE_PATH"] . "\" data-toggle=\"lightbox\" data-gallery=\"image-gallery\" data-id=\"" . $row["ID"] . "\"><img ng-src=\"" . $row["IMAGE_PATH"] . "\" alt=\"" . $row["IMAGE"] . "\" class=\"img-responsive\" title=\"" . $row["IMAGE"] . "\"></a></td>";
+								}
+								else
+								{
+									echo "<td>-</td>";
+								}
 								echo "</tr>";
 							}
 							?>

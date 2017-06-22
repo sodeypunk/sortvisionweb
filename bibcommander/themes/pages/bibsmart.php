@@ -58,6 +58,7 @@ $this->load->view(get_template_directory() . 'header');
                                             <label for="input-ec2-type">Speed</label>
                                             <p class="help-block">Determine how fast you want this job to process</p>
                                             <select name="input-speed">
+                                                <option value="test">Testing (do not use)</option>
                                                 <option value="slow">Slow ($5/hr)</option>
                                                 <option value="fast" selected>Fast ($15/hr)</option>
                                                 <option value="fastest">Fastest ($25/hr)</option>
@@ -88,11 +89,24 @@ $this->load->view(get_template_directory() . 'header');
                                                 </div>
                                                 <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                                     <div class="panel-body">
-                                                        <div class="form-group">
-                                                            <label>
-                                                                <input type="checkbox" name="input-dryrun"> Dry Run
-                                                            </label>
-                                                            <p class="help-block">Will not start an EC2 instance if checked.</p>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="input-ec2-type">Terminate Timeout (mins)</label>
+                                                                    <p class="help-block">Will terminate EC2 instance after minutes of idling from last image.</p>
+                                                                    <input type="number" name="input-terminate-timeout" value="5">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="input-dryrun"> Dry Run
+                                                                    </label>
+                                                                    <p class="help-block">Will not start an EC2 instance if checked.</p>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
