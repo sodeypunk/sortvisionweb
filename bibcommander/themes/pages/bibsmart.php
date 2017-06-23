@@ -117,7 +117,7 @@ $this->load->view(get_template_directory() . 'header');
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br/>
-                                        <button type="submit" class="btn btn-default">Submit</button>
+                                        <button type="submit" class="btn btn-default">Submit</button><img class='loadingImage' id="submit-loading-image" style="display: none" src="<?php echo base_url("assets/img/loading_sm_tr.gif"); ?>">
                                     </div>
                                 </div>
                             </form>
@@ -243,7 +243,7 @@ $this->load->view(get_template_directory() . 'header');
                 async: false,
                 data: postData,
                 beforeSend: function () {
-                    //$('#loadingImage').show();
+                    $("#submit-loading-image").show();
                 }
 
             })
@@ -260,7 +260,7 @@ $this->load->view(get_template_directory() . 'header');
                 alert("New Job Error: " + error.statusText);
             })
             .complete(function () {
-                //$('#loadingImage').hide();
+                $("#submit-loading-image").hide();
             });
 
             return false;
@@ -302,46 +302,46 @@ $this->load->view(get_template_directory() . 'header');
     {
         $('#files-inprogress-table > tbody  > tr').each(function() {
 
-            var fileid = $(this).attr('id');
-            var apiKeyString = $("#apikey").val();
+            if ($(this)[0].innerText.indexOf("No data") < 0) {
 
-            $.ajax({
-                    url: "<?php echo site_url('/files/filestatusjson'); ?>",
-                    type: "POST",
-                    async: true,
-                    data: {fileid: this.id, apikey: apiKeyString},
-                })
-                .done(function (msg) {
-                    var json_result = JSON.parse(msg);
-                    if (json_result !== null)
-                    {
-                        var file_id = json_result[0].IDFILE;
-                        var ec2_state = json_result[0].EC2_STATE;
-                        if (ec2_state === null)
-                        {
-                            ec2_state = '';
+                var fileid = $(this).attr('id');
+                var apiKeyString = $("#apikey").val();
+
+                $.ajax({
+                        url: "<?php echo site_url('/files/filestatusjson'); ?>",
+                        type: "POST",
+                        async: true,
+                        data: {fileid: this.id, apikey: apiKeyString},
+                    })
+                    .done(function (msg) {
+                        var json_result = JSON.parse(msg);
+                        if (json_result.length > 0) {
+                            var file_id = json_result[0].IDFILE;
+                            var ec2_state = json_result[0].EC2_STATE;
+                            if (ec2_state === null) {
+                                ec2_state = '';
+                            }
+                            var images_count = json_result[0].IMG_COUNT;
+                            if (images_count === null) {
+                                images_count = '';
+                            }
+                            var images_completed = json_result[0].IMAGES_COMPLETED;
+                            var file_status = json_result[0].FILE_STATUS;
+                            var updt = json_result[0].UPDT;
+
+                            var currentRow = $('#files-inprogress-table').find("#" + file_id);
+
+                            $(currentRow).find(".ec2-state").text(ec2_state);
+                            $(currentRow).find(".images-count").text(images_count);
+                            $(currentRow).find(".images-completed").text(images_completed);
+                            $(currentRow).find(".file-status").text(file_status);
+                            $(currentRow).find(".updt").text(updt);
                         }
-                        var images_count = json_result[0].IMG_COUNT;
-                        if (images_count === null)
-                        {
-                            images_count = '';
-                        }
-                        var images_completed = json_result[0].IMAGES_COMPLETED;
-                        var file_status = json_result[0].FILE_STATUS;
-                        var updt = json_result[0].UPDT;
-
-                        var currentRow = $('#files-inprogress-table').find("#" + file_id);
-
-                        $(currentRow).find(".ec2-state").text(ec2_state);
-                        $(currentRow).find(".images-count").text(images_count);
-                        $(currentRow).find(".images-completed").text(images_completed);
-                        $(currentRow).find(".file-status").text(file_status);
-                        $(currentRow).find(".updt").text(updt);
-                    }
-                })
-                .fail(function (error) {
-                    console.log("File Progress Error: " + error.statusText);
-                })
+                    })
+                    .fail(function (error) {
+                        console.log("File Progress Error: " + error.statusText);
+                    })
+            }
         });
     }
 

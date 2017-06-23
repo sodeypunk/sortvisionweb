@@ -13,7 +13,7 @@ $this->load->view(get_template_directory() . 'header');
 				</div>
 			</div>
 			<input type="hidden" id="apikey" value="<?php echo $profile->api_key ? $profile->api_key : ''; ?>">
-			<input type="hidden" id="fileid" value="<?php echo $fileId; ?>">
+			<input type="hidden" id="fileid" value="<?php echo $fileid; ?>">
 			<div class="row">
 				<div class="col-sm-6">
 					<?php echo '<h2>File Status</h2>'; ?>

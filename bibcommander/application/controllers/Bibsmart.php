@@ -94,15 +94,23 @@ class Bibsmart extends CI_Controller
 				$result = Util::CallAPI("POST", $url, $header, $json_data);
 
 				if (!empty($result)) {
-					$success = json_decode($result)->result;
+					$json_result = json_decode($result);
+					if (!empty($json_result->result)) {
 
-					if ($success == "success") {
-						//$data['success'] = 'Job creation ' . $success . '. File ID is: ' . json_decode($result)->fileid;
-						echo "success";
-					} elseif ($success == "failed") {
-						$message = json_decode($result)->error;
-						//$data['errors'] = 'Job creation ' . $success . '. Message: ' . $message;
-						echo "error: " . $message;
+						$success = $json_result->result;
+
+						if ($success == "success") {
+							//$data['success'] = 'Job creation ' . $success . '. File ID is: ' . json_decode($result)->fileid;
+							echo "success";
+						} elseif ($success == "failed") {
+							$message = json_decode($result)->error;
+							//$data['errors'] = 'Job creation ' . $success . '. Message: ' . $message;
+							echo "error: " . $message;
+						}
+					}
+					else
+					{
+						echo "error: No results from API.";
 					}
 				}
 			}

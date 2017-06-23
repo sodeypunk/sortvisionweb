@@ -46,7 +46,7 @@ class Files extends CI_Controller {
 			$data['fileNm'] = "";
 			$data['status'] = "";
 			$data['uploadedDt'] = "";
-			$data['fileId'] = "";
+			$data['fileid'] = "";
 			$data['filesHistory'] = "";
 			$data['s3Bucket'] = "";
 			$data['fileName'] = "";
@@ -57,6 +57,8 @@ class Files extends CI_Controller {
 
 			if (!empty ($_GET)) {
 				$fileId = $_GET['fileid'];
+				$data['fileid'] = $fileId;
+
 				$result = $this->files_model->get_by_fileId($fileId);
 
 				if ($result != false) {
