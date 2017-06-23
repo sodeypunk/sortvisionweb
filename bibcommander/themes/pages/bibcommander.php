@@ -27,7 +27,6 @@
                     <th>IDFILE</th>
                     <th>FILE</th>
                     <th>STATUS</th>
-                    <th>S3 BUCKET</th>
                     <th>TIMESTAMP</th>
                     <th>LINKS</th>
                 </tr>
@@ -43,7 +42,6 @@
                         echo "<td>" . $row["IDFILE"] . "</td>";
                         echo "<td>" . $row["FILE_NAME"] . "</td>";
                         echo "<td>" . $row["STATUS"] . "</td>";
-                        echo "<td>" . $row["S3_BUCKET"] . "</td>";
                         echo "<td>" . $row["UPDT"] . "</td>";
                         echo "<td>" . $row["LINKS"] . "</td>";
                         echo "</tr>";

@@ -91,7 +91,7 @@ class Results_Client_model extends CI_Model {
 
     public function get_job_information($fileId)
     {
-        $imageSql = "SELECT f.IDFILE, f.S3_BUCKET, f.FILE_STATUS, f.FILE_NAME, j.IDJOB FROM FILES f " .
+        $imageSql = "SELECT f.IDFILE, f.FILE_STATUS, f.FILE_PATH, j.IDJOB FROM FILES f " .
             "INNER JOIN SPARK_JOBS j " .
             "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' ";
@@ -157,7 +157,7 @@ class Results_Client_model extends CI_Model {
             $index = 0;
 
             // Construct the image path
-            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageInfoResults[0]['FILE_NAME']);
+            $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageInfoResults[0]['FILE_PATH']);
             $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['IDFILE'], $imageInfoResults[0]['IDJOB']);
             foreach ($imageResults as &$row) {
 

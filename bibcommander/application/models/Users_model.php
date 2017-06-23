@@ -30,7 +30,7 @@ class Users_model extends CI_Model {
 
     public function get_all_users()
     {
-        $this->db->select('IDUSERS, EMAIL, S3_BUCKET');
+        $this->db->select('IDUSERS, EMAIL');
         $this->db->from('USERS u');
 
         $query = $this->db->get();

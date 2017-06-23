@@ -26,11 +26,11 @@ class Bibcommander extends CI_Controller {
     public function index() {
         $data['demo_server_online'] = false;
 
-        if (isset($_SESSION['s3_bucket'])) {
+        if (isset($_SESSION['s3_bucket'])) { # Need to be changed to FILE ID
 
             $s3Bucket = $_SESSION['s3_bucket'];
 
-            $files = $this->files_model->get_files_by_s3bucket($s3Bucket, 100);
+            $files = $this->files_model->get_files_by_s3buck($s3Bucket, 100);
             $data['files'] = util::AddLinks($files);
 
             $demoMonitor = $this->Monitor_Status_model->get_demo_status();

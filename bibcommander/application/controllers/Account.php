@@ -71,15 +71,7 @@ class Account extends CI_Controller {
 			$email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
 			$token = $_POST['token'];
 
-//			$wrapper = new AWSCognitoWrapper();
-//			$wrapper->initialize();
-//			if(!$wrapper->isAuthenticated()) {
-//				$resultMessage = $wrapper->authenticate($email, $password);
-//			}
-
 			$_SESSION['email'] = $email;
-			//$_SESSION['s3_bucket'] = $login[0]['S3_BUCKET'];
-			$_SESSION['s3_bucket'] = 'bibsmart-demo';
 			$_SESSION['logged_in'] = true;
 			$_SESSION['id_user'] = $email;
 			$_SESSION['token'] = $token;

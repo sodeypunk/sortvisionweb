@@ -26,7 +26,7 @@ class Files_model extends CI_Model {
 
 	public function get_by_fileId($fileId, $numberOfRecords = 0) {
 
-		$this->db->select('f.S3_BUCKET, f.FILE_PATH, f.FILE_STATUS, f.DRAW_IMAGES, f.UPDT, j.IDJOB');
+		$this->db->select('f.FILE_PATH, f.FILE_STATUS, f.DRAW_IMAGES, f.UPDT, j.IDJOB');
 		$this->db->from('FILES f');
 		$this->db->join('SPARK_JOBS j', 'f.IDFILE = j.IDFILE', 'left');
 		$this->db->where('f.IDFILE', $fileId);
@@ -48,32 +48,9 @@ class Files_model extends CI_Model {
 
 	}
 
-	public function get_files_by_s3bucket($s3Bucket, $numberOfRecords)
-	{
-		$this->db->select('*');
-		$this->db->from('FILES f');
-		$this->db->where('f.S3_BUCKET', $s3Bucket);
-		$this->db->order_by('f.IDFILE', 'desc');
-		if ($numberOfRecords > 0)
-		{
-			$this->db->limit($numberOfRecords);
-		}
-
-		$query = $this->db->get();
-
-		if($query->num_rows() != 0)
-		{
-			return $query->result_array();
-		}
-		else
-		{
-			return false;
-		}
-	}
-
 	public function get_completed_files_by_api_key($apiKey, $numberOfRecords)
 	{
-		$this->db->select('f.IDFILE, f.EC2_STATE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
+		$this->db->select('f.IDFILE, f.EC2_STATE, f.EC2_INSTANCE_ID, f.EC2_HOSTNAME, f.EC2_INSTANCE_TYPE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, f.START_TIME, f.END_TIME, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
 		$this->db->from('FILES f');
 		$this->db->join('SPARK_JOBS s', 'f.IDFILE = s.IDFILE', 'left');
 		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');
@@ -100,7 +77,7 @@ class Files_model extends CI_Model {
 
 	public function get_in_progress_files_status($fileid, $apiKey)
 	{
-		$this->db->select('f.IDFILE, f.EC2_STATE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
+		$this->db->select('f.IDFILE, f.EC2_STATE, f.EC2_INSTANCE_ID, f.EC2_HOSTNAME, f.EC2_INSTANCE_TYPE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, f.START_TIME, f.END_TIME, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
 		$this->db->from('FILES f');
 		$this->db->join('SPARK_JOBS s', 'f.IDFILE = s.IDFILE', 'left');
 		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');
@@ -123,7 +100,7 @@ class Files_model extends CI_Model {
 
 	public function get_in_progress_files_by_api_key($apiKey, $numberOfRecords)
 	{
-		$this->db->select('f.IDFILE, f.EC2_STATE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
+		$this->db->select('f.IDFILE, f.EC2_STATE, f.EC2_INSTANCE_ID, f.EC2_HOSTNAME, f.EC2_INSTANCE_TYPE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, f.START_TIME, f.END_TIME, s.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
 		$this->db->from('FILES f');
 		$this->db->join('SPARK_JOBS s', 'f.IDFILE = s.IDFILE', 'left');
 		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');

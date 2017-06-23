@@ -67,18 +67,32 @@ class Bibsmart extends CI_Controller
 				$user_id = $this->ci_auth->get_user_id();
 				$user_profile = $this->user_model->get_user($user_id);
 				$apiKey = $user_profile[0]->api_key ? $user_profile[0]->api_key : '';
-				if ($dry_run)
-					$dry_run_param = 'True';
-				else
-					$dry_run_param = 'False';
+				$hostname = "";
+				$instanceid = "";
+				if ($dry_run) {
+					$dry_run_param = 1;
+				}
+				else {
+					$dry_run_param = 0;
+				}
 
-				if ($draw_results)
-				{
+				if ($draw_results) {
 					$draw_images_param = 1;
 				}
-				else
-				{
+				else {
 					$draw_images_param = 0;
+				}
+
+				if ($speed == "custom")
+				{
+					if (isset($_POST['input-hostname']))
+					{
+						$hostname = $_POST['input-hostname'];
+
+						if (isset($_POST['input-instanceid'])) {
+							$instanceid = $_POST['input-instanceid'];
+						}
+					}
 				}
 
 				// Call API here
@@ -88,7 +102,8 @@ class Bibsmart extends CI_Controller
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param, 'terminatetimeout' => $terminate_timeout));
+				$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
+									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid));
 				$json_data = json_encode($body_data);
 
 				$result = Util::CallAPI("POST", $url, $header, $json_data);
