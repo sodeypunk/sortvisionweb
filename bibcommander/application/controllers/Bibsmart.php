@@ -63,18 +63,12 @@ class Bibsmart extends CI_Controller
 				$speed = $_POST['input-speed'];
 				$draw_results = isset($_POST['input-draw-results']);
 				$terminate_timeout = $_POST['input-terminate-timeout'];
-				$dry_run = isset($_POST['input-dryrun']);
 				$user_id = $this->ci_auth->get_user_id();
 				$user_profile = $this->user_model->get_user($user_id);
 				$apiKey = $user_profile[0]->api_key ? $user_profile[0]->api_key : '';
 				$hostname = "";
 				$instanceid = "";
-				if ($dry_run) {
-					$dry_run_param = 1;
-				}
-				else {
-					$dry_run_param = 0;
-				}
+				$instancetype = "";
 
 				if ($draw_results) {
 					$draw_images_param = 1;
@@ -92,6 +86,10 @@ class Bibsmart extends CI_Controller
 						if (isset($_POST['input-instanceid'])) {
 							$instanceid = $_POST['input-instanceid'];
 						}
+
+						if (isset($_POST['input-instance-type'])) {
+							$instancetype = $_POST['input-instance-type'];
+						}
 					}
 				}
 
@@ -102,8 +100,8 @@ class Bibsmart extends CI_Controller
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('dryrun' => $dry_run_param, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
-									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid));
+				$body_data = array('params' => array('file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
+									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid, 'instancetype'  => $instancetype));
 				$json_data = json_encode($body_data);
 
 				$result = Util::CallAPI("POST", $url, $header, $json_data);

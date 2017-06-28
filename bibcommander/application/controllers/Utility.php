@@ -299,9 +299,9 @@ class util
         return date("Y-m-d H:i:s");
     }
 
-    public static function GetResultImagePath($fileId, $jobId)
+    public static function GetResultImagePath($fileId)
     {
-        $resultImagePath = sprintf("https://s3.amazonaws.com/bibsmart-results/%s/%s/recognition_images/", $fileId, $jobId);
+        $resultImagePath = sprintf("https://s3.amazonaws.com/bibsmart-results/%s/recognition_images/", $fileId);
         return $resultImagePath;
     }
 

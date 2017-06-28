@@ -192,8 +192,25 @@ class Files extends CI_Controller {
 				$api_key = $_POST['apikey'];
 
 				$file_status = $this->files_model->get_in_progress_files_status($file_id, $api_key);
+				$gpu_status = $this->files_model->get_gpu_information($file_id);
 
-				echo json_encode ($file_status);
+				$result['file_status'] = $file_status;
+				$result['gpu_status'] = $gpu_status;
+
+				echo json_encode ($result);
+			}
+		}
+	}
+
+	public function GPUJSON(){
+		if ($this->CheckLogin())
+		{
+			if (isset($_POST['fileid'])) {
+				$file_id = $_POST['fileid'];
+
+				$gpu_status = $this->files_model->get_gpu_information($file_id);
+
+				echo json_encode ($gpu_status);
 			}
 		}
 	}

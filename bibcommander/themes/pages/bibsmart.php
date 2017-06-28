@@ -58,7 +58,6 @@ $this->load->view(get_template_directory() . 'header');
                                             <label for="input-ec2-type">Speed</label>
                                             <p class="help-block">Determine how fast you want this job to process</p>
                                             <select name="input-speed" id="input-speed">
-                                                <option value="test">Testing (do not use)</option>
                                                 <option value="custom">Custom</option>
                                                 <option value="slow" selected>Normal ($5/hr)</option>
                                                 <option value="fast">Fast ($15/hr)</option>
@@ -69,10 +68,11 @@ $this->load->view(get_template_directory() . 'header');
                                 </div>
                                 <div class="row" id="custom-speed" style="display: none;">
                                     <div class="col-md-6">
-                                        <label for="input-ec2-type">Custom Speed</label>
-                                        <p class="help-block">This will not start an EC2 instance. Use for attaching job to existing instance.</p>
+                                        <label for="input-ec2-type">Custom Instance</label>
+                                        <p class="help-block">If hostname is specified, it will not start an EC2 Instance. Use for attaching to existing instances.</p>
                                         <input type="text" class="form-control" name="input-hostname" placeholder="hostname">
-                                        <input type="text" class="form-control" name="input-instanceid" placeholder="instance id">
+                                        <input type="text" class="form-control" name="input-instanceid" placeholder="instance id (optional)">
+                                        <input type="text" class="form-control" name="input-instance-type" placeholder="instance type (optional)">
                                         <br/>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@ $this->load->view(get_template_directory() . 'header');
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>
-                                            <input type="checkbox" name="input-draw-results"> Draw Results
+                                            <input type="checkbox" name="input-draw-results" checked> Draw Results
                                             </label>
                                             <p class="help-block">Will draw the detection box for each image. (Note: could slow performance)</p>
                                         </div>
@@ -108,16 +108,6 @@ $this->load->view(get_template_directory() . 'header');
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <label>
-                                                                        <input type="checkbox" name="input-dryrun"> Dry Run
-                                                                    </label>
-                                                                    <p class="help-block">Will not start an EC2 instance if checked.</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -139,20 +129,21 @@ $this->load->view(get_template_directory() . 'header');
                 <div class="col-md-12">
                     <h3><span style="color: green"> In Progress</span></h3>
                     <hr>
-                    <table id="files-inprogress-table" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
+                    <table id="files-inprogress-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
+                            <th></th>
                             <th>#</th>
                             <th>Actions</th>
                             <th>File ID</th>
                             <th>EC2 Status</th>
                             <th>File Path</th>
                             <th>File Status</th>
-                            <th>Images Completed</th>
+                            <th>Imgs Completed</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <th>EC2 Host</th>
-                            <th>EC2 Instance ID</th>
+                            <th>Host</th>
+                            <th>Instance ID</th>
                             <th>Speed</th>
                         </tr>
                         </thead>
@@ -166,6 +157,7 @@ $this->load->view(get_template_directory() . 'header');
                                 $row["IMG_COUNT"] = "0";
                             $imagesCompleted = $row["IMAGES_COMPLETED"] . " / " . $row["IMG_COUNT"];
                             echo "<tr id='" . $row["IDFILE"] . "'>";
+                            echo "<td class='details-control'></td>";
                             echo "<td>" . $rowNum . "</td>";
                             echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div>" .
                                 "<div class='col-md-6'><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete Job'></span></a></div></div></td>";
@@ -190,20 +182,21 @@ $this->load->view(get_template_directory() . 'header');
                 <div class="col-md-12">
                     <h3><span style="color: darkblue">History</span></h3>
                     <hr>
-                    <table id="files-history-table" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
+                    <table id="files-history-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
+                            <th></th>
                             <th>#</th>
                             <th>Actions</th>
                             <th>File ID</th>
                             <th>EC2 Status</th>
                             <th>File Path</th>
                             <th>File Status</th>
-                            <th>Images Completed</th>
+                            <th>Imgs Completed</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <th>EC2 Host</th>
-                            <th>EC2 Instance ID</th>
+                            <th>Host</th>
+                            <th>Instance ID</th>
                             <th>Speed</th>
                         </tr>
                         </thead>
@@ -216,7 +209,8 @@ $this->load->view(get_template_directory() . 'header');
                             if ($row["IMG_COUNT"] == "")
                                 $row["IMG_COUNT"] = "0";
                             $imagesCompleted = $row["IMAGES_COMPLETED"] . " / " . $row["IMG_COUNT"];
-                            echo "<tr>";
+                            echo "<tr id='" . $row["IDFILE"] . "'>";
+                            echo "<td class='details-control'></td>";
                             echo "<td>" . $rowNum . "</td>";
                             echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div></div></td>";
                             echo "<td>" . $row["IDFILE"] . "</td>";
@@ -249,19 +243,55 @@ $this->load->view(get_template_directory() . 'header');
 
     $(function () {
 
-        $("#files-history-table").DataTable({
+        var historyTable = $("#files-history-table").DataTable({
             "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
-            "scrollX": true,
+            //"scrollX": true,
             destroy: true
         });
 
-        $("#files-inprogress-table").DataTable({
+        var inprogressTable = $("#files-inprogress-table").DataTable({
             "paging": false,
             "searching": false,
             "info": false,
-            "scrollX": true,
+            //"scrollX": true,
             destroy: true
         });
+
+        $('#files-inprogress-table tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = inprogressTable.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                var fileid = $(this).closest('tr').attr('id');
+                var table_html = get_gpu_information(fileid);
+                row.child( table_html ).show();
+                tr.addClass('shown');
+            }
+        } );
+
+        $('#files-history-table tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = historyTable.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                var fileid = $(this).closest('tr').attr('id');
+                var table_html = get_gpu_information(fileid);
+                row.child( table_html ).show();
+                tr.addClass('shown');
+            }
+        } );
 
         $("#input-speed").change(function(e){
             var speed = $(this).val();
@@ -342,6 +372,71 @@ $this->load->view(get_template_directory() . 'header');
         });
     });
 
+    function get_gpu_information ( fileid ) {
+
+        var table_html = "";
+
+        $.ajax({
+            url: "<?php echo site_url('/files/gpujson'); ?>",
+            type: "POST",
+            async: false,
+            data: {fileid: fileid },
+        })
+        .done(function (msg) {
+            var json_result = JSON.parse(msg);
+            if (json_result.length > 0) {
+                table_html = gpu_information_table(json_result);
+            }
+        })
+        .fail(function (error) {
+            alert("Get GPU action Error: " + error.statusText);
+        })
+        .complete(function () {
+            //$('#loadingImage').hide();
+        });
+
+        return(table_html);
+    }
+
+    function gpu_information_table(gpu_information)
+    {
+        var table = '<table class="gpu-info table table-striped table-bordered" cellspacing="0">';
+
+        if (gpu_information.length > 0)
+        {
+            table += "<thead><tr></tr>" +
+                    "<th>Hostname</th>" +
+                "<th>GPU Slot</th>" +
+                "<th>GPU Status</th>" +
+                "<th>Start Time</th>" +
+                "<th>End Time</th>" +
+                "<th>Images Processed</th>" +
+                "<th>Last Image</th>" +
+                "</thead><tbody>";
+            for (var i = 0; i < gpu_information.length; i++)
+            {
+                table += "<tr class=" + gpu_information[i].EC2_HOSTNAME + "-" + gpu_information[i].GPU_SLOT + ">" +
+                    "<td>" + gpu_information[i].EC2_HOSTNAME + "</td>" +
+                    "<td>" + gpu_information[i].GPU_SLOT + "</td>" +
+                    "<td class='gpu-status'>" + gpu_information[i].GPU_STATUS + "</td>" +
+                    "<td class='gpu-start-time'>" + gpu_information[i].START_TIME + "</td>" +
+                    "<td class='gpu-end-time'>" + gpu_information[i].END_TIME + "</td>" +
+                    "<td class='gpu-images-processed'>" + gpu_information[i].IMAGES_PROCESSED + "</td>" +
+                    "<td class='gpu-last-image-processed'>" + gpu_information[i].LAST_IMAGE_PROCESSED + "</td>" +
+                    "</tr>";
+            }
+        }
+        else
+        {
+            table += "<tr><td>No information available</td></tr>";
+        }
+
+
+        table += '</tbody></table>';
+
+        return table;
+    }
+
     function refreshInProgressStatus()
     {
         $('#files-inprogress-table > tbody  > tr').each(function() {
@@ -359,20 +454,20 @@ $this->load->view(get_template_directory() . 'header');
                     })
                     .done(function (msg) {
                         var json_result = JSON.parse(msg);
-                        if (json_result.length > 0) {
-                            var file_id = json_result[0].IDFILE;
-                            var ec2_state = json_result[0].EC2_STATE;
+                        if (json_result.file_status.length > 0) {
+                            var file_id = json_result.file_status[0].IDFILE;
+                            var ec2_state = json_result.file_status[0].EC2_STATE;
                             if (ec2_state === null) {
                                 ec2_state = '';
                             }
-                            var images_count = json_result[0].IMG_COUNT;
+                            var images_count = json_result.file_status[0].IMG_COUNT;
                             if (images_count === null) {
                                 images_count = '0';
                             }
-                            var images_completed = json_result[0].IMAGES_COMPLETED + ' / ' + images_count;
-                            var file_status = json_result[0].FILE_STATUS;
-                            var start_time = json_result[0].START_TIME;
-                            var end_time = json_result[0].END_TIME;
+                            var images_completed = json_result.file_status[0].IMAGES_COMPLETED + ' / ' + images_count;
+                            var file_status = json_result.file_status[0].FILE_STATUS;
+                            var start_time = json_result.file_status[0].START_TIME;
+                            var end_time = json_result.file_status[0].END_TIME;
 
                             var currentRow = $('#files-inprogress-table').find("#" + file_id);
 
@@ -382,6 +477,26 @@ $this->load->view(get_template_directory() . 'header');
                             $(currentRow).find(".file-status").text(file_status);
                             $(currentRow).find(".start-time").text(start_time);
                             $(currentRow).find(".end-time").text(end_time);
+
+                            for (var i=0; i<json_result.gpu_status.length; i++)
+                            {
+                                var hostname = json_result.gpu_status[i].EC2_HOSTNAME;
+                                var gpu_slot = json_result.gpu_status[i].GPU_SLOT;
+                                var gpu_status = json_result.gpu_status[i].GPU_STATUS;
+                                var start_time = json_result.gpu_status[i].START_TIME;
+                                var end_time = json_result.gpu_status[i].END_TIME;
+                                var images_processed = json_result.gpu_status[i].IMAGES_PROCESSED;
+                                var last_image_processed = json_result.gpu_status[i].LAST_IMAGE_PROCESSED;
+
+                                var row_to_find = hostname + "-" + gpu_slot;
+                                var gpu_row = $(currentRow).closest("tr").next("tr").find(".gpu-info").find("." + row_to_find);
+                                $(gpu_row).find(".gpu-status").text(gpu_status);
+                                $(gpu_row).find(".gpu-start-time").text(start_time);
+                                $(gpu_row).find(".gpu-end-time").text(end_time);
+                                $(gpu_row).find(".gpu-images-processed").text(images_processed);
+                                $(gpu_row).find(".gpu-last-image-processed").text(last_image_processed);
+
+                            }
                         }
                     })
                     .fail(function (error) {

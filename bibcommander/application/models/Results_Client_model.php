@@ -14,8 +14,6 @@ class Results_Client_model extends CI_Model {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
@@ -31,8 +29,6 @@ class Results_Client_model extends CI_Model {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' " .
             "AND CLEANUP_STATUS = '" . $status . "' ";
 
@@ -50,8 +46,6 @@ class Results_Client_model extends CI_Model {
             $sql = "SELECT * from RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
-                "INNER JOIN SPARK_JOBS j " .
-                "ON f.IDFILE = j.IDFILE " .
                 "WHERE f.IDFILE = '" . $fileId . "' " .
                 "    AND IMAGE < (SELECT IMAGE FROM RESULTS_CLIENT WHERE IDFILE = " . $fileId . " and ID = " . $imgid . ") " .
                 "ORDER BY IMAGE DESC " .
@@ -63,8 +57,6 @@ class Results_Client_model extends CI_Model {
             $sql = "SELECT * from RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
-                "INNER JOIN SPARK_JOBS j " .
-                "ON f.IDFILE = j.IDFILE " .
                 "WHERE f.IDFILE = '" . $fileId . "' " .
                 "    AND IMAGE > (SELECT IMAGE FROM RESULTS_CLIENT WHERE IDFILE = " . $fileId . " and ID = " . $imgid . ") " .
                 "ORDER BY IMAGE ASC " .
@@ -91,9 +83,7 @@ class Results_Client_model extends CI_Model {
 
     public function get_job_information($fileId)
     {
-        $imageSql = "SELECT f.IDFILE, f.FILE_STATUS, f.FILE_PATH, j.IDJOB FROM FILES f " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
+        $imageSql = "SELECT f.IDFILE, f.FILE_STATUS, f.FILE_PATH FROM FILES f " .
             "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
@@ -111,8 +101,6 @@ class Results_Client_model extends CI_Model {
         $imageSql = "SELECT c.ID, c.IMAGE, c.HASH FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' " .
             "ORDER BY c.IMAGE";
 
@@ -158,7 +146,7 @@ class Results_Client_model extends CI_Model {
 
             // Construct the image path
             $fileNameWithoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $imageInfoResults[0]['FILE_PATH']);
-            $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['IDFILE'], $imageInfoResults[0]['IDJOB']);
+            $sourcePath = Util::GetResultImagePath($imageInfoResults[0]['IDFILE']);
             foreach ($imageResults as &$row) {
 
                 $row['LABELS_ARRAY'] = util::labelsArrayFromAllArray($labelHashDict, $row['HASH']);
@@ -184,8 +172,6 @@ class Results_Client_model extends CI_Model {
         $imageSql = "SELECT * FROM RESULTS_CLIENT c " .
                 "INNER JOIN FILES f " .
                 "ON f.IDFILE = c.IDFILE " .
-                "INNER JOIN SPARK_JOBS j " .
-                "ON f.IDFILE = j.IDFILE " .
                 "WHERE f.IDFILE = '" . $fileId . "' ";
 
 
@@ -372,8 +358,6 @@ class Results_Client_model extends CI_Model {
         $sql = "SELECT COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "WHERE f.IDFILE = '" . $fileId . "' " .
             "AND REVIEWER_ID = '" . $userid . "' ";
 
@@ -390,8 +374,6 @@ class Results_Client_model extends CI_Model {
         $sql = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "LEFT JOIN USERS u " .
             "ON c.REVIEWER_ID = u.IDUSERS " .
             "WHERE f.IDFILE = '" . $fileId . "' " .
@@ -402,8 +384,6 @@ class Results_Client_model extends CI_Model {
         $sqlActual = "SELECT c.IDFILE, REVIEWER_ID, EMAIL, COUNT(*) as COUNT FROM RESULTS_CLIENT c " .
             "INNER JOIN FILES f " .
             "ON f.IDFILE = c.IDFILE " .
-            "INNER JOIN SPARK_JOBS j " .
-            "ON f.IDFILE = j.IDFILE " .
             "LEFT JOIN USERS u " .
             "ON c.REVIEWER_ID = u.IDUSERS " .
             "WHERE f.IDFILE = '" . $fileId . "' " .
