@@ -24,6 +24,7 @@ $this->load->view(get_template_directory() . 'header');
 						echo '<p>Status: <span id="status">' . $status . '</span></p>';
 						echo '<p>Draw Images: ' . $drawimages . '</p>';
 						echo '<p>Last Update: ' . $uploadedDt . '</p>';
+						echo '<p>Download: <a href="' . site_url('/files/clientresultscsv?fileid=' . $fileid) . '" class="icon"><span class="action-view-result glyphicon glyphicon-download-alt" title="View Result"></span></a></p>';
 						echo '<div class="progress">';
 						echo '<div id="status-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">';
 						echo '0%';

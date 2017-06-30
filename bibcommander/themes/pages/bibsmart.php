@@ -212,7 +212,8 @@ $this->load->view(get_template_directory() . 'header');
                             echo "<tr id='" . $row["IDFILE"] . "'>";
                             echo "<td class='details-control'></td>";
                             echo "<td>" . $rowNum . "</td>";
-                            echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div></div></td>";
+                            echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div>" .
+                            "<div class='col-md-6'><a href='" . site_url('/files/clientresultscsv?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-download-alt' title='View Result'></span></a></div></div></td>";
                             echo "<td>" . $row["IDFILE"] . "</td>";
                             echo "<td>" . $row["EC2_STATE"] . "</td>";
                             echo "<td>" . $row["FILE_PATH"] . "</td>";

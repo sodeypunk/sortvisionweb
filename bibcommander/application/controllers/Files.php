@@ -147,6 +147,38 @@ class Files extends CI_Controller {
         return $files;
     }
 
+	public function clientResultsCSV() {
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename=data.csv');
+
+		if ($this->CheckLogin()) {
+
+			if (!empty ($_GET)) {
+				$fileId = $_GET['fileid'];
+
+				header('Content-Type: text/csv; charset=utf-8');
+				header('Content-Disposition: attachment; filename=data.csv');
+
+				$resultImages = $this->Results_Client_model->get_client_result_by_fileId($fileId);
+				$this->ConvertArrayToCSV($resultImages);
+
+			}
+		}
+	}
+
+	public function ConvertArrayToCSV($array) {
+
+		$output = fopen('php://output', 'w');
+
+		fputcsv($output, array('id', 'file', 'labels', 'image_path'));
+		foreach ($array as $line)
+		{
+			$line_array = array($line['ID'], $line['IMAGE'], $line['LABELS_STRING'], $line['IMAGE_PATH']);
+			fputcsv($output, $line_array);
+		}
+
+	}
+
 	public function clientResultsJSON() {
 		$clientResult = array();
 
