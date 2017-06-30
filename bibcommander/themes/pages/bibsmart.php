@@ -59,7 +59,7 @@ $this->load->view(get_template_directory() . 'header');
                                             <p class="help-block">Determine how fast you want this job to process</p>
                                             <select name="input-speed" id="input-speed">
                                                 <option value="custom">Custom</option>
-                                                <option value="slow" selected>Normal ($5/hr)</option>
+                                                <option value="normal" selected>Normal ($5/hr)</option>
                                                 <option value="fast">Fast ($15/hr)</option>
                                                 <option value="fastest">Fastest ($25/hr)</option>
                                             </select>
@@ -321,8 +321,7 @@ $this->load->view(get_template_directory() . 'header');
             })
             .done(function (msg) {
                 if (msg.indexOf("error") >= 0) {
-                    alert('Adding a new job failed. ' + msg);
-                    $("#submit-loading-text").text("");
+                    show_submit_error('Adding a new job failed. ' + msg);
                     return;
                 }
                 else {
@@ -330,8 +329,7 @@ $this->load->view(get_template_directory() . 'header');
                 }
             })
             .fail(function (error) {
-                alert("New Job Error: " + error.statusText);
-                $("#submit-loading-text").text("");
+                show_submit_error("New Job Error: " + error.statusText);
             })
             .complete(function () {
 
@@ -504,6 +502,10 @@ $this->load->view(get_template_directory() . 'header');
                     })
             }
         });
+    }
+
+    function show_submit_error(msg){
+        $("#submit-loading-text").html("<span style='color:red;'>" + msg + "</span>");
     }
 
     setInterval(function(){

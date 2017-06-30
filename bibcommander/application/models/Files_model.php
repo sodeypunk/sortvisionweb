@@ -162,10 +162,12 @@ class Files_model extends CI_Model {
 	public function get_gpu_information($fileid)
 	{
 		$this->db->select('G.EC2_HOSTNAME, G.GPU_SLOT, G.GPU_STATUS, G.START_TIME, G.END_TIME, COUNT(J.IDFILE) as IMAGES_PROCESSED, ' .
-		'(SELECT IMAGE_PATH FROM JOB_IMAGES WHERE IDFILE = ' . $fileid . ' AND IMAGE_STATUS <> \'NEW\' ORDER BY UPDT DESC LIMIT 1) AS LAST_IMAGE_PROCESSED ');
+		'(SELECT IMAGE_PATH FROM JOB_IMAGES WHERE IDFILE = ' . $fileid . ' AND IMAGE_STATUS <> \'NEW\' AND GPU_ID = G.GPU_SLOT ORDER BY UPDT DESC LIMIT 1) AS LAST_IMAGE_PROCESSED ');
 		$this->db->from('JOB_GPUS G');
-		$this->db->join('JOB_IMAGES J', 'G.IDFILE = J.IDFILE AND J.IMAGE_STATUS <> \'NEW\' ', 'left');
+		$this->db->join('JOB_IMAGES J', 'G.IDFILE = J.IDFILE AND J.IMAGE_STATUS <> \'NEW\' AND J.GPU_ID = G.GPU_SLOT', 'left');
 		$this->db->where('G.IDFILE', $fileid);
+		$this->db->group_by(array('G.EC2_HOSTNAME', 'G.GPU_SLOT', 'G.GPU_STATUS', 'G.START_TIME', 'G.END_TIME'));
+		$this->db->order_by('G.GPU_SLOT', 'asc');
 
 		$query = $this->db->get();
 
