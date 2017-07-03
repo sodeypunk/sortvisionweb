@@ -154,7 +154,7 @@ class Results_Client_model extends CI_Model {
 
                 $imageFlattened = util::flatten($row['IMAGE']);
 
-                $imagePath = $sourcePath . $imageFlattened;
+                $imagePath = $sourcePath . urlencode($imageFlattened);
                 $row['IMAGE_PATH'] = $imagePath;
                 $index++;
             }

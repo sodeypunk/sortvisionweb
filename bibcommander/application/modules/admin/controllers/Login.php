@@ -57,7 +57,7 @@ class Login extends CI_Controller
 			}
 
 			$data['use_recaptcha'] = $this->config->item('use_recaptcha');
-			if ($this->ci_auth->is_max_login_attempts_exceeded($login)) {
+			if ($data['use_recaptcha'] && $this->ci_auth->is_max_login_attempts_exceeded($login)) {
 				if ($data['use_recaptcha'])
 					$this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'trim|xss_clean|required|callback__check_recaptcha');
 				else

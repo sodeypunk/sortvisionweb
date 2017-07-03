@@ -74,7 +74,7 @@ class Auth extends CI_Controller
 		if ($this->ci_auth->is_logged_in()) { /* logged in*/
 			
 			if($this->ci_auth->canDo('login_to_frontend')) {
-				redirect(site_url('/auth/profile'));
+				redirect(site_url('/bibsmart'));
 			} else {
 				redirect(site_url('/admin/login'));
 			}
@@ -102,7 +102,7 @@ class Auth extends CI_Controller
 			
 			$data['use_recaptcha'] = $this->config->item('use_recaptcha');
 			
-			if ($this->ci_auth->is_max_login_attempts_exceeded($login)) {
+			if ($data['use_recaptcha'] && $this->ci_auth->is_max_login_attempts_exceeded($login)) {
 				if ($data['use_recaptcha'])
 					$this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'trim|xss_clean|required|callback__check_recaptcha');
 				else
@@ -117,7 +117,8 @@ class Auth extends CI_Controller
 						$this->form_validation->set_value('remember'),
 						$data['login_by_username'],
 						$data['login_by_email'])) {								/* success */
-						redirect(site_url('/auth/profile'));
+						//redirect(site_url('/auth/profile'));
+						redirect(site_url('/bibsmart'));
 				} else {
 					$errors = $this->ci_auth->get_error_message();
 					if (isset($errors['banned'])) {								/* banned user */
