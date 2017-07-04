@@ -1,2 +1,1 @@
-<?php echo CI_VERSION; ?>
-<?php phpinfo(); ?>
+<!-- This file is being overridden by the themes file -->
