@@ -25,6 +25,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $config['base_url'] = 'http://sortvision.localhost.com/bibcommander';
 
+# Available
+# https://api-demo.sortvision.com/bibsmart
+# https://api-dev.sortvision.com/bibsmart
+# https://api-test.sortvision.com/bibsmart
+# https://api.sortvision.com/bibsmart
+$config['bibsmart_api_url'] = 'https://api-demo.sortvision.com/bibsmart';
+
+# Available
+# demo
+# dev
+# test
+# prod
+$config['bibsmart_api_stage'] = 'dev';
+
 /*
 |--------------------------------------------------------------------------
 | Index File

@@ -100,7 +100,7 @@ class Upload extends CI_Controller {
                 }
 
                 // Call API here
-                $url = 'https://api-demo.sortvision.com/bibsmart';
+                $url = $this->config->item('bibsmart_api_url');
                 $apiDemoKey = 'RxzrwroMd5a4dPfT7pz3M69PChQTjKh01WZwelPU';
                 $contentType = $fileType;
 

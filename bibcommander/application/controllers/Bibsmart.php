@@ -94,13 +94,14 @@ class Bibsmart extends CI_Controller
 				}
 
 				// Call API here
-				$url = 'https://api-test.sortvision.com/bibsmart';
+				$url = $this->config->item('bibsmart_api_url');
+				$stage = $this->config->item('bibsmart_api_stage');
 				$contentType = 'application/json';
 
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
+				$body_data = array('params' => array('stage' => $stage, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
 									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid, 'instancetype'  => $instancetype));
 				$json_data = json_encode($body_data);
 
