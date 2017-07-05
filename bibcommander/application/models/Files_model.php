@@ -52,7 +52,7 @@ class Files_model extends CI_Model {
 		$this->db->select('f.IDFILE, f.EC2_STATE, f.EC2_INSTANCE_ID, f.EC2_HOSTNAME, f.EC2_INSTANCE_TYPE, f.FILE_PATH, f.FILE_STATUS, f.UPDT, f.START_TIME, f.END_TIME, f.IMG_COUNT, COUNT(rc.IDFILE) AS IMAGES_COMPLETED');
 		$this->db->from('FILES f');
 		$this->db->join('RESULTS_CLIENT rc', 'f.IDFILE = rc.IDFILE', 'left');
-		$where = "(f.API_KEY='$apiKey' AND (f.FILE_STATUS = 'COMPLETED' OR f.FILE_STATUS = 'ERROR' or f.FILE_STATUS = 'REMOVED'))";
+		$where = "(f.API_KEY='$apiKey' AND (f.FILE_STATUS = 'COMPLETED' OR f.FILE_STATUS = 'ERROR' or f.FILE_STATUS = 'REMOVED' or f.FILE_STATUS = 'CANCELLED'))";
 		$this->db->where($where);
 		$this->db->group_by(array('EC2_INSTANCE_ID', 'EC2_STATE', 'FILE_PATH', 'FILE_STATUS', 'UPDT', 'IMG_COUNT'));
 		$this->db->order_by('f.IDFILE', 'desc');

@@ -160,7 +160,7 @@ $this->load->view(get_template_directory() . 'header');
                             echo "<td class='details-control'></td>";
                             echo "<td>" . $rowNum . "</td>";
                             echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div>" .
-                                "<div class='col-md-6'><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete Job'></span></a></div></div></td>";
+                                "<div class='col-md-6'><a href='#' class='icon'><span id='" . $row["IDFILE"] . "' class='action-trash glyphicon glyphicon-trash' title='Delete/Cancel Job'></span></a></div></div></td>";
                             echo "<td>" . $row["IDFILE"] . "</td>";
                             echo "<td><span class='ec2-state'>" . $row["EC2_STATE"] . "</span><img class='loadingImage' src='" . base_url("assets/img/loading_sm_tr.gif") . "'/></td>";
                             echo "<td>" . $row["FILE_PATH"] . "</td>";
@@ -341,7 +341,7 @@ $this->load->view(get_template_directory() . 'header');
 
         $(".action-trash").click(function(){
 
-            if (confirm("Delete Job?")) {
+            if (confirm("Confirm Delete/Cancel Job?")) {
                 var apiKeyString = $("#apikey").val();
 
                 $.ajax({
