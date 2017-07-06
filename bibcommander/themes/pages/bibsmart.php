@@ -47,8 +47,8 @@ $this->load->view(get_template_directory() . 'header');
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="input-file">Image Location</label>
-                                            <p class="help-block">Can be file or folder location</p>
-                                            <input type="text" class="form-control" name="input-file" placeholder="s3://bucket/race1">
+                                            <p class="help-block">Can be file or folder location.<br>Format: s3://[bucket] or s3://[bucket]/[sub-folder or filename]</p>
+                                            <input type="text" class="form-control" name="input-file" placeholder="s3://bucket/sub-folder">
                                         </div>
                                     </div>
                                 </div>
@@ -59,9 +59,9 @@ $this->load->view(get_template_directory() . 'header');
                                             <p class="help-block">Determine how fast you want this job to process</p>
                                             <select name="input-speed" id="input-speed">
                                                 <option value="custom">Custom</option>
-                                                <option value="normal" selected>Normal ($5/hr)</option>
-                                                <option value="fast">Fast ($15/hr)</option>
-                                                <option value="fastest">Fastest ($25/hr)</option>
+                                                <option value="normal" selected>Normal (1x)</option>
+                                                <option value="fast">Fast (8x)</option>
+                                                <option value="fastest">Fastest (16x)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -104,7 +104,7 @@ $this->load->view(get_template_directory() . 'header');
                                                                 <div class="form-group">
                                                                     <label for="input-ec2-type">Terminate Timeout (mins)</label>
                                                                     <p class="help-block">Will terminate EC2 instance after minutes of idling from last image.</p>
-                                                                    <input type="number" name="input-terminate-timeout" value="5">
+                                                                    <input type="number" name="input-terminate-timeout" value="15">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -213,7 +213,7 @@ $this->load->view(get_template_directory() . 'header');
                             echo "<td class='details-control'></td>";
                             echo "<td>" . $rowNum . "</td>";
                             echo "<td><div class='row'><div class='col-md-6'><a href='" . site_url('/files/status?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-list-alt' title='View Result'></span></a></div>" .
-                            "<div class='col-md-6'><a href='" . site_url('/files/clientresultscsv?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-download-alt' title='View Result'></span></a></div></div></td>";
+                            "<div class='col-md-6'><a href='" . site_url('/files/clientresultscsv?fileid=' . $row["IDFILE"]) . "' class='icon'><span id='" . $row["IDFILE"] . "' class='action-view-result glyphicon glyphicon-download-alt' title='Download CSV'></span></a></div></div></td>";
                             echo "<td>" . $row["IDFILE"] . "</td>";
                             echo "<td>" . $row["EC2_STATE"] . "</td>";
                             echo "<td>" . $row["FILE_PATH"] . "</td>";
@@ -316,6 +316,7 @@ $this->load->view(get_template_directory() . 'header');
                 async: false,
                 data: postData,
                 beforeSend: function () {
+                    show_submit_error('');
                     $("#submit-loading-text").text("Creating job...");
                 }
 

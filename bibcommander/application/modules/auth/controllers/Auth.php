@@ -18,6 +18,7 @@ class Auth extends CI_Controller
 		$this->load->helper(array('form', 'url', 'security'));
 		$this->load->library('form_validation');
 		$this->load->model('settings_model');
+		$this->load->model('auth/user_model');
 	}
 
 	function index()
@@ -487,8 +488,14 @@ class Auth extends CI_Controller
 
 		// Activate user
 		if ($this->ci_auth->activate_user($user_id, $new_email_key)) {		// success
+			// Send email to notify web master of activation
+			$user_profile = $this->user_model->get_user($user_id)[0];
+			$user_email = $user_profile->email;
+			$this->_send_email_activated_email($user_email, $user_id);
+
 			$this->ci_auth->logout();
 			$this->_show_message($this->lang->line('auth_message_activation_completed'));
+
 		} else {																// fail
 			$this->_show_message($this->lang->line('auth_message_activation_failed'));
 		}
@@ -773,6 +780,18 @@ class Auth extends CI_Controller
 		$this->email->subject(sprintf($this->lang->line('auth_subject_'.$type), $this->config->item('website_name')));
 		$this->email->message($this->load->view('email/'.$type.'-html', $data, TRUE));
 		$this->email->set_alt_message($this->load->view('email/'.$type.'-txt', $data, TRUE));
+		$this->email->send();
+	}
+
+	function _send_email_activated_email($activated_email, $user_id)
+	{
+		$this->load->library('email');
+		$this->email->set_mailtype("html");
+		$this->email->from("no-reply@sortvision.com", $this->config->item('website_name'));
+		$this->email->reply_to("no-reply@sortvision.com", $this->config->item('website_name'));
+		$this->email->to($this->config->item('webmaster_email'));
+		$this->email->subject("SortVision user activated their email: " . $activated_email);
+		$this->email->message("The following user have activated their email. They may need an API key. <br> User: " . $user_id . "<br>Email: " . $activated_email);
 		$this->email->send();
 	}
 

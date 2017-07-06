@@ -30,7 +30,7 @@ $config['base_url'] = 'http://sortvision.localhost.com/bibcommander';
 # https://api-dev.sortvision.com/bibsmart
 # https://api-test.sortvision.com/bibsmart
 # https://api.sortvision.com/bibsmart
-$config['bibsmart_api_url'] = 'https://api-demo.sortvision.com/bibsmart';
+$config['bibsmart_api_url'] = 'https://api-dev.sortvision.com/bibsmart';
 
 # Available
 # demo
