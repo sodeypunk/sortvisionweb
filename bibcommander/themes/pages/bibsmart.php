@@ -108,6 +108,16 @@ $this->load->view(get_template_directory() . 'header');
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>
+                                                                        <input type="checkbox" name="input-dryrun"> Dry Run
+                                                                    </label>
+                                                                    <p class="help-block">Will simulate starting an EC2 but not run it.</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

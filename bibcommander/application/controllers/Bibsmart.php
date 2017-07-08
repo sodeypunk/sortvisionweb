@@ -62,6 +62,7 @@ class Bibsmart extends CI_Controller
 				$file = $_POST['input-file'];
 				$speed = $_POST['input-speed'];
 				$draw_results = isset($_POST['input-draw-results']);
+				$dry_run = isset($_POST['input-dryrun']);
 				$terminate_timeout = $_POST['input-terminate-timeout'];
 				$user_id = $this->ci_auth->get_user_id();
 				$user_profile = $this->user_model->get_user($user_id);
@@ -76,6 +77,11 @@ class Bibsmart extends CI_Controller
 				else {
 					$draw_images_param = 0;
 				}
+
+				if ($dry_run)
+					$dry_run_param = 'True';
+				else
+					$dry_run_param = 'False';
 
 				if ($speed == "custom")
 				{
@@ -101,7 +107,7 @@ class Bibsmart extends CI_Controller
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('stage' => $stage, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
+				$body_data = array('params' => array('dryrun' => $dry_run_param, 'stage' => $stage, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
 									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid, 'instancetype'  => $instancetype));
 				$json_data = json_encode($body_data);
 
@@ -121,6 +127,9 @@ class Bibsmart extends CI_Controller
 							//$data['errors'] = 'Job creation ' . $success . '. Message: ' . $message;
 							echo "error: " . $message;
 						}
+					}
+					else if (!empty($json_result->errorMessage)) {
+						echo "error: " . $json_result->errorMessage;
 					}
 					else
 					{
