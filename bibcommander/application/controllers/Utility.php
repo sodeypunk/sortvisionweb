@@ -161,8 +161,6 @@ class util
     {
         $newString = str_replace("/", "^", $string);
         $newString = str_replace(" ", "+", $newString);
-        $newString = preg_replace('/\\.[^.\\s]{3,4}$/', '', $newString);
-        $newString = $newString . ".jpg"; // for showing result images
 
         return $newString;
     }
