@@ -60,8 +60,8 @@ $this->load->view(get_template_directory() . 'header');
                                             <select name="input-speed" id="input-speed">
                                                 <option value="custom">Custom</option>
                                                 <option value="normal" selected>Normal (1x)</option>
-                                                <option value="fast">Fast (8x)</option>
-                                                <option value="fastest">Fastest (16x)</option>
+                                                <option value="fast" disabled>Fast (8x)</option>
+                                                <option value="fastest" disabled>Fastest (16x)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -115,6 +115,18 @@ $this->load->view(get_template_directory() . 'header');
                                                                         <input type="checkbox" name="input-dryrun"> Dry Run
                                                                     </label>
                                                                     <p class="help-block">Will simulate starting an EC2 but not run it.</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="input-region">Region</label>
+                                                                    <p class="help-block">Switch server region.</p>
+                                                                    <select name="input-region" id="input-region">
+                                                                        <option value="us-east-1" selected>us-east-1</option>
+                                                                        <option value="us-west-2">us-west-2</option>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -61,6 +61,7 @@ class Bibsmart extends CI_Controller
 			if (isset($_POST['input-file'])) {
 				$file = $_POST['input-file'];
 				$speed = $_POST['input-speed'];
+				$region = $_POST['input-region'];
 				$draw_results = isset($_POST['input-draw-results']);
 				$dry_run = isset($_POST['input-dryrun']);
 				$terminate_timeout = $_POST['input-terminate-timeout'];
@@ -107,7 +108,7 @@ class Bibsmart extends CI_Controller
 				$header = array('Content-Type: ' . $contentType,
 					'x-api-key: ' . $apiKey);
 
-				$body_data = array('params' => array('dryrun' => $dry_run_param, 'stage' => $stage, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
+				$body_data = array('params' => array('region' => $region, 'dryrun' => $dry_run_param, 'stage' => $stage, 'file' => $file, 'speed' => $speed, 'drawimages' => $draw_images_param,
 									'terminatetimeout' => $terminate_timeout, 'hostname' => $hostname, 'instanceid' => $instanceid, 'instancetype'  => $instancetype));
 				$json_data = json_encode($body_data);
 
